@@ -1,33 +1,38 @@
 save game uml
 ```mermaid
 flowchart TD
-%% Khởi đầu từ 2 hướng
-    TriggerManual([Người chơi nhấn Save]) --> SetSinglePath[Đường dẫn: saves/save.dat]
-    TriggerAuto([Sự kiện: Chuyển phòng / Xong Puzzle]) --> SetSinglePath
+%% Hai nguồn kích hoạt
+    TriggerManual([Người chơi nhấn Save]) --> CheckPriority{Đang bận lưu?}
+    TriggerAuto([Sự kiện: Chuyển phòng / Xong Puzzle]) --> CheckPriority
 
-    SetSinglePath --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory, Flags]
+%% Logic ưu tiên
+    CheckPriority -- "Đang lưu Auto" --> Interrupt[Hủy Auto - Ưu tiên Manual]
+    CheckPriority -- "Đang lưu Manual" --> IgnoreAuto[Bỏ qua Auto]
+    CheckPriority -- "Trống" --> SavePermission{Cho phép lưu?}
 
-    Collect --> CheckDir{Thư mục tồn tại?}
-    CheckDir -- "Không" --> CreateDir(Tạo thư mục Saves)
-    CreateDir --> Serialize
-    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu)
+    Interrupt --> SavePermission
+    IgnoreAuto --> End([Kết thúc])
 
-    Serialize --> WriteTemp(Ghi vào save.tmp)
-    WriteTemp --> Verify{Ghi file thành công?}
+%% Kiểm tra trạng thái meta/cốt truyện
+    SavePermission -- "Đang Jumpscare/Event" --> Deny[Thông báo: Không thể lưu lúc này]
+    SavePermission -- "Đúng" --> Collect[Gom dữ liệu: RS, Flags, Inventory]
 
-%% Xử lý ngoại lệ
-    Verify -- "Lỗi" --> CatchErr[Bắt ngoại lệ & Báo lỗi UI]
+    Deny --> End
 
-%% Xử lý thành công
-    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file duy nhất)
+%% Luồng ghi JSON
+    Collect --> JsonFormat(Chuyển đổi sang JSON String)
+    JsonFormat --> WriteFile(Ghi đè save.json)
 
-    Rename --> CheckType{Loại lưu?}
-    CheckType -- "Thủ công" --> Success[Hiện bảng: Game Saved]
-    CheckType -- "Tự động" --> Silent[Hiện icon 'Saving' nhỏ]
+    WriteFile --> Verify{Thành công?}
+    Verify -- "Sai" --> Catch[Xử lý ngoại lệ IO]
+    Verify -- "Đúng" --> Feedback{Loại lưu?}
 
-    Success --> End([Kết thúc])
+    Feedback -- "Manual" --> Success[UI: Progress Secured]
+    Feedback -- "Auto" --> Silent[UI: Icon Saving...]
+
+    Success --> End
     Silent --> End
-    CatchErr --> End
+    Catch --> End
 ```
 ---
 ending system
