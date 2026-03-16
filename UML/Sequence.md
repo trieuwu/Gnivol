@@ -17,7 +17,7 @@ flowchart TD
     Success --> End([Kết thúc])
     CatchErr --> End
 ```
-
+---
 ```mermaid
 flowchart TD
     Start([Kích hoạt Sự kiện cuối]) --> FetchData(Truy xuất World RS & Global Flags)
@@ -44,7 +44,7 @@ flowchart TD
     
     PlayCredits --> End([Trở về Main Menu])
 ```
-
+---
 ```mermaid
 flowchart TD
     Start([Sự kiện xảy ra]) --> RequestType{Loại yêu cầu?}
@@ -67,7 +67,7 @@ flowchart TD
     GetValue --> LogicBranch
     LogicBranch --> End
 ```
-
+---
 ```mermaid
 flowchart TD
     Start([Hành động người chơi]) --> ChangeRS(Cập nhật RS của NPC liên quan)
@@ -89,7 +89,7 @@ flowchart TD
     Broken --> FourthWall(Phá vỡ bức tường thứ tư / Gọi tên Player)
     FourthWall --> End
 ```
-
+---
 ```mermaid
 flowchart TD
     Start([Click vào vật thể]) --> TypeCheck{Là vật phẩm nhặt được?}
