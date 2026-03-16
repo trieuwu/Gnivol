@@ -34,6 +34,7 @@ flowchart TD
     Silent --> End
     Catch --> End
 ```
+
 ---
 ending system
 ```mermaid
@@ -110,31 +111,54 @@ flowchart TD
     FourthWall --> End
 ```
 ---
+
+
+
 merge logic 
 ```mermaid
 flowchart TD
-    Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
+    Start([Chọn vật phẩm A]) --> Highlight(Highlight A)
     Highlight --> SelectB([Click vào vật phẩm B])
     
     SelectB --> SameCheck{A trùng B?}
     SameCheck -- "Có" --> Deselect(Bỏ chọn A)
-    Deselect --> End([Kết thúc])
     
-    SameCheck -- "Không" --> RecipeCheck{Có công thức A + B?}
+    SameCheck -- "Không" --> RecipeCheck{Có công thức tương tác?}
     
     %% Nhánh thất bại
-    RecipeCheck -- "Sai" --> FailAnim(Phát âm thanh/Hiệu ứng 'Không khớp')
+    RecipeCheck -- "Sai" --> FailAnim(Hiệu ứng: Không tương tác được)
     FailAnim --> Deselect
     
-    %% Nhánh thành công
-    RecipeCheck -- "Đúng" --> MergeAction(Xóa A và B khỏi ArrayList)
-    MergeAction --> CreateNew(Thêm vật phẩm C mới vào ArrayList)
-    CreateNew --> PlaySuccess(Phát âm thanh/Hiệu ứng ghép đồ)
-    PlaySuccess --> RSCheck{C có gây biến đổi thực tại?}
+    %% Nhánh thành công (Xử lý linh hoạt)
+    RecipeCheck -- "Đúng" --> ProcessRecipe[Xử lý danh sách vật phẩm sau tương tác]
+    ProcessRecipe --> UpdateInv[Cập nhật Inventory: Xóa/Thêm/Thay đổi trạng thái]
     
-    RSCheck -- "Có" --> UpdateRS(Cập nhật chỉ số RS / Flag mới)
+    UpdateInv --> PlaySuccess(Phát âm thanh mở khóa/ghép đồ)
+    PlaySuccess --> RSCheck{Sự kiện này có gây biến đổi?}
+    
+    RSCheck -- "Có" --> UpdateRS(Cập nhật RS / Bật Global Flag)
     RSCheck -- "Không" --> RefreshUI(Cập nhật lại giao diện Inventory)
     
     UpdateRS --> RefreshUI
-    RefreshUI --> End
+    RefreshUI --> End([Kết thúc])
+    Deselect --> End
+```
+---
+update inventory uml
+```mermaid
+flowchart TD
+    UpdateStart([Lệnh: Cập nhật Inventory]) --> TaskType{Loại hành động?}
+    
+    TaskType -- "Mở khóa/Tiêu thụ" --> RemoveItem[Xóa vật phẩm A khỏi ArrayList]
+    TaskType -- "Lắp ráp/Nhặt" --> AddItem[Thêm vật phẩm B vào ArrayList]
+    TaskType -- "Biến đổi" --> ReplaceItem[Thay thế ID_Old bằng ID_New]
+    
+    RemoveItem --> SyncUI(Gọi UI Refresh)
+    AddItem --> SyncUI
+    ReplaceItem --> SyncUI
+    
+    SyncUI --> SaveCheck{Là sự kiện quan trọng?}
+    SaveCheck -- "Phải" --> AutoSave(Gọi JsonSaveEngine)
+    SaveCheck -- "Không" --> End([Kết thúc])
+    AutoSave --> End
 ```
