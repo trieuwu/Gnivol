@@ -1,23 +1,36 @@
+save game uml
 ```mermaid
 flowchart TD
-    Start([Lệnh Save Game]) --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory]
-    Collect --> CheckDir{Thư mục tồn tại?}
+%% Khởi đầu từ 2 hướng
+    TriggerManual([Người chơi nhấn Save]) --> SetSinglePath[Đường dẫn: saves/save.dat]
+    TriggerAuto([Sự kiện: Chuyển phòng / Xong Puzzle]) --> SetSinglePath
 
+    SetSinglePath --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory, Flags]
+
+    Collect --> CheckDir{Thư mục tồn tại?}
     CheckDir -- "Không" --> CreateDir(Tạo thư mục Saves)
     CreateDir --> Serialize
-    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu - Serialization)
+    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu)
 
-    Serialize --> WriteTemp(Ghi vào file tạm .tmp)
+    Serialize --> WriteTemp(Ghi vào save.tmp)
     WriteTemp --> Verify{Ghi file thành công?}
 
-    Verify -- "Lỗi (IOException)" --> CatchErr[Bắt ngoại lệ & Thông báo UI]
-    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file cũ)
+%% Xử lý ngoại lệ
+    Verify -- "Lỗi" --> CatchErr[Bắt ngoại lệ & Báo lỗi UI]
 
-    Rename --> Success[Thông báo: Save Complete]
+%% Xử lý thành công
+    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file duy nhất)
+
+    Rename --> CheckType{Loại lưu?}
+    CheckType -- "Thủ công" --> Success[Hiện bảng: Game Saved]
+    CheckType -- "Tự động" --> Silent[Hiện icon 'Saving' nhỏ]
+
     Success --> End([Kết thúc])
+    Silent --> End
     CatchErr --> End
 ```
-
+---
+ending system
 ```mermaid
 flowchart TD
     Start([Kích hoạt Sự kiện cuối]) --> FetchData(Truy xuất World RS & Global Flags)
@@ -44,7 +57,8 @@ flowchart TD
     
     PlayCredits --> End([Trở về Main Menu])
 ```
-
+---
+flag / key system
 ```mermaid
 flowchart TD
     Start([Sự kiện xảy ra]) --> RequestType{Loại yêu cầu?}
@@ -67,7 +81,8 @@ flowchart TD
     GetValue --> LogicBranch
     LogicBranch --> End
 ```
-
+---
+rs system
 ```mermaid
 flowchart TD
     Start([Hành động người chơi]) --> ChangeRS(Cập nhật RS của NPC liên quan)
@@ -89,7 +104,8 @@ flowchart TD
     Broken --> FourthWall(Phá vỡ bức tường thứ tư / Gọi tên Player)
     FourthWall --> End
 ```
-
+---
+merge logic 
 ```mermaid
 flowchart TD
     Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
