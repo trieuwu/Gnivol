@@ -92,48 +92,51 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start([Khởi động App]) --> ReadData(Đọc File cấu hình JSON & Flags hệ thống)
-    ReadData --> IntegrityCheck{File Character tồn tại?}
+    Start([Click vào vật thể]) --> TypeCheck{Là vật phẩm nhặt được?}
+    
+    %% Nhánh không nhặt được (Chỉ để soi)
+    TypeCheck -- "Không" --> Examine(Hiện lời thoại mô tả/suy nghĩ)
+    Examine --> End([Kết thúc hành động])
+    
+    %% Nhánh nhặt được
+    TypeCheck -- "Có" --> PlaySound(Phát âm thanh nhặt đồ)
+    PlaySound --> TriggerDialogue(Hiện thông báo: Đã nhặt được...)
+    
+    TriggerDialogue --> RSImpact{Món đồ có gây sợ hãi?}
+    RSImpact -- "Có" --> LowerRS(Trừ chỉ số RS của nhân vật)
+    RSImpact -- "Không" --> UpdateFlag(Ghi nhận Global Flag: đã có vật phẩm)
+    
+    LowerRS --> UpdateFlag
+    UpdateFlag --> AddToInv(Thêm ID vào ArrayList Inventory)
+    AddToInv --> RemoveSprite(Xóa hình ảnh khỏi Scene)
+    RemoveSprite --> RefreshUI(Cập nhật thanh công cụ Inventory)
+    RefreshUI --> End
+```
 
-%% Nhánh Meta Horror ngay đầu game
-    IntegrityCheck -- "Không" --> MetaJumpscare(Kích hoạt Meta Horror: Xóa file / Glitch)
-    MetaJumpscare --> EndMeta([Thoát Game đột ngột])
-
-%% Nhánh bình thường
-    IntegrityCheck -- "Có" --> MainMenu["Hiển thị Main Menu"]
-
-    MainMenu --> MainChoice{Lựa chọn?}
-
-    MainChoice -- "New Game" --> InitGame(Khởi tạo: RS=100%, Flags=Empty)
-    MainChoice -- "Load Game" --> LoadScreen[[Màn hình chọn Slot 1/2/3]]
-    MainChoice -- "Settings" --> Settings[[Sub-activity: Settings]]
-    MainChoice -- "Quit" --> Exit([Thoát Game])
-
-    LoadScreen --> RestoreState(Đọc dữ liệu: Room, Dialogue, RS, Items)
-
-%% Kiểm tra Flag sau khi Load (Đề phòng người chơi gian lận hoặc File bị hỏng)
-    InitGame --> PreCheck{Kiểm tra Flag 'Broken'?}
-    RestoreState --> PreCheck
-
-    PreCheck -- "Có" --> MetaEvent
-    PreCheck -- "Không" --> EnterScene(Vào Scene)
-
-%% Vòng lặp Gameplay
-    EnterScene --> PlayLoop(Xử lý: Hội thoại, Giải đố, Di chuyển)
-    PlayLoop --> RSMonitor{RS < Ngưỡng?}
-
-    RSMonitor -- "Có" --> MetaEvent(Kích hoạt: Glitch/Meta Horror)
-    RSMonitor -- "Không" --> InputCheck{Phím ESC?}
-
-    MetaEvent --> InputCheck
-
-    InputCheck -- "Có" --> PauseMenu["Pause Menu: Save, Settings, Menu"]
-    InputCheck -- "Không" --> EndLogic{Đạt Ending?}
-
-    PauseMenu -- "Save" --> SaveSys[[Sub-activity: Save Game]]
-    PauseMenu -- "Main Menu" --> MainMenu
-
-    EndLogic -- "Chưa" --> PlayLoop
-    EndLogic -- "Rồi" --> EndingScreen[Hiển thị Ending / Credits]
-    EndingScreen --> MainMenu
+```mermaid
+flowchart TD
+    Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
+    Highlight --> SelectB([Click vào vật phẩm B])
+    
+    SelectB --> SameCheck{A trùng B?}
+    SameCheck -- "Có" --> Deselect(Bỏ chọn A)
+    Deselect --> End([Kết thúc])
+    
+    SameCheck -- "Không" --> RecipeCheck{Có công thức A + B?}
+    
+    %% Nhánh thất bại
+    RecipeCheck -- "Sai" --> FailAnim(Phát âm thanh/Hiệu ứng 'Không khớp')
+    FailAnim --> Deselect
+    
+    %% Nhánh thành công
+    RecipeCheck -- "Đúng" --> MergeAction(Xóa A và B khỏi ArrayList)
+    MergeAction --> CreateNew(Thêm vật phẩm C mới vào ArrayList)
+    CreateNew --> PlaySuccess(Phát âm thanh/Hiệu ứng ghép đồ)
+    PlaySuccess --> RSCheck{C có gây biến đổi thực tại?}
+    
+    RSCheck -- "Có" --> UpdateRS(Cập nhật chỉ số RS / Flag mới)
+    RSCheck -- "Không" --> RefreshUI(Cập nhật lại giao diện Inventory)
+    
+    UpdateRS --> RefreshUI
+    RefreshUI --> End
 ```
