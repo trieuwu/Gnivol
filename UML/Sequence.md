@@ -92,29 +92,6 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start([Click vào vật thể]) --> TypeCheck{Là vật phẩm nhặt được?}
-    
-    %% Nhánh không nhặt được (Chỉ để soi)
-    TypeCheck -- "Không" --> Examine(Hiện lời thoại mô tả/suy nghĩ)
-    Examine --> End([Kết thúc hành động])
-    
-    %% Nhánh nhặt được
-    TypeCheck -- "Có" --> PlaySound(Phát âm thanh nhặt đồ)
-    PlaySound --> TriggerDialogue(Hiện thông báo: Đã nhặt được...)
-    
-    TriggerDialogue --> RSImpact{Món đồ có gây sợ hãi?}
-    RSImpact -- "Có" --> LowerRS(Trừ chỉ số RS của nhân vật)
-    RSImpact -- "Không" --> UpdateFlag(Ghi nhận Global Flag: đã có vật phẩm)
-    
-    LowerRS --> UpdateFlag
-    UpdateFlag --> AddToInv(Thêm ID vào ArrayList Inventory)
-    AddToInv --> RemoveSprite(Xóa hình ảnh khỏi Scene)
-    RemoveSprite --> RefreshUI(Cập nhật thanh công cụ Inventory)
-    RefreshUI --> End
-```
-
-```mermaid
-flowchart TD
     Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
     Highlight --> SelectB([Click vào vật phẩm B])
     
