@@ -1,39 +1,91 @@
 ```mermaid
 flowchart TD
-    Start([Kích hoạt Hội thoại]) --> LoadNode(Tải Dialogue Node)
+    Start([Lệnh Save Game]) --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory]
+    Collect --> CheckDir{Thư mục tồn tại?}
 
-%% Kiểm tra điểm dừng ngay khi nạp
-    LoadNode --> ExistCheck{Node tồn tại?}
-    ExistCheck -- "Không (Hết)" --> EndDialogue([Đóng UI & Trả quyền điều khiển])
+    CheckDir -- "Không" --> CreateDir(Tạo thư mục Saves)
+    CreateDir --> Serialize
+    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu - Serialization)
 
-%% Nếu tồn tại thì mới chạy tiếp logic
-    ExistCheck -- "Có" --> IsDecision{Là Node lựa chọn?}
+    Serialize --> WriteTemp(Ghi vào file tạm .tmp)
+    WriteTemp --> Verify{Ghi file thành công?}
 
-    IsDecision -- "Phải" --> StopSkip[Dừng Skip & Hiện lựa chọn]
-    StopSkip --> ShowChoices[Hiển thị nút A và B]
+    Verify -- "Lỗi (IOException)" --> CatchErr[Bắt ngoại lệ & Thông báo UI]
+    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file cũ)
 
-    IsDecision -- "Không" --> SkipCheck{Đang bật Skip?}
+    Rename --> Success[Thông báo: Save Complete]
+    Success --> End([Kết thúc])
+    CatchErr --> End
+```
 
-    SkipCheck -- "Có" --> AutoNext(Tải Node tiếp theo)
-    AutoNext --> LoadNode
+```mermaid
+flowchart TD
+    Start([Kích hoạt Sự kiện cuối]) --> FetchData(Truy xuất World RS & Global Flags)
+    FetchData --> ConditionCheck{Kiểm tra điều kiện}
+    
+    %% Nhánh True Ending
+    ConditionCheck -- "RS > 80% + Đủ Item ẩn" --> TrueEnd[True Ending: Thực tại ổn định]
+    
+    %% Nhánh Hidden Ending (Dành cho dân cày)
+    ConditionCheck -- "Đạt Flag đặc biệt" --> SecretEnd[Secret Ending: Sự thật về thế giới]
+    
+    %% Nhánh Normal Ending
+    ConditionCheck -- "50% < RS < 80%" --> NormalEnd[Normal Ending: Kết thúc mở]
+    
+    %% Nhánh Bad/Horror Ending (Meta)
+    ConditionCheck -- "RS < 30%" --> HorrorEnd[Horror Ending: Thực tại sụp đổ]
+    
+    HorrorEnd --> MetaAction(Xóa file save/Gửi thông điệp qua System)
+    
+    TrueEnd --> PlayCredits(Chạy Credits)
+    SecretEnd --> PlayCredits
+    NormalEnd --> PlayCredits
+    MetaAction --> PlayCredits
+    
+    PlayCredits --> End([Trở về Main Menu])
+```
 
-    SkipCheck -- "Không" --> RSCheck{Chỉ số RS?}
-    RSCheck -- "Thấp" --> Glitch[Hiệu ứng Glitch]
-    RSCheck -- "Cao" --> Typewriter[Hiệu ứng Typewriter]
+```mermaid
+flowchart TD
+    Start([Sự kiện xảy ra]) --> RequestType{Loại yêu cầu?}
+    
+    %% Luồng cập nhật
+    RequestType -- "Ghi dữ liệu" --> UpdateFlag[Lưu Key/Value vào Global Map]
+    UpdateFlag --> AutoSave{Yêu cầu lưu file?}
+    AutoSave -- "Có" --> TriggerSave(Gọi Save System)
+    AutoSave -- "Không" --> End([Kết thúc])
+    TriggerSave --> End
 
-    Glitch --> WaitInput{Chờ Click / Skip}
-    Typewriter --> WaitInput
+    %% Luồng truy vấn (Dùng cho rẽ nhánh)
+    RequestType -- "Kiểm tra" --> QueryMap[Truy tìm Key trong Map]
+    QueryMap --> ExistCheck{Flag tồn tại?}
+    
+    ExistCheck -- "Không" --> DefaultValue(Trả về giá trị mặc định: False)
+    ExistCheck -- "Có" --> GetValue(Trả về giá trị thực tế)
+    
+    DefaultValue --> LogicBranch[Rẽ nhánh Logic Game]
+    GetValue --> LogicBranch
+    LogicBranch --> End
+```
 
-    WaitInput -- "Nhấn Skip" --> SetSkip[Bật trạng thái Skip]
-    WaitInput -- "Click tiếp" --> AutoNext
-    SetSkip --> AutoNext
-
-    UserSelect{Người chơi chọn?}
-    ShowChoices --> UserSelect
-    UserSelect -- "A" --> UpdateRSA(Cập nhật RS A & Flag)
-    UserSelect -- "B" --> UpdateRSB(Cập nhật RS B & Flag)
-
-    UpdateRSA --> NextBranch(Tải Node nhánh A)
-    UpdateRSB --> NextBranch
-    NextBranch --> LoadNode
+```mermaid
+flowchart TD
+    Start([Hành động người chơi]) --> ChangeRS(Cập nhật RS của NPC liên quan)
+    ChangeRS --> CalcWorldRS[Tính World RS = Tổng RS hiện tại / Tổng RS tối đa]
+    
+    CalcWorldRS --> Threshold{Kiểm tra ngưỡng RS}
+    
+    %% Nhánh bình thường
+    Threshold -- "RS > 0.7" --> Normal[Diễn biến bình thường]
+    Normal --> End([Cập nhật trạng thái game])
+    
+    %% Nhánh bất ổn (Glitch)
+    Threshold -- "0.3 <= RS <= 0.7" --> Unstable[Kích hoạt Glitch Mode]
+    Unstable --> GlitchEffect(Lời thoại lạ / Hình ảnh nhiễu)
+    GlitchEffect --> End
+    
+    %% Nhánh sụp đổ (Meta/Horror)
+    Threshold -- "RS < 0.3" --> Broken[Kích hoạt Meta Horror]
+    Broken --> FourthWall(Phá vỡ bức tường thứ tư / Gọi tên Player)
+    FourthWall --> End
 ```
