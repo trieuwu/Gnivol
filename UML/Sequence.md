@@ -89,3 +89,51 @@ flowchart TD
     Broken --> FourthWall(Phá vỡ bức tường thứ tư / Gọi tên Player)
     FourthWall --> End
 ```
+
+```mermaid
+flowchart TD
+    Start([Khởi động App]) --> ReadData(Đọc File cấu hình JSON & Flags hệ thống)
+    ReadData --> IntegrityCheck{File Character tồn tại?}
+
+%% Nhánh Meta Horror ngay đầu game
+    IntegrityCheck -- "Không" --> MetaJumpscare(Kích hoạt Meta Horror: Xóa file / Glitch)
+    MetaJumpscare --> EndMeta([Thoát Game đột ngột])
+
+%% Nhánh bình thường
+    IntegrityCheck -- "Có" --> MainMenu["Hiển thị Main Menu"]
+
+    MainMenu --> MainChoice{Lựa chọn?}
+
+    MainChoice -- "New Game" --> InitGame(Khởi tạo: RS=100%, Flags=Empty)
+    MainChoice -- "Load Game" --> LoadScreen[[Màn hình chọn Slot 1/2/3]]
+    MainChoice -- "Settings" --> Settings[[Sub-activity: Settings]]
+    MainChoice -- "Quit" --> Exit([Thoát Game])
+
+    LoadScreen --> RestoreState(Đọc dữ liệu: Room, Dialogue, RS, Items)
+
+%% Kiểm tra Flag sau khi Load (Đề phòng người chơi gian lận hoặc File bị hỏng)
+    InitGame --> PreCheck{Kiểm tra Flag 'Broken'?}
+    RestoreState --> PreCheck
+
+    PreCheck -- "Có" --> MetaEvent
+    PreCheck -- "Không" --> EnterScene(Vào Scene)
+
+%% Vòng lặp Gameplay
+    EnterScene --> PlayLoop(Xử lý: Hội thoại, Giải đố, Di chuyển)
+    PlayLoop --> RSMonitor{RS < Ngưỡng?}
+
+    RSMonitor -- "Có" --> MetaEvent(Kích hoạt: Glitch/Meta Horror)
+    RSMonitor -- "Không" --> InputCheck{Phím ESC?}
+
+    MetaEvent --> InputCheck
+
+    InputCheck -- "Có" --> PauseMenu["Pause Menu: Save, Settings, Menu"]
+    InputCheck -- "Không" --> EndLogic{Đạt Ending?}
+
+    PauseMenu -- "Save" --> SaveSys[[Sub-activity: Save Game]]
+    PauseMenu -- "Main Menu" --> MainMenu
+
+    EndLogic -- "Chưa" --> PlayLoop
+    EndLogic -- "Rồi" --> EndingScreen[Hiển thị Ending / Credits]
+    EndingScreen --> MainMenu
+```
