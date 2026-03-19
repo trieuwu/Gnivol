@@ -1,25 +1,5 @@
 ```mermaid
 flowchart TD
-    Start([Lệnh Save Game]) --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory]
-    Collect --> CheckDir{Thư mục tồn tại?}
-
-    CheckDir -- "Không" --> CreateDir(Tạo thư mục Saves)
-    CreateDir --> Serialize
-    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu - Serialization)
-
-    Serialize --> WriteTemp(Ghi vào file tạm .tmp)
-    WriteTemp --> Verify{Ghi file thành công?}
-
-    Verify -- "Lỗi (IOException)" --> CatchErr[Bắt ngoại lệ & Thông báo UI]
-    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file cũ)
-
-    Rename --> Success[Thông báo: Save Complete]
-    Success --> End([Kết thúc])
-    CatchErr --> End
-```
----
-```mermaid
-flowchart TD
     Start([Kích hoạt Sự kiện cuối]) --> FetchData(Truy xuất World RS & Global Flags)
     FetchData --> ConditionCheck{Kiểm tra điều kiện}
     
@@ -90,6 +70,7 @@ flowchart TD
     FourthWall --> End
 ```
 ---
+merge logic uml 
 ```mermaid
 flowchart TD
     Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
