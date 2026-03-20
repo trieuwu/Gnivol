@@ -1,25 +1,5 @@
 ```mermaid
 flowchart TD
-    Start([Lệnh Save Game]) --> Collect[Gom dữ liệu: RS, Puzzle, Dialogue, Inventory]
-    Collect --> CheckDir{Thư mục tồn tại?}
-
-    CheckDir -- "Không" --> CreateDir(Tạo thư mục Saves)
-    CreateDir --> Serialize
-    CheckDir -- "Có" --> Serialize(Tuần tự hóa dữ liệu - Serialization)
-
-    Serialize --> WriteTemp(Ghi vào file tạm .tmp)
-    WriteTemp --> Verify{Ghi file thành công?}
-
-    Verify -- "Lỗi (IOException)" --> CatchErr[Bắt ngoại lệ & Thông báo UI]
-    Verify -- "Thành công" --> Rename(Đổi tên .tmp thành .dat - Ghi đè file cũ)
-
-    Rename --> Success[Thông báo: Save Complete]
-    Success --> End([Kết thúc])
-    CatchErr --> End
-```
----
-```mermaid
-flowchart TD
     Start([Kích hoạt Sự kiện cuối]) --> FetchData(Truy xuất World RS & Global Flags)
     FetchData --> ConditionCheck{Kiểm tra điều kiện}
     
@@ -92,28 +72,32 @@ flowchart TD
 ---
 ```mermaid
 flowchart TD
-    Start([Chọn vật phẩm A trong Inventory]) --> Highlight(Highlight vật phẩm A)
-    Highlight --> SelectB([Click vào vật phẩm B])
+    %% Các nguồn kích hoạt Silent Save
+    T1([Timer: Mỗi 5 giây]) --> DirtyCheck{Có thay đổi dữ liệu?}
+    T2([Sự kiện: Interact/Xong thoại/Di chuyển]) --> DirtyCheck
     
-    SelectB --> SameCheck{A trùng B?}
-    SameCheck -- "Có" --> Deselect(Bỏ chọn A)
-    Deselect --> End([Kết thúc])
+    DirtyCheck -- "Không" --> End([Bỏ qua])
+    DirtyCheck -- "Có" --> Permission{Cho phép lưu?}
+
+    %% Kiểm tra trạng thái đặc biệt
+    Permission -- "Không (Đang Jumpscare/Event)" --> End
     
-    SameCheck -- "Không" --> RecipeCheck{Có công thức A + B?}
+    Permission -- "Có" --> LockCheck{Đang bận lưu?}
+    LockCheck -- "Đang lưu" --> End
     
-    %% Nhánh thất bại
-    RecipeCheck -- "Sai" --> FailAnim(Phát âm thanh/Hiệu ứng 'Không khớp')
-    FailAnim --> Deselect
+    LockCheck -- "Trống" --> Lock[Khóa luồng: IsSaving = True]
     
-    %% Nhánh thành công
-    RecipeCheck -- "Đúng" --> MergeAction(Xóa A và B khỏi ArrayList)
-    MergeAction --> CreateNew(Thêm vật phẩm C mới vào ArrayList)
-    CreateNew --> PlaySuccess(Phát âm thanh/Hiệu ứng ghép đồ)
-    PlaySuccess --> RSCheck{C có gây biến đổi thực tại?}
+    %% Quy trình gom dữ liệu và ghi JSON
+    Lock --> Collect[Snapshot: x,y, RS, Flags, Inventory, DialogueID]
+    Collect --> ToJson(Chuyển đổi sang JSON String)
+    ToJson --> AsyncWrite(Ghi đè save.json bằng luồng phụ)
     
-    RSCheck -- "Có" --> UpdateRS(Cập nhật chỉ số RS / Flag mới)
-    RSCheck -- "Không" --> RefreshUI(Cập nhật lại giao diện Inventory)
+    AsyncWrite --> Verify{Thành công?}
     
-    UpdateRS --> RefreshUI
-    RefreshUI --> End
+    Verify -- "Sai" --> Catch[Silent Log Error]
+    Verify -- "Đúng" --> UI[Icon Saving mờ/nháy nhẹ]
+    
+    Catch --> Unlock[Mở khóa: IsSaving = False]
+    UI --> Unlock
+    Unlock --> End
 ```
