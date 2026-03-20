@@ -376,3 +376,89 @@ PlayerInteractionSystem --> RSManager : "Cộng/Trừ RS"
 PlayerInteractionSystem --> AudioManager : "Phát tiếng động"
 PlayerInteractionSystem --> GameUI : "Cập nhật giao diện"
 ```
+---
+## Item Merging Logic Class UML
+```mermaid
+classDiagram
+    %% ==========================================
+    %% 1. NHÓM ĐIỀU KHIỂN UI (UI CONTROLLER)
+    %% ==========================================
+    class InventoryUIController {
+        <<Controller>>
+        -String selectedItemID
+        -GameUI gameUI
+        -CraftingManager craftingManager
+        -InventoryManager inventoryManager
+        -RSManager rsManager
+        -GameStateManager gameStateManager
+        
+        +onItemClicked(String itemID)
+        -processMerge(String itemA, String itemB)
+        -resetSelection()
+    }
+
+    %% ==========================================
+    %% 2. NHÓM QUẢN LÝ CÔNG THỨC & DỮ LIỆU (MODEL)
+    %% ==========================================
+    class CraftingManager {
+        <<Singleton / Logic>>
+        -HashMap~String, String~ recipes
+        +getMergeResult(String itemA, String itemB) String
+    }
+
+    class ItemDatabase {
+        <<Singleton / Data>>
+        -HashMap~String, ItemData~ database
+        +getItemData(String itemID) ItemData
+    }
+
+    class ItemData {
+        <<Data Structure>>
+        +String itemID
+        +String itemName
+        +int rsChangeValue
+        +boolean isCursed
+    }
+
+    %% ==========================================
+    %% 3. NHÓM KHO ĐỒ & THỰC TẠI (SINGLETON MODELS)
+    %% ==========================================
+    class InventoryManager {
+        <<Singleton / Model>>
+        -ArrayList~String~ items
+        +addItem(String itemID)
+        +removeItem(String itemID)
+    }
+
+    class RSManager {
+        <<Singleton / Model>>
+        -int currentRS
+        +addRS(int value)
+    }
+
+    class GameStateManager {
+        <<Singleton / Model>>
+        +setFlag(String flagID, boolean value)
+    }
+
+    %% ==========================================
+    %% 4. NHÓM GIAO DIỆN (VIEW)
+    %% ==========================================
+    class GameUI {
+        <<View - Scene2D>>
+        +showNotification(String message)
+        +updateInventoryBar(ArrayList items)
+        +highlightSlot(String itemID)
+        +removeHighlight(String itemID)
+    }
+
+    %% --- MỐI QUAN HỆ TƯƠNG TÁC CHÍNH ---
+    InventoryUIController --> GameUI : "1. Ra lệnh Highlight/Báo lỗi"
+    InventoryUIController --> CraftingManager : "2. Hỏi kết quả A + B"
+    CraftingManager --> ItemDatabase : "3. Tra cứu thông tin Item C"
+    ItemDatabase ..> ItemData : "Chứa dữ liệu tĩnh"
+
+    InventoryUIController --> InventoryManager : "4. Xóa A, B & Thêm C"
+    InventoryUIController --> RSManager : "5. Cập nhật RS (nếu C có rsChangeValue)"
+    InventoryUIController --> GameStateManager : "6. Cập nhật Flag sự kiện"
+```
