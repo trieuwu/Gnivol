@@ -254,3 +254,181 @@ classDiagram
     SceneController o-- AssetManager : handles memory
     Scene o-- RoomData : contains state data
 ```
+<<<<<<< HEAD
+=======
+
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace Engine_Core {
+        class GameLauncher {
+            +main() void
+        }
+        class GameManager {
+            -gameState:GameState
+            -mainMenu:MainMenu
+            -pauseMenu:PauseMenu
+            -settingMenu:SettingMenu
+            -sceneManager:SceneManager
+            -dialogueEngine:DialogueEngine
+            -inventoryManager:InventoryManager
+            -metaHorrorManager:MetaHorrorManager
+            -saveLoadManager:SaveLoadManager
+            -stabilityManager:StabilityManager
+            -flagManager:FlagManager
+            -assetManager:AssetManager
+            -inputHandler:InputHandler
+            -endingManager:EndingManager
+            -dataManager:DataManager
+            +initialize() void
+            +startGame() void
+            +loadGame() void
+            +quitGame() void
+            +update(float delta) void
+            +render() void
+            +handleEscPress() void
+        }
+        class InputHandler {
+            +isKeyPressed(int key) boolean
+            +isMouseButtonPressed(int button) boolean
+        }
+        class AssetManager {
+            +loadTexture(String path) Texture
+            +loadSound(String path) Sound
+            +getTexture(String key) Texture
+            +getSound(String key) Sound
+        }
+    }
+
+    namespace Persistence_System {
+        class GameState {
+            -currentSceneId:String
+            -dialogueNodeId:String
+            -inventory:List~String~
+            -flags:Map~String, Boolean~
+            -realityStability:float
+            +serialize() String
+            +deserialize(String json) void
+        }
+        class SaveLoadManager {
+            -dataManager:DataManager
+            -parser:JsonParser
+            +saveGame(GameState state) void
+            +loadGame() GameState
+        }
+        class FlagManager {
+            -flags:Map~String, Boolean~
+            +initialize() void
+            +setFlag(String key, boolean value) void
+            +getFlag(String key) boolean
+        }
+        class JsonParser {
+            +parseConfig(String json) Map~String, String~
+            +parseSaveData(String json) GameState
+            +toJson(GameState state) String
+        }
+        class DataManager {
+            +readString(String path) String
+            +writeString(String path, String data) void
+            +exists(String path) boolean
+        }
+    }
+
+    namespace Gameplay_Modules {
+        class SceneManager {
+            -currentScene:Scene
+            +loadScene(String sceneId) void
+            +update(float delta) void
+            +render() void
+        }
+        class Scene {
+            <<abstract>>
+            -sceneId:String
+            +load() void
+            +update(float delta) void
+            +render() void
+            +unload() void
+        }
+        class DialogueEngine {
+            +initialize() void
+            +startDialogue(String dialogueId) void
+            +advanceDialogue() void
+        }
+        class InventoryManager {
+            -items:List~String~
+            +addItem(String itemId) void
+            +removeItem(String itemId) void
+            +combineItems(String idA, String idB) String
+            +hasItem(String itemId) boolean
+        }
+        class PuzzleManager {
+            +initialize() void
+            +startPuzzle(String puzzleId) void
+            +checkPuzzleSolved() boolean
+        }
+    }
+
+    namespace Meta_Systems {
+        class StabilityManager {
+            -stability:float
+            +initialize() void
+            +decreaseStability(float amount) void
+            +increaseStability(float amount) void
+            +getStability() float
+            +isBelowThreshold() boolean
+        }
+        class MetaHorrorManager {
+            -stabilityManager:StabilityManager
+            -flagManager:FlagManager
+            +initialize() void
+            +checkForMetaEvents() void
+            -triggerGlitch() void
+            -triggerJumpscare() void
+        }
+        class EndingManager {
+            +checkEndingConditions(GameState state) String
+            +displayEnding(String endingId) void
+        }
+    }
+
+    namespace UI_Components {
+        class MainMenu {
+            +display() void
+        }
+        class SettingMenu {
+            +display() void
+        }
+        class PauseMenu {
+            +display() void
+        }
+    }
+
+    %% Relationships - Organized for LR flow
+    GameLauncher --> GameManager : initializes
+    GameManager o-- GameState
+    GameManager --> SaveLoadManager
+    GameManager --> SceneManager
+    GameManager --> MainMenu
+    GameManager --> PauseMenu
+    GameManager --> MetaHorrorManager
+    
+    SaveLoadManager -- JsonParser
+    SaveLoadManager --> DataManager
+    GameState -- JsonParser
+    
+    SceneManager *-- Scene
+    Scene <|-- DialogueScene
+    Scene <|-- PuzzleScene
+    
+    MetaHorrorManager --> StabilityManager
+    MetaHorrorManager --> FlagManager
+    
+    GameManager o-- DialogueEngine
+    GameManager o-- PuzzleManager
+    GameManager o-- InventoryManager
+    GameManager o-- AssetManager
+    GameManager o-- InputHandler
+```
+>>>>>>> abc2e641df43d09d8f4efc3d8e6849ace179bb7f
