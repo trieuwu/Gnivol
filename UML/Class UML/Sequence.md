@@ -192,6 +192,7 @@ classDiagram
     EndingManager --> AssetManager : displays credits
 ```
 
+
 ```mermaid
 classDiagram
     class SceneController {
@@ -253,6 +254,8 @@ classDiagram
     SceneController o-- AssetManager : handles memory
     Scene o-- RoomData : contains state data
 ```
+<<<<<<< HEAD
+=======
 
 
 ```mermaid
@@ -428,3 +431,4 @@ classDiagram
     GameManager o-- AssetManager
     GameManager o-- InputHandler
 ```
+>>>>>>> abc2e641df43d09d8f4efc3d8e6849ace179bb7f
