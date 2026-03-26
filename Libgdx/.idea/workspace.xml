@@ -5,64 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25cfe350-a709-4bee-8028-9b71a135179b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/desktop/DesktopLauncher.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/Constants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/GnivolGame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/audio/AudioManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/BoundsComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/CollectibleComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/Component.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/GlitchComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/ItemInfoComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/RSModifierComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/component/TransformComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/data/DataManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/data/FlagManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/data/JsonParser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/entity/GameObject.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/input/InputHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/model/GameState.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/model/ItemData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/model/PlayerData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/model/RoomData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/render/SceneRenderer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/EndingScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/GameScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/LoadGameScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/MainMenuScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/PauseScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/screen/SettingScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/dialogue/DialogueEngine.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/inventory/CraftingManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/inventory/InventoryManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/inventory/ItemDatabase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/meta/EndingManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/meta/MetaHorrorManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/meta/StabilityManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/puzzle/PuzzleManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/rs/RSEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/rs/RSEventType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/rs/RSListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/rs/RSManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/rs/RSMonitorSystem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/AsyncFileWriter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/AutoSaveManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/DirtyTracker.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/GameSnapshot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/ISaveable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/SaveCallback.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/SaveGuard.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/SaveLock.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/SaveUIController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/save/SilentErrorLogger.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/scene/Scene.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/scene/SceneController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/scene/SceneManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/system/scene/ScreenFader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/ui/GameUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/ui/InventoryUIController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game/game/ui/SaveUIController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/BaseScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/BaseScreen.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,86 +52,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;core-engine&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.JAVA&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Download Sources.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "core-engine",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.sourceCode.JAVA",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="Libgdx" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="Libgdx" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="Libgdx" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Python.FlaskServer">
-      <module name="Libgdx" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="Libgdx" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <method v="2" />
-    </configuration>
-  </component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -200,6 +88,7 @@
       <workItem from="1774452333203" duration="597000" />
       <workItem from="1774514771343" duration="58000" />
       <workItem from="1774514838945" duration="5119000" />
+      <workItem from="1774536759615" duration="1116000" />
     </task>
     <servers />
   </component>
