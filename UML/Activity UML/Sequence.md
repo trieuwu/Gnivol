@@ -101,3 +101,29 @@ flowchart TD
     UI --> Unlock
     Unlock --> End
 ```
+
+```mermaid
+graph TD
+    %% Root Package
+    Root([com.trieuwu.game]) --> Core[core]
+    Root --> Mgr[manager]
+    Root --> Scr[screen]
+    Root --> Mdl[model]
+    Root --> Util[util]
+    Root --> UI[ui]
+    Root --> Sys[system]
+
+    %% System Sub-packages
+    Sys --> SysInv[inventory]
+    Sys --> SysDia[dialogue]
+    Sys --> SysInt[interaction]
+    Sys --> SysMini[minigame]
+
+    %% Minigame Implementation
+    SysMini --> SysMiniImpl[impl]
+
+    %% Styling
+    style Root fill:#f96,stroke:#333,stroke-width:4px
+    style Sys fill:#69f,stroke:#333,stroke-width:2px
+    style Mgr fill:#6f9,stroke:#333,stroke-width:2px```
+```
