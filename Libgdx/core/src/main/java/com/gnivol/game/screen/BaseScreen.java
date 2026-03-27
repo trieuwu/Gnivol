@@ -65,7 +65,7 @@ public abstract class BaseScreen implements Screen {
         stage.draw();
     }
 
-    /** Override method này để vẽ game world tất cả các screen con sẽ được override từ screen này*/
+    /** Override method này để vẽ game world tất cả các screen con sẽ được override    từ screen này*/
     protected abstract void renderWorld(float delta);
 
     @Override
