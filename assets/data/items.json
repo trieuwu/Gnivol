@@ -1,0 +1,20 @@
+[
+  {
+    "itemID": "paper_A",
+    "itemName": "Mảnh giấy rách góc trái",
+    "rsChangeValue": 0,
+    "isCursed": false
+  },
+  {
+    "itemID": "paper_B",
+    "itemName": "Mảnh giấy dính máu",
+    "rsChangeValue": -10,
+    "isCursed": true
+  },
+  {
+    "itemID": "cursed_letter",
+    "itemName": "Bức thư nguyền rủa",
+    "rsChangeValue": -30,
+    "isCursed": true
+  }
+]
