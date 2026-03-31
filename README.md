@@ -169,7 +169,7 @@ Một số tính năng vẫn đang trong quá trình:
 ---
 # 👤 Developer
 
-**Hà Tiến Triệu**  
+**Hà 36**  
 GitHub: https://github.com/trieuwu  
 Thành viên **CLB Lập trình PTIT - ProPTIT** thuộc **Học viện Công nghệ Bưu chính Viễn thông (PTIT)**
 
