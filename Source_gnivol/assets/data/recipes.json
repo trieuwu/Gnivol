@@ -1,0 +1,12 @@
+[
+  {
+    "itemA": "paper_A",
+    "itemB": "paper_B",
+    "result": "cursed_letter"
+  },
+  {
+    "itemA": "key_part_1",
+    "itemB": "key_part_2",
+    "result": "rusty_key"
+  }
+]
