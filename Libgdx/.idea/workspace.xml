@@ -5,137 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25cfe350-a709-4bee-8028-9b71a135179b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Libgdx.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/Constants.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/GnivolGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/GnivolGame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/audio/AudioManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/audio/AudioManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/BoundsComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/BoundsComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/CollectibleComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/CollectibleComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/Component.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/Component.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/GlitchComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/GlitchComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/ItemInfoComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/ItemInfoComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/RSModifierComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/RSModifierComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/TransformComponent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/component/TransformComponent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/DataManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/DataManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/FlagManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/FlagManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/JsonParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/data/JsonParser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/entity/GameObject.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/entity/GameObject.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/input/InputHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/input/InputHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/GameState.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/GameState.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/ItemData.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/ItemData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/PlayerData.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/PlayerData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/RoomData.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/model/RoomData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/render/SceneRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/render/SceneRenderer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/BaseScreen.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/EndingScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/EndingScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/GameScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/GameScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/LoadGameScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/LoadGameScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/MainMenuScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/MainMenuScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/PauseScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/PauseScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/SettingScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/screen/SettingScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/dialogue/DialogueEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/dialogue/DialogueEngine.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/CraftingManager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/InventoryManager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/ItemDatabase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/EndingManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/EndingManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/MetaHorrorManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/MetaHorrorManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/StabilityManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/meta/StabilityManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/puzzle/PuzzleManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/puzzle/PuzzleManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSEvent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSEventType.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSEventType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSMonitorSystem.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/rs/RSMonitorSystem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/AsyncFileWriter.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/AsyncFileWriter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/AutoSaveManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/AutoSaveManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/DirtyTracker.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/DirtyTracker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/GameSnapshot.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/GameSnapshot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/ISaveable.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/ISaveable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveCallback.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveCallback.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveGuard.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveGuard.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveLock.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveLock.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SaveUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SilentErrorLogger.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/save/SilentErrorLogger.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/Scene.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/Scene.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/SceneController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/SceneController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/SceneManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/SceneManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/ScreenFader.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/scene/ScreenFader.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/GameUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/GameUI.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/InventoryUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/InventoryUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/SaveUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/ui/SaveUIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/ui/InventoryUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/ui/InventoryUIController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/libs/core-1.0.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/libs/core-1.0.3.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/audio/AudioManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/audio/AudioManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/BoundsComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/BoundsComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/CollectibleComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/CollectibleComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/Component.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/Component.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/Component.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/ItemInfoComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/ItemInfoComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/RSModifierComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/RSModifierComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/TransformComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/TransformComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/DataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/DataManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/FlagManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/FlagManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/JsonParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/JsonParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/entity/GameObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/entity/GameObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/input/InputHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/input/InputHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/GameState.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/GameState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/ItemData.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/ItemData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/PlayerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/PlayerData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/RoomData.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/RoomData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/render/SceneRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/render/SceneRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/BaseScreen.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/EndingScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/EndingScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/GameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/GameScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/LoadGameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/LoadGameScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/MainMenuScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/MainMenuScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/PauseScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/PauseScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/SettingScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/SettingScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/dialogue/DialogueEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/dialogue/DialogueEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/CraftingManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/InventoryManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/ItemDatabase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/EndingManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/EndingManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/MetaHorrorManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/MetaHorrorManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/StabilityManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/meta/StabilityManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/puzzle/PuzzleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/puzzle/PuzzleManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEventType.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEventType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSMonitorSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSMonitorSystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/AsyncFileWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/AsyncFileWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/AutoSaveManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/AutoSaveManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/DirtyTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/DirtyTracker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/GameSnapshot.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/GameSnapshot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/ISaveable.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/ISaveable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveCallback.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveCallback.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveGuard.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveGuard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveLock.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveLock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SaveUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SilentErrorLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/save/SilentErrorLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/ScreenFader.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/ScreenFader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/GameUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/GameUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/InventoryUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/InventoryUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/SaveUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/ui/SaveUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/build/classes/java/main/com/gnivol/game/desktop/DesktopLauncher.class" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build/classes/java/main/com/gnivol/game/desktop/DesktopLauncher.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/ui/InventoryUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/ui/InventoryUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/src/main/java/com/gnivol/game/desktop/DesktopLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/src/main/java/com/gnivol/game/desktop/DesktopLauncher.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,6 +62,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -176,6 +76,9 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="3BRWOJ79nG75zyKI4spMtnGyjLQ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -190,7 +93,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "feature/inventory",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",

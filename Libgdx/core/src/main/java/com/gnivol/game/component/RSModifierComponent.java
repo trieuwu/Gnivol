@@ -1,5 +1,9 @@
 package com.gnivol.game.component;
 
-public class RSModifierComponent extends Component {
+import com.badlogic.ashley.core.Component;
 
+public class RSModifierComponent implements Component {
+    public int rsChangeValue = 0;
+
+    public boolean hasTriggered = false;
 }

@@ -22,6 +22,7 @@ allprojects {
 project(':core') {
     dependencies {
         api "com.badlogicgames.gdx:gdx:1.14.0"
+        api "com.badlogicgames.ashley:ashley:1.7.4"
     }
 }
 
