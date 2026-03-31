@@ -1,20 +1,58 @@
-[
-  {
-    "itemID": "paper_A",
-    "itemName": "Mảnh giấy rách góc trái",
-    "rsChangeValue": 0,
-    "isCursed": false
-  },
-  {
-    "itemID": "paper_B",
-    "itemName": "Mảnh giấy dính máu",
-    "rsChangeValue": -10,
-    "isCursed": true
-  },
-  {
-    "itemID": "cursed_letter",
-    "itemName": "Bức thư nguyền rủa",
-    "rsChangeValue": -30,
-    "isCursed": true
-  }
-]
+{
+  "items": [
+    {
+      "itemID": "phone",
+      "itemName": "Điện thoại bàn",
+      "description": "Chiếc điện thoại bàn cũ, dây bị đứt.",
+      "inspectText": "Màn hình nhấp nháy hiện dòng chữ kỳ lạ...",
+      "pickupSoundID": "sfx_pickup_phone",
+      "rsChangeValue": 5,
+      "isCursed": false
+    },
+    {
+      "itemID": "paper_fragment_1",
+      "itemName": "Mảnh giấy 1",
+      "description": "Nửa trên của một mảnh giấy rách. Viết: '3-1-...'",
+      "inspectText": "Có vẻ như nếu ghép đủ sẽ thấy một mật mã.",
+      "pickupSoundID": "sfx_pickup_paper",
+      "rsChangeValue": 0,
+      "isCursed": false
+    },
+    {
+      "itemID": "paper_fragment_2",
+      "itemName": "Mảnh giấy 2",
+      "description": "Nửa dưới, viết: '...-4'",
+      "inspectText": "Ghép với mảnh giấy kia sẽ ra mật mã hoàn chỉnh.",
+      "pickupSoundID": "sfx_pickup_paper",
+      "rsChangeValue": 0,
+      "isCursed": false
+    },
+    {
+      "itemID": "password_note",
+      "itemName": "Mật mã: 3-1-4",
+      "description": "Hai mảnh giấy ghép lại. Mật mã: 3-1-4",
+      "inspectText": "Mật mã cho cái gì đó trong phòng này...",
+      "pickupSoundID": "sfx_merge",
+      "rsChangeValue": 10,
+      "isCursed": false
+    },
+    {
+      "itemID": "drawer_key",
+      "itemName": "Chìa khóa ngăn kéo",
+      "description": "Chìa khóa nhỏ, bằng đồng, hơi rỉ sét.",
+      "inspectText": "Dùng để mở ngăn kéo?",
+      "pickupSoundID": "sfx_pickup_key",
+      "rsChangeValue": 0,
+      "isCursed": false
+    },
+    {
+      "itemID": "cursed_mirror",
+      "itemName": "Mảnh gương vỡ",
+      "description": "Phản chiếu hình ảnh méo mó...",
+      "inspectText": "Khuôn mặt trong gương không phải của bạn.",
+      "pickupSoundID": "sfx_pickup_glass",
+      "rsChangeValue": 20,
+      "isCursed": true
+    }
+  ]
+}

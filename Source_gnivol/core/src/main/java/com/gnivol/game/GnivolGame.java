@@ -20,30 +20,32 @@ public class GnivolGame extends ApplicationAdapter {
         com.gnivol.game.system.inventory.model.InventoryManager invMgr = new com.gnivol.game.system.inventory.model.InventoryManager();
 
         System.out.println("\n--- KICH BAN TEST GAME ---");
-        // 2. Kịch bản: Người chơi đi lòng vòng và nhặt được 2 mảnh giấy
-        invMgr.addItem("paper_B");
-        invMgr.addItem("paper_A");
+        // Nhặt 2 mảnh giấy mật mã mới
+        invMgr.addItem("paper_fragment_2");
+        invMgr.addItem("paper_fragment_1");
 
-        // 3. Người chơi mở túi, chọn mảnh B, chọn mảnh A và bấm "Ghép"
-        String itemA = "paper_B"; // Cố tình để B trước xem nó có hiểu không
-        String itemB = "paper_A";
+        String itemA = "paper_fragment_2";
+        String itemB = "paper_fragment_1";
 
-        // Hỏi hệ thống xem ghép ra cái gì
+        // Ghép thử
         String resultItem = craftMgr.getMergeResult(itemA, itemB);
 
         if (resultItem != null) {
             System.out.println("Ghep thanh cong! Tao ra vat pham moi: " + resultItem);
-
-            // 4. Xóa 2 mảnh cũ đi
             invMgr.removeItem(itemA);
             invMgr.removeItem(itemB);
-
-            // 5. Thêm đồ mới vào túi
             invMgr.addItem(resultItem);
 
-            // 6. In ra thông tin chi tiết của đồ mới để dọa người chơi
-            com.gnivol.game.system.inventory.data.ItemData cursedData = itemDB.getItemData(resultItem);
-            System.out.println("Canh bao! Ban vua tao ra [" + cursedData.itemName + "]. Diem thuc tai bi tru: " + cursedData.rsChangeValue);
+            // Tìm data của đồ mới
+            com.gnivol.game.system.inventory.data.ItemData newData = itemDB.getItemData(resultItem);
+
+            // In ra text miêu tả để xem có chuẩn JSON không nhé
+            System.out.println("Ban doc duoc: " + newData.description);
+
+            if (newData.isCursed) {
+                System.out.println("Ban dang cam mot vat pham bi nguyen rua!");
+               // rsManager.addRS(newData.rsChangeValue);
+            }
         } else {
             System.out.println("Khong the ghep 2 mon nay!");
         }

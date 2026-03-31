@@ -9,6 +9,10 @@ import com.badlogic.gdx.utils.Json;
 public class ItemDatabase {
     private HashMap<String, ItemData> database;
 
+    public static class ItemDataWrapper {
+        public com.badlogic.gdx.utils.Array<ItemData> items;
+    }
+
     public ItemDatabase() {
         database = new HashMap<>();
         loadDataFromJson();
@@ -20,21 +24,12 @@ public class ItemDatabase {
 
     private void loadDataFromJson() {
         Json json = new Json();
+        ItemDataWrapper wrapper = json.fromJson(ItemDataWrapper.class, Gdx.files.internal("data/items.json"));
 
-        Array<ItemData> itemArray = json.fromJson(Array.class, ItemData.class, Gdx.files.internal("data/items.json"));
-
-        for(ItemData item : itemArray) {
-            database.put(item.itemID, item);
+        if (wrapper != null && wrapper.items != null ) {
+            for (ItemData item : wrapper.items) {
+                database.put(item.itemID, item);
+            }
         }
-        System.out.println("Loaded " + database.size() + " items into the database.");
-        System.out.println("--- Check ---");
-        for(ItemData item : database.values()) {
-            System.out.println("Mã ID: " + item.itemID);
-            System.out.println("Tên hiển thị: " + item.itemName);
-            System.out.println("Điểm RS thay đổi: " + item.rsChangeValue);
-            System.out.println("Có bị nguyền rủa không?: " + item.isCursed);
-            System.out.println("----------------------------");
-        }
-
     }
 }
