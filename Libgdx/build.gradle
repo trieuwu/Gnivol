@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+    apply plugin: 'java-library'
+
+    group = 'com.gnivol.game'
+    version = '1.0.3'
+
+    sourceCompatibility = 25
+    targetCompatibility = 25
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+project(':core') {
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:1.14.0"
+    }
+}
+
+project(':desktop') {
+    apply plugin: 'application'
+
+    ext.assetsDir = new File("${rootProject.projectDir}/assets")
+
+    application {
+        mainClass = 'com.gnivol.game.desktop.DesktopLauncher'
+    }
+
+    dependencies {
+        implementation project(':core')
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.14.0"
+        implementation "com.badlogicgames.gdx:gdx-platform:1.14.0:natives-desktop"
+    }
+
+    run {
+        workingDir = project.ext.assetsDir
+        ignoreExitValue = true
+    }
+}
