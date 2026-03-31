@@ -1,5 +1,0 @@
-package com.gnivol.game.component;
-
-public class BoundsComponent extends Component {
-
-}
