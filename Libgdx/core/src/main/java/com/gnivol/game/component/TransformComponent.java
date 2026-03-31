@@ -2,10 +2,8 @@ package com.gnivol.game.component;
 
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.math.Vector2;
 
 public class TransformComponent implements Component {
-    public float x = 0.0f;
-    public float y = 0.0f;
-
-    public int z = 0;
+    public Vector2 position = new Vector2();
 }

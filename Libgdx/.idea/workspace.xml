@@ -5,30 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25cfe350-a709-4bee-8028-9b71a135179b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/GnivolGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/GnivolGame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/ui/InventoryUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/com/gnivol/game/system/inventory/ui/InventoryUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/libs/core-1.0.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/libs/core-1.0.3.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/BoundsComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/BoundsComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/CollectibleComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/CollectibleComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/Component.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/ItemInfoComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/ItemInfoComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/RSModifierComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/RSModifierComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/TransformComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/TransformComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/ui/InventoryUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/inventory/ui/InventoryUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
