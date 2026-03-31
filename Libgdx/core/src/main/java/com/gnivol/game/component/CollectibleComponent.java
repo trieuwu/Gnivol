@@ -1,5 +1,7 @@
 package com.gnivol.game.component;
 
-public class CollectibleComponent extends Component {
+import com.badlogic.ashley.core.Component;
+
+public class CollectibleComponent implements Component {
 
 }

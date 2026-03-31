@@ -1,54 +1,86 @@
 package com.gnivol.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.gnivol.game.system.inventory.data.ItemDatabase;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+// Import đầy đủ các class của hệ thống Inventory
+import com.gnivol.game.system.inventory.data.ItemDatabase;
+import com.gnivol.game.system.inventory.model.CraftingManager;
+import com.gnivol.game.system.inventory.model.InventoryManager;
+import com.gnivol.game.system.inventory.ui.GameUI;
+import com.gnivol.game.system.inventory.ui.InventoryUIController;
+
 public class GnivolGame extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+
+    // Sân khấu Scene2D để vẽ giao diện UI
+    private Stage stage;
+    private GameUI gameUI;
+
     @Override
     public void create() {
         System.out.println("Dang khoi dong game Gnivol...");
 
-        // 1. Khởi tạo các Manager
-        com.gnivol.game.system.inventory.data.ItemDatabase itemDB = new com.gnivol.game.system.inventory.data.ItemDatabase();
-        com.gnivol.game.system.inventory.model.CraftingManager craftMgr = new com.gnivol.game.system.inventory.model.CraftingManager();
-        com.gnivol.game.system.inventory.model.InventoryManager invMgr = new com.gnivol.game.system.inventory.model.InventoryManager();
+        // 1. TẠO SÂN KHẤU VÀ BẬT CẢM ỨNG CHUỘT
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage); // Lệnh cực kỳ quan trọng để game nhận diện click chuột
 
-        System.out.println("\n--- KICH BAN TEST GAME ---");
-        // Nhặt 2 mảnh giấy mật mã mới
+        // 2. KHỞI TẠO BỘ NÃO (MODEL & DATA)
+        ItemDatabase itemDB = new ItemDatabase();
+        CraftingManager craftMgr = new CraftingManager();
+        InventoryManager invMgr = new InventoryManager();
+      //  GameStateManager stateMgr = new GameStateManager();
+
+        // 3. KHỞI TẠO GIAO DIỆN (VIEW)
+        gameUI = new GameUI(stage);
+
+        // 4. KHỞI TẠO QUẢN GIA (CONTROLLER)
+        InventoryUIController uiController = new InventoryUIController(craftMgr, invMgr, itemDB, gameUI);
+
+        // --- KỊCH BẢN TEST GAME BẰNG CONTROLLER ---
+        System.out.println("\n--- KICH BAN TEST GAME MOI (MVC) ---");
+
+        // Nhặt đồ vào túi
         invMgr.addItem("paper_fragment_2");
         invMgr.addItem("paper_fragment_1");
 
-        String itemA = "paper_fragment_2";
-        String itemB = "paper_fragment_1";
+        // Giả lập người chơi bấm chuột vào mảnh 1
+        uiController.onItemClicked("paper_fragment_1");
 
-        // Ghép thử
-        String resultItem = craftMgr.getMergeResult(itemA, itemB);
+        // Giả lập người chơi bấm chuột vào mảnh 2 -> Sẽ kích hoạt ghép đồ!
+        uiController.onItemClicked("paper_fragment_2");
 
-        if (resultItem != null) {
-            System.out.println("Ghep thanh cong! Tao ra vat pham moi: " + resultItem);
-            invMgr.removeItem(itemA);
-            invMgr.removeItem(itemB);
-            invMgr.addItem(resultItem);
+        // Ghi lại lịch sử cốt truyện
+       // stateMgr.setFlag("has_password_note", true);
+    }
 
-            // Tìm data của đồ mới
-            com.gnivol.game.system.inventory.data.ItemData newData = itemDB.getItemData(resultItem);
+    @Override
+    public void render() {
+        // Xóa màn hình cũ và tô màu nền đen (Red=0, Green=0, Blue=0)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            // In ra text miêu tả để xem có chuẩn JSON không nhé
-            System.out.println("Ban doc duoc: " + newData.description);
-
-            if (newData.isCursed) {
-                System.out.println("Ban dang cam mot vat pham bi nguyen rua!");
-               // rsManager.addRS(newData.rsChangeValue);
-            }
-        } else {
-            System.out.println("Khong the ghep 2 mon nay!");
+        // Lệnh cho GameUI vẽ đồ họa lên màn hình mỗi khung hình (60 FPS)
+        if (gameUI != null) {
+            gameUI.draw();
         }
     }
 
+    @Override
+    public void resize(int width, int height) {
+        // Cập nhật lại kích thước sân khấu khi người chơi kéo dãn cửa sổ
+        if (stage != null) {
+            stage.getViewport().update(width, height, true);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        // Dọn dẹp RAM khi tắt game
+        if (stage != null) {
+            stage.dispose();
+        }
+    }
 }
