@@ -10,8 +10,8 @@ allprojects {
     group = 'com.gnivol.game'
     version = '1.0.3'
 
-    sourceCompatibility = 25
-    targetCompatibility = 25
+   // sourceCompatibility = 25
+    //targetCompatibility = 25
 
     repositories {
         mavenCentral()

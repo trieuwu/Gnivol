@@ -1,45 +1,54 @@
 package com.gnivol.game;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
-import com.gnivol.game.screen.MainMenuScreen;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.gnivol.game.system.inventory.data.ItemDatabase;
 
-public class GnivolGame extends Game {
-
-    //Đây là "hàng chờ". Khi muốn chuyển screen, không switch ngay mà ghi vào đây trước, đợi đầu frame sau mới thực sự switch.
-    private Screen pendingScreen = null;
-
+/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+public class GnivolGame extends ApplicationAdapter {
+    private SpriteBatch batch;
+    private Texture image;
     @Override
-    // Chạy lần đầu khi game khởi động
     public void create() {
-        setScreen(new MainMenuScreen(this));
-    }
+        System.out.println("Dang khoi dong game Gnivol...");
 
-    //Method setScreen
-    public void switchScreen(Screen newScreen) {
-        this.pendingScreen = newScreen;
-    }
+        // 1. Khởi tạo các Manager
+        com.gnivol.game.system.inventory.data.ItemDatabase itemDB = new com.gnivol.game.system.inventory.data.ItemDatabase();
+        com.gnivol.game.system.inventory.model.CraftingManager craftMgr = new com.gnivol.game.system.inventory.model.CraftingManager();
+        com.gnivol.game.system.inventory.model.InventoryManager invMgr = new com.gnivol.game.system.inventory.model.InventoryManager();
 
-    @Override
-    /* Ở đây sẽ lấy screen hiiện tại và đổi screen mới vào hàng chờ, chờ sau khi xóa xong screen cũ
-    mới render screen tiếp theo để tránh crash*/
-    public void render() {
-        if (pendingScreen != null) {
-            Screen old = getScreen();       // 1. Lấy screen hiện tại
-            setScreen(pendingScreen);       // 2. Đổi sang screen mới
-            pendingScreen = null;           // 3. Xoá hàng chờ
-            if (old != null) {
-                old.dispose();              // 4. Giải phóng screen cũ
+        System.out.println("\n--- KICH BAN TEST GAME ---");
+        // Nhặt 2 mảnh giấy mật mã mới
+        invMgr.addItem("paper_fragment_2");
+        invMgr.addItem("paper_fragment_1");
+
+        String itemA = "paper_fragment_2";
+        String itemB = "paper_fragment_1";
+
+        // Ghép thử
+        String resultItem = craftMgr.getMergeResult(itemA, itemB);
+
+        if (resultItem != null) {
+            System.out.println("Ghep thanh cong! Tao ra vat pham moi: " + resultItem);
+            invMgr.removeItem(itemA);
+            invMgr.removeItem(itemB);
+            invMgr.addItem(resultItem);
+
+            // Tìm data của đồ mới
+            com.gnivol.game.system.inventory.data.ItemData newData = itemDB.getItemData(resultItem);
+
+            // In ra text miêu tả để xem có chuẩn JSON không nhé
+            System.out.println("Ban doc duoc: " + newData.description);
+
+            if (newData.isCursed) {
+                System.out.println("Ban dang cam mot vat pham bi nguyen rua!");
+               // rsManager.addRS(newData.rsChangeValue);
             }
+        } else {
+            System.out.println("Khong the ghep 2 mon nay!");
         }
-        super.render();                     // 5. Render screen hiện tại
     }
 
-    @Override
-    public void dispose() {
-        Screen current = getScreen();
-        if (current != null) { // Phải check null vì nếu dispose script null khả năng cao sẽ gây crash
-            current.dispose();
-        }
-    }
 }
