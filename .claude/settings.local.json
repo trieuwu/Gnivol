@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersadminDocumentsGitHubGnivolLibgdx -type f \\\\\\(-name *.json -o -name *.md \\\\\\))"
+    ]
+  }
+}
