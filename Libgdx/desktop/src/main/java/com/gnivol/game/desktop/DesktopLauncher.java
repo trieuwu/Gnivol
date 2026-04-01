@@ -11,11 +11,11 @@ public class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 
         //Set tiêu đề dụa theo tên config ở file Constants và set cấu hình game
-        config.setTitle("Gnivol v1.0");
-        config.setWindowedMode(1280, 720);
+        config.setTitle(Constants.GAME_TITLE + " v" + Constants.GAME_VERSION);
+        config.setWindowedMode(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         config.setResizable(true);
         config.useVsync(true);
-        config.setForegroundFPS(60);
+        config.setForegroundFPS(Constants.TARGET_FPS);
 
         /*
          làm 3 việc cùng lúc: tạo cửa sổ theo config, tạo instance GnivolGame, rồi bắt đầu game loop

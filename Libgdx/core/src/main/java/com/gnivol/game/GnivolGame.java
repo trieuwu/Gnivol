@@ -1,86 +1,71 @@
 package com.gnivol.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.ashley.core.Engine;
+import com.gnivol.game.screen.MainMenuScreen;
 
-// Import đầy đủ các class của hệ thống Inventory
-import com.gnivol.game.system.inventory.data.ItemDatabase;
-import com.gnivol.game.system.inventory.model.CraftingManager;
-import com.gnivol.game.system.inventory.model.InventoryManager;
-import com.gnivol.game.system.inventory.ui.GameUI;
-import com.gnivol.game.system.inventory.ui.InventoryUIController;
+/**
+ * Lop chinh cua game Gnivol.
+ * Extends Game de ho tro chuyen doi giua cac Screen (MainMenu, GameScreen, v.v.)
+ */
+public class GnivolGame extends Game {
 
-public class GnivolGame extends ApplicationAdapter {
-
-    // Sân khấu Scene2D để vẽ giao diện UI
+    // Stage dung chung cho UI overlay (dialogue, inventory, menu)
     private Stage stage;
-    private GameUI gameUI;
+
+    // Ashley ECS engine dung chung cho tat ca entity/component/system
+    private Engine ashleyEngine;
 
     @Override
     public void create() {
-        System.out.println("Dang khoi dong game Gnivol...");
+        // Tao Stage voi FitViewport giu ti le 1280x720
+        stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+        Gdx.input.setInputProcessor(stage);
 
-        // 1. TẠO SÂN KHẤU VÀ BẬT CẢM ỨNG CHUỘT
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage); // Lệnh cực kỳ quan trọng để game nhận diện click chuột
+        // Khoi tao Ashley ECS Engine
+        ashleyEngine = new Engine();
 
-        // 2. KHỞI TẠO BỘ NÃO (MODEL & DATA)
-        ItemDatabase itemDB = new ItemDatabase();
-        CraftingManager craftMgr = new CraftingManager();
-        InventoryManager invMgr = new InventoryManager();
-      //  GameStateManager stateMgr = new GameStateManager();
-
-        // 3. KHỞI TẠO GIAO DIỆN (VIEW)
-        gameUI = new GameUI(stage);
-
-        // 4. KHỞI TẠO QUẢN GIA (CONTROLLER)
-        InventoryUIController uiController = new InventoryUIController(craftMgr, invMgr, itemDB, gameUI);
-
-        // --- KỊCH BẢN TEST GAME BẰNG CONTROLLER ---
-        System.out.println("\n--- KICH BAN TEST GAME MOI (MVC) ---");
-
-        // Nhặt đồ vào túi
-        invMgr.addItem("paper_fragment_2");
-        invMgr.addItem("paper_fragment_1");
-
-        // Giả lập người chơi bấm chuột vào mảnh 1
-        uiController.onItemClicked("paper_fragment_1");
-
-        // Giả lập người chơi bấm chuột vào mảnh 2 -> Sẽ kích hoạt ghép đồ!
-        uiController.onItemClicked("paper_fragment_2");
-
-        // Ghi lại lịch sử cốt truyện
-       // stateMgr.setFlag("has_password_note", true);
+        // Bat dau tu man hinh MainMenu
+        setScreen(new MainMenuScreen(this));
     }
 
     @Override
     public void render() {
-        // Xóa màn hình cũ và tô màu nền đen (Red=0, Green=0, Blue=0)
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+        // Xoa man hinh
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Lệnh cho GameUI vẽ đồ họa lên màn hình mỗi khung hình (60 FPS)
-        if (gameUI != null) {
-            gameUI.draw();
-        }
+        // Goi render cua Screen hien tai (duoc quan ly boi Game)
+        super.render();
     }
 
     @Override
     public void resize(int width, int height) {
-        // Cập nhật lại kích thước sân khấu khi người chơi kéo dãn cửa sổ
-        if (stage != null) {
-            stage.getViewport().update(width, height, true);
-        }
+        stage.getViewport().update(width, height, true);
+        super.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        // Dọn dẹp RAM khi tắt game
         if (stage != null) {
             stage.dispose();
         }
+        if (getScreen() != null) {
+            getScreen().dispose();
+        }
+    }
+
+    /** Tra ve Stage dung chung */
+    public Stage getStage() {
+        return stage;
+    }
+
+    /** Tra ve Ashley ECS Engine dung chung */
+    public Engine getAshleyEngine() {
+        return ashleyEngine;
     }
 }
