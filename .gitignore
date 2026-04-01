@@ -37,3 +37,6 @@ hs_err_pid*
 
 # Local config
 local.properties
+
+# Planning docs (local only)
+gnivol_v3_media_only.md
