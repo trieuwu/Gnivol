@@ -38,6 +38,9 @@ public final class Constants {
     public static final String ASSETS_DIALOGUE = "data/dialogue/";
     public static final String ASSETS_AUDIO = "audio/";
     public static final String ASSETS_TEXTURES = "textures/";
+    public static final String ASSETS_BACKGROUNDS = "textures/backgrounds/";
+    public static final String ASSETS_OBJECTS = "textures/objects/";
+    public static final String ASSETS_CHARACTERS = "textures/characters/";
 
     private Constants() {}
 }
