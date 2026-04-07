@@ -5,23 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25cfe350-a709-4bee-8028-9b71a135179b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/core/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/component/GlitchComponent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/GnivolGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/DataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/data/DataManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/input/InputHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/input/InputHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/RoomData.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/model/RoomData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/GameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/GameScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/MainMenuScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/screen/MainMenuScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEventType.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSEventType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSMonitorSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/rs/RSMonitorSystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/SceneManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/ScreenFader.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/gnivol/game/system/scene/ScreenFader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +98,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#17 on develop&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/core-engine&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -134,6 +134,14 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="25cfe350-a709-4bee-8028-9b71a135179b" name="Changes" comment="" />
@@ -145,11 +153,24 @@
       <workItem from="1774514771343" duration="58000" />
       <workItem from="1774514838945" duration="5119000" />
       <workItem from="1774536759615" duration="4581000" />
+      <workItem from="1775311274452" duration="13330000" />
+      <workItem from="1775410841748" duration="2202000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -34,7 +34,7 @@ public class RSManager {
             + " (" + amount + ")");
 
         // Cập nhật tất cả thay đổi theo từng Event
-        notifyListeners(newValue);
+        notifyListeners(oldValue, newValue);
         // Check vượt ngưỡng để bật tắt glitch, sound
         notifyThresholdCross(isAbove);
     }
@@ -43,10 +43,10 @@ public class RSManager {
         currentRS = Math.max(0, Math.min(currentRS, maxRS));
     }
 
-    private void notifyListeners(float newValue) {
+    private void notifyListeners(float oldValue, float newValue) {
         for (RSListener listener : listeners) {
             try {
-                listener.onRSChanged(newValue);
+                listener.onRSChanged(oldValue, newValue);
             } catch (Exception e) {
                 Gdx.app.error("RS", "Listener error", e);
             }
