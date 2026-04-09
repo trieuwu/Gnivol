@@ -8,6 +8,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.ashley.core.Engine;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.screen.MainMenuScreen;
+import com.gnivol.game.system.interaction.PlayerInteractionSystem;
+import com.gnivol.game.system.inventory.InventoryManager;
+import com.gnivol.game.system.rs.RSManager;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
 
@@ -20,10 +23,13 @@ public class GnivolGame extends Game {
     private Stage stage;
     private Engine ashleyEngine;
 
-    // MỚI: Các manager dùng chung
+    // Các manager dùng chung
     private SceneManager sceneManager;
     private ScreenFader screenFader;
     private InputHandler inputHandler;
+    private RSManager rsManager;
+    private InventoryManager inventoryManager;
+    private PlayerInteractionSystem playerInteractionSystem;
 
     @Override
     public void create() {
@@ -37,6 +43,9 @@ public class GnivolGame extends Game {
         sceneManager = new SceneManager();
         screenFader = new ScreenFader(2.5f, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
         inputHandler = new InputHandler();
+        rsManager = new RSManager();
+        inventoryManager = new InventoryManager();
+        playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager);
 
         // Bắt đầu từ MainMenu
         setScreen(new MainMenuScreen(this));
@@ -83,5 +92,17 @@ public class GnivolGame extends Game {
 
     public InputHandler getInputHandler() {
         return inputHandler;
+    }
+
+    public RSManager getRsManager() {
+        return rsManager;
+    }
+
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
+    }
+
+    public PlayerInteractionSystem getPlayerInteractionSystem() {
+        return playerInteractionSystem;
     }
 }

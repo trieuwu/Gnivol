@@ -1,9 +1,9 @@
-package com.gnivol.game.system.inventory.model;
+package com.gnivol.game.system.inventory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.gnivol.game.system.inventory.data.RecipeData;
+import com.gnivol.game.model.RecipeData;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +38,5 @@ public class CraftingManager {
             String key = makeRecipeKey(recipeData.itemA, recipeData.itemB);
             recipes.put(key, recipeData.result);
         }
-
     }
-
 }

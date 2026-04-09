@@ -1,9 +1,9 @@
 package com.gnivol.game.system.inventory.ui;
 
-import com.gnivol.game.system.inventory.data.ItemData;
-import com.gnivol.game.system.inventory.data.ItemDatabase;
-import com.gnivol.game.system.inventory.model.CraftingManager;
-import com.gnivol.game.system.inventory.model.InventoryManager;
+import com.gnivol.game.model.ItemData;
+import com.gnivol.game.data.ItemDatabase;
+import com.gnivol.game.system.inventory.CraftingManager;
+import com.gnivol.game.system.inventory.InventoryManager;
 
 public class InventoryUIController {
     private String selectedItemID = null;

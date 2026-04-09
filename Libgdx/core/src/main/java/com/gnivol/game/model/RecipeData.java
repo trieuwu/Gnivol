@@ -1,4 +1,4 @@
-package com.gnivol.game.system.inventory.data;
+package com.gnivol.game.model;
 
 public class RecipeData {
     public String itemA;

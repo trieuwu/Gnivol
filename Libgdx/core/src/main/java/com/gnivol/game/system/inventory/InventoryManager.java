@@ -1,6 +1,4 @@
-package com.gnivol.game.system.inventory.model;
-
-import com.gnivol.game.system.inventory.data.RecipeData;
+package com.gnivol.game.system.inventory;
 
 import java.util.ArrayList;
 
@@ -27,12 +25,11 @@ public class InventoryManager {
         return items.contains(itemID);
     }
 
-    public  ArrayList<String> getItems() {
+    public ArrayList<String> getItems() {
         return items;
     }
 
     public void clearInventory() {
         items.clear();
     }
-
 }

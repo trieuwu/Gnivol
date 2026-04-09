@@ -16,6 +16,14 @@ allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
 
+  repositories {
+    mavenCentral()
+    mavenLocal()
+    google()
+    maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
+    maven { url = 'https://jitpack.io' }
+  }
+
   // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
   idea {
     module {
@@ -23,36 +31,6 @@ allprojects {
       testOutputDir = file('build/classes/java/test')
     }
   }
-}
-
-project(':core') {
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:1.14.0"
-        api "com.badlogicgames.gdx:gdx-freetype:1.14.0"
-        api "com.badlogicgames.ashley:ashley:1.7.4"
-    }
-}
-
-project(':desktop') {
-    apply plugin: 'application'
-
-    ext.assetsDir = new File("${rootProject.projectDir}/assets")
-
-    application {
-        mainClass = 'com.gnivol.game.desktop.DesktopLauncher'
-    }
-
-    dependencies {
-        implementation project(':core')
-        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.14.0"
-        implementation "com.badlogicgames.gdx:gdx-platform:1.14.0:natives-desktop"
-        implementation "com.badlogicgames.gdx:gdx-freetype-platform:1.14.0:natives-desktop"
-    }
-
-    run {
-        workingDir = project.ext.assetsDir
-        ignoreExitValue = true
-    }
 }
 
 eclipse.project.name = 'Gnivol' + '-parent'
