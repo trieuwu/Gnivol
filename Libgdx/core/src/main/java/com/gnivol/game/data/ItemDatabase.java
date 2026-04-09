@@ -1,16 +1,18 @@
-package com.gnivol.game.system.inventory.data;
+package com.gnivol.game.data;
 
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.gnivol.game.model.ItemData;
 
 public class ItemDatabase {
+
     private HashMap<String, ItemData> database;
 
     public static class ItemDataWrapper {
-        public com.badlogic.gdx.utils.Array<ItemData> items;
+        public Array<ItemData> items;
     }
 
     public ItemDatabase() {
@@ -26,7 +28,7 @@ public class ItemDatabase {
         Json json = new Json();
         ItemDataWrapper wrapper = json.fromJson(ItemDataWrapper.class, Gdx.files.internal("data/items.json"));
 
-        if (wrapper != null && wrapper.items != null ) {
+        if (wrapper != null && wrapper.items != null) {
             for (ItemData item : wrapper.items) {
                 database.put(item.itemID, item);
             }

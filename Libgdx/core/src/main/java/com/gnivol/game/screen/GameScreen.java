@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,8 +16,11 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.gnivol.game.Constants;
 import com.gnivol.game.GnivolGame;
+import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.model.RoomData;
+import com.gnivol.game.system.interaction.InteractionCallback;
+import com.gnivol.game.system.interaction.PlayerInteractionSystem;
 import com.gnivol.game.system.scene.RoomScene;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
@@ -30,6 +31,7 @@ public class GameScreen extends BaseScreen {
     private SceneManager sceneManager;
     private ScreenFader screenFader;
     private InputHandler inputHandler;
+    private PlayerInteractionSystem interactionSystem;
 
     // UI inspect text
     private Label inspectLabel;
@@ -42,8 +44,6 @@ public class GameScreen extends BaseScreen {
     private boolean overlayActive;
     private float overlayAlpha;       // fade-in animation
     private ShapeRenderer dimRenderer; // vẽ nền mờ đen
-
-    private final Vector3 touchPoint = new Vector3();
 
     private static final String VIETNAMESE_CHARS =
             "aăâbcdđeêfghijklmnoôơpqrstuưvwxyz"
@@ -61,6 +61,7 @@ public class GameScreen extends BaseScreen {
         sceneManager = game.getSceneManager();
         screenFader = game.getScreenFader();
         inputHandler = game.getInputHandler();
+        interactionSystem = game.getPlayerInteractionSystem();
         batch = new SpriteBatch();
         dimRenderer = new ShapeRenderer();
 
@@ -87,6 +88,55 @@ public class GameScreen extends BaseScreen {
         inspectTable.setVisible(false);
         game.getStage().addActor(inspectTable);
 
+        // --- Interaction callback: GameScreen chỉ xử lý visual ---
+        interactionSystem.setCallback(new InteractionCallback() {
+            @Override
+            public void onShowInspectText(String text) {
+                showInspectText(text);
+            }
+
+            @Override
+            public void onEmptyClick() {
+                hideInspectText();
+            }
+
+            @Override
+            public void onItemCollected(GameObject obj, String itemId) {
+                Gdx.app.log("GameScreen", "Item collected: " + itemId);
+                // TODO: Triệu — play pickup sound, ẩn sprite, animation
+            }
+
+            @Override
+            public void onDoorInteracted(GameObject obj) {
+                // Lấy targetScene từ RoomData
+                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
+                if (roomData == null || roomData.getObjects() == null) return;
+                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
+                            && roomObj.properties.targetScene != null) {
+                        changeSceneWithFade(roomObj.properties.targetScene);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onObjectInteracted(GameObject obj) {
+                // Object có altTextures → mở overlay
+                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
+                if (roomData == null || roomData.getObjects() == null) return;
+                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
+                            && roomObj.properties.altTextures != null
+                            && !roomObj.properties.altTextures.isEmpty()) {
+                        String firstPath = roomObj.properties.altTextures.values().iterator().next();
+                        openOverlay(firstPath);
+                        return;
+                    }
+                }
+            }
+        });
+
         // --- Input ---
         inputHandler.clear();
         inputHandler.addStage(game.getStage());
@@ -97,7 +147,7 @@ public class GameScreen extends BaseScreen {
                     closeOverlay();
                     return true;
                 }
-                return handleClick(screenX, screenY);
+                return interactionSystem.handleClick(screenX, screenY, viewport);
             }
 
             @Override
@@ -138,48 +188,6 @@ public class GameScreen extends BaseScreen {
         }
         hideInspectText();
         Gdx.app.log("Overlay", "Closed");
-    }
-
-    // --- Click ---
-
-    private boolean handleClick(int screenX, int screenY) {
-        touchPoint.set(screenX, screenY, 0);
-        viewport.unproject(touchPoint);
-        float wx = touchPoint.x;
-        float wy = touchPoint.y;
-
-        if (sceneManager.getCurrentScene() == null) return false;
-        RoomData roomData = sceneManager.getCurrentScene().getRoomData();
-        if (roomData == null || roomData.getObjects() == null) return false;
-
-        java.util.List<RoomData.RoomObject> objects = roomData.getObjects();
-        for (int i = objects.size() - 1; i >= 0; i--) {
-            RoomData.RoomObject obj = objects.get(i);
-            Rectangle hitbox = new Rectangle(obj.x, obj.y, obj.w, obj.h);
-
-            if (hitbox.contains(wx, wy)) {
-                Gdx.app.log("Click", "Hit: " + obj.id + " at (" + (int) wx + ", " + (int) wy + ")");
-
-                if (obj.properties != null && obj.properties.inspectText != null) {
-                    showInspectText(obj.properties.inspectText);
-                }
-
-                // Object có altTextures → mở overlay với ảnh trạng thái đầu tiên
-                if (obj.properties != null && obj.properties.altTextures != null
-                        && !obj.properties.altTextures.isEmpty()) {
-                    String firstPath = obj.properties.altTextures.values().iterator().next();
-                    openOverlay(firstPath);
-                }
-
-                if ("door".equals(obj.type) && obj.properties != null && obj.properties.targetScene != null) {
-                    changeSceneWithFade(obj.properties.targetScene);
-                }
-                return true;
-            }
-        }
-
-        hideInspectText();
-        return false;
     }
 
     private void showInspectText(String text) {

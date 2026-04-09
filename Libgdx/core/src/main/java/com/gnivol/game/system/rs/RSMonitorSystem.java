@@ -14,7 +14,7 @@ public class RSMonitorSystem implements RSListener {
     }
 
     @Override
-    public void onRSChanged(float newValue) {
+    public void onRSChanged(float oldValue, float newValue) {
 
     }
 

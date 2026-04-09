@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gnivol.game.component.BoundsComponent;
+import com.gnivol.game.component.CollectibleComponent;
+import com.gnivol.game.component.GlitchComponent;
+import com.gnivol.game.component.ItemInfoComponent;
+import com.gnivol.game.component.RSModifierComponent;
 import com.gnivol.game.component.TransformComponent;
 import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.model.RoomData;
@@ -48,6 +52,38 @@ public class RoomScene extends Scene {
                 BoundsComponent bounds = new BoundsComponent();
                 bounds.hitbox.set(objData.x, objData.y, objData.w, objData.h);
                 obj.addComponent(bounds);
+
+                // Gắn component dựa trên properties từ room JSON
+                if (objData.properties != null) {
+                    RoomData.Properties props = objData.properties;
+
+                    // ItemInfoComponent — cho object có itemId hoặc inspectText
+                    if (props.itemId != null || props.inspectText != null) {
+                        ItemInfoComponent info = new ItemInfoComponent();
+                        info.itemID = props.itemId;
+                        info.inspectText = props.inspectText;
+                        obj.addComponent(info);
+                    }
+
+                    // CollectibleComponent — object nhặt được
+                    if (props.collectible) {
+                        CollectibleComponent collectible = new CollectibleComponent();
+                        obj.addComponent(collectible);
+                    }
+
+                    // RSModifierComponent — object thay đổi RS khi tương tác
+                    if (props.rsChange != 0) {
+                        RSModifierComponent rsMod = new RSModifierComponent();
+                        rsMod.rsChangeValue = props.rsChange;
+                        obj.addComponent(rsMod);
+                    }
+
+                    // GlitchComponent — object có hiệu ứng glitch
+                    if (props.hasGlitch) {
+                        GlitchComponent glitch = new GlitchComponent();
+                        obj.addComponent(glitch);
+                    }
+                }
 
                 gameObjects.add(obj);
                 objectStates.put(objData.id, "default");
