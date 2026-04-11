@@ -2,15 +2,16 @@ package com.gnivol.game.system.dialogue;
 import com.gnivol.game.model.dialogue.Choice;
 import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.model.dialogue.DialogueTree;
+import com.gnivol.game.system.rs.RSEvent;
+import com.gnivol.game.system.rs.RSEventType;
+import com.gnivol.game.system.rs.RSManager;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DialogueEngine {
     private Map<String, DialogueNode> nodeMap;
     private DialogueNode currentNode;
-
-    // TODO: Cần reference tới RSManager
-    // private RSManager rsManager;
+    private RSManager rsManager;
 
     public DialogueEngine() {
         nodeMap = new HashMap<>();
@@ -34,7 +35,7 @@ public class DialogueEngine {
         if (currentNode != null && !currentNode.hasChoice() && currentNode.nextNodeId != null) {
             currentNode = nodeMap.get(currentNode.nextNodeId);
         } else {
-            // End of dialogue
+            // Kết thúc treeDialogue
             currentNode = null;
         }
     }
@@ -44,14 +45,17 @@ public class DialogueEngine {
         if (currentNode != null && currentNode.hasChoice()) {
             if (choiceIndex >= 0 && choiceIndex < currentNode.choices.size()) {
                 Choice selectedChoice = currentNode.choices.get(choiceIndex);
-
-                // 1. Áp dụng thay đổi Reality Stability
-                if (selectedChoice.rsChange != 0) {
-                    // rsManager.modifyRS(selectedChoice.rsChange);
-                    System.out.println("RS Changed by: " + selectedChoice.rsChange);
+                // Thay đổi Reality Stability
+                if (selectedChoice.rsChange != 0 && rsManager != null) {
+                    // Khởi tạo RSEvent và quăng cho RSManager xử lý
+                    RSEvent event = new RSEvent(
+                        RSEventType.DIALOGUE_CHOICE,
+                        selectedChoice.rsChange,
+                        "Dialogue Node: " + currentNode.id
+                    );
+                    rsManager.processEvent(event);
                 }
-
-                // 2. Chuyển tới node tiếp theo
+                // Chuyển tới node tiếp theo
                 currentNode = nodeMap.get(selectedChoice.nextNodeId);
             }
         }
