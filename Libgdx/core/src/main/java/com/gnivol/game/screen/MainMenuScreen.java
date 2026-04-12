@@ -32,7 +32,7 @@ public class MainMenuScreen extends BaseScreen {
         Gdx.input.setInputProcessor(stage);
 
         // FreeType font
-        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IMFellEnglish.ttf"));
 
         FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         titleParam.size = 64;

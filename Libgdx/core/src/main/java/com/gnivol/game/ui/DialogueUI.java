@@ -29,6 +29,9 @@ public class DialogueUI {
     private TextButton.TextButtonStyle btnStyle;
     private TextButton.TextButtonStyle btnHoverStyle;
 
+    // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
+    private Runnable onFinished;
+
     public DialogueUI(Stage stage, BitmapFont font, DialogueEngine engine) {
         this.engine = engine;
 
@@ -96,9 +99,18 @@ public class DialogueUI {
         stage.addActor(rootTable);
     }
 
+    public void setOnFinished(Runnable onFinished) {
+        this.onFinished = onFinished;
+    }
+
     public void displayNode(DialogueNode node) {
         if (node == null) {
             rootTable.setVisible(false);
+            if (onFinished != null) {
+                Runnable callback = onFinished;
+                onFinished = null;  // chỉ chạy 1 lần
+                callback.run();
+            }
             return;
         }
 
