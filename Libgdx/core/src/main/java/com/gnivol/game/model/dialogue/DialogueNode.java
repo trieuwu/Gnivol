@@ -12,7 +12,7 @@ public class DialogueNode {
     public String nextNodeId;        // Dùng khi KHÔNG CÓ choice (chuyển thẳng tới node này)
 
     // Danh sách các lựa chọn. Nếu list rỗng -> NodeNoChoice.
-    public List<Choice> choices = new ArrayList<>();
+    public ArrayList<Choice> choices = new ArrayList<>();
 
     public boolean hasChoice() {
         return choices != null && !choices.isEmpty();

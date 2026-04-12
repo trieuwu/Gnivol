@@ -55,6 +55,7 @@
       "offsetX": 0,
       "offsetY": 0,
       "properties": {
+        "dialogueId": "intro_phone_call",
         "inspectText": "Bàn làm việc cũ. Sách vở bày bừa, đèn bàn vẫn sáng.",
         "collectible": false,
         "hasGlitch": false,

@@ -19,11 +19,16 @@ import com.gnivol.game.GnivolGame;
 import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.model.RoomData;
+import com.gnivol.game.model.dialogue.DialogueTree;
+import com.gnivol.game.system.dialogue.DialogueEngine;
 import com.gnivol.game.system.interaction.InteractionCallback;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
+import com.gnivol.game.system.rs.RSListener;
 import com.gnivol.game.system.scene.RoomScene;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
+import com.gnivol.game.ui.DialogueUI;
+import com.gnivol.game.ui.RSUI;
 
 public class GameScreen extends BaseScreen {
 
@@ -32,6 +37,12 @@ public class GameScreen extends BaseScreen {
     private ScreenFader screenFader;
     private InputHandler inputHandler;
     private PlayerInteractionSystem interactionSystem;
+    // Khai báo hệ thống hội thoại
+    private DialogueEngine dialogueEngine;
+    private DialogueUI dialogueUI;
+    private java.util.Map<String, DialogueTree> dialogueDatabase;
+
+    private RSUI rsUI;
 
     // UI inspect text
     private Label inspectLabel;
@@ -75,6 +86,31 @@ public class GameScreen extends BaseScreen {
         param.borderColor = Color.BLACK;
         vietnameseFont = fontGenerator.generateFont(param);
 
+        // THÊM MỚI: Khởi tạo Dialogue System
+        dialogueEngine = new DialogueEngine(game.getRsManager());
+        dialogueUI = new DialogueUI(game.getStage(), vietnameseFont, dialogueEngine);
+
+        // --- ĐỌC FILE DIALOGUES.JSON ---
+        dialogueDatabase = new java.util.HashMap<>();
+        com.badlogic.gdx.utils.Json json = new com.badlogic.gdx.utils.Json();
+        json.setIgnoreUnknownFields(true);
+        try {
+            // Đọc file json và ép kiểu nó thành 1 mảng các DialogueTree
+            java.util.ArrayList<DialogueTree> treeList = json.fromJson(
+                java.util.ArrayList.class,
+                DialogueTree.class,
+                Gdx.files.internal("data/dialogues.json")
+            );
+
+            // Đổ vào Database để tra cứu cho nhanh
+            for (DialogueTree tree : treeList) {
+                dialogueDatabase.put(tree.dialogueId, tree);
+            }
+            Gdx.app.log("GameScreen", "Đã load thành công " + treeList.size() + " cây hội thoại!");
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "LỖI ĐỌC FILE DIALOGUES.JSON", e);
+        }
+
         // --- Inspect text UI ---
         Label.LabelStyle labelStyle = new Label.LabelStyle(vietnameseFont, Color.WHITE);
         inspectLabel = new Label("", labelStyle);
@@ -88,6 +124,21 @@ public class GameScreen extends BaseScreen {
         inspectTable.setVisible(false);
         game.getStage().addActor(inspectTable);
 
+        Label.LabelStyle rsStyle = new Label.LabelStyle(vietnameseFont, Color.WHITE);
+        rsUI = new RSUI(game.getStage(), rsStyle);
+
+            // Lắng nghe sự thay đổi từ RSManager
+            game.getRsManager().addListener(new RSListener() {
+            @Override
+            public void onRSChanged(float oldValue, float newValue) {
+                rsUI.updateRS(newValue); // Cập nhật số mỗi khi RS thay đổi
+            }
+
+            @Override
+            public void onThresholdCrossed(boolean isAbove) {
+                // Logic glitch đã có ở MonitorSystem
+            }
+        });
         // --- Interaction callback: GameScreen chỉ xử lý visual ---
         interactionSystem.setCallback(new InteractionCallback() {
             @Override
@@ -119,13 +170,18 @@ public class GameScreen extends BaseScreen {
                     }
                 }
             }
-
             @Override
             public void onObjectInteracted(GameObject obj) {
                 // Object có altTextures → mở overlay
                 RoomData roomData = sceneManager.getCurrentScene().getRoomData();
                 if (roomData == null || roomData.getObjects() == null) return;
                 for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                    // Check nếu đồ vật này có gắn dialogueId trong file JSON
+                    if (roomObj.properties.dialogueId != null) {
+                        onDialogueTriggered(roomObj.properties.dialogueId);
+                        return;
+                    }
+
                     if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
                             && roomObj.properties.altTextures != null
                             && !roomObj.properties.altTextures.isEmpty()) {
@@ -133,6 +189,25 @@ public class GameScreen extends BaseScreen {
                         openOverlay(firstPath);
                         return;
                     }
+                }
+            }
+            // Xử lý khi trigger dialogue
+            @Override
+            public void onDialogueTriggered(String dialogueId) {
+                // Tạm thời ẩn inspect text đi cho đỡ rối
+                hideInspectText();
+
+                // TODO: Load đoạn hội thoại dựa vào dialogueId
+                // 1. Lôi cây hội thoại từ Database ra
+                DialogueTree tree = dialogueDatabase.get(dialogueId);
+                if (tree != null) {
+                    // 2. Nạp đạn cho Engine
+                    dialogueEngine.loadDialogue(tree);
+                    // 3. Hiển thị UI
+                    dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                    Gdx.app.log("GameScreen", "Đang mở hội thoại: " + dialogueId);
+                } else {
+                    Gdx.app.error("GameScreen", "Không tìm thấy dữ liệu hội thoại cho ID: " + dialogueId);
                 }
             }
         });
@@ -143,6 +218,10 @@ public class GameScreen extends BaseScreen {
         inputHandler.addProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                // Đang nói chuyện thì chặn không cho click vào đồ vật trong thế giới
+                if (dialogueUI != null && dialogueUI.isVisible()) {
+                    return false; // Stage sẽ tự bắt lấy event này để next câu thoại, không truyền xuống world
+                }
                 if (overlayActive) {
                     closeOverlay();
                     return true;

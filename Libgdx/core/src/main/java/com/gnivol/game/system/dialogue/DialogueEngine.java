@@ -1,4 +1,5 @@
 package com.gnivol.game.system.dialogue;
+import com.badlogic.gdx.Gdx;
 import com.gnivol.game.model.dialogue.Choice;
 import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.model.dialogue.DialogueTree;
@@ -13,8 +14,9 @@ public class DialogueEngine {
     private DialogueNode currentNode;
     private RSManager rsManager;
 
-    public DialogueEngine() {
+    public DialogueEngine(RSManager rsManager) {
         nodeMap = new HashMap<>();
+        this.rsManager = rsManager;
     }
 
     // Load dữ liệu từ DialogueTree (được parse từ dialogues.json)
@@ -32,12 +34,17 @@ public class DialogueEngine {
 
     // Chuyển sang node tiếp theo (Dành cho Node KHÔNG có lựa chọn)
     public void advance() {
+        if(currentNode == null) return;
+        String finishedNodeId = currentNode.id;
         if (currentNode != null && !currentNode.hasChoice() && currentNode.nextNodeId != null) {
             currentNode = nodeMap.get(currentNode.nextNodeId);
         } else {
             // Kết thúc treeDialogue
             currentNode = null;
         }
+        // Xóa node khi kết thúc treeDialogue
+        nodeMap.remove(finishedNodeId);
+        Gdx.app.log("DialogueEngine", "Đã xóa node: " + finishedNodeId);
     }
 
     // Xử lý khi người chơi bấm vào một lựa chọn
@@ -45,6 +52,7 @@ public class DialogueEngine {
         if (currentNode != null && currentNode.hasChoice()) {
             if (choiceIndex >= 0 && choiceIndex < currentNode.choices.size()) {
                 Choice selectedChoice = currentNode.choices.get(choiceIndex);
+                String finishedNodeId = currentNode.id;
                 // Thay đổi Reality Stability
                 if (selectedChoice.rsChange != 0 && rsManager != null) {
                     // Khởi tạo RSEvent và quăng cho RSManager xử lý
@@ -57,6 +65,8 @@ public class DialogueEngine {
                 }
                 // Chuyển tới node tiếp theo
                 currentNode = nodeMap.get(selectedChoice.nextNodeId);
+                nodeMap.remove(finishedNodeId);
+                Gdx.app.log("DialogueEngine", "Đã tiêu hủy node sau lựa chọn: " + finishedNodeId);
             }
         }
     }

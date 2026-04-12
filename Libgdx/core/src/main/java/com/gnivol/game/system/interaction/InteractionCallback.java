@@ -22,4 +22,6 @@ public interface InteractionCallback {
 
     /** Object khác được tương tác (mở overlay, alt texture...) */
     void onObjectInteracted(GameObject obj);
+
+    void onDialogueTriggered(String dialogueId);
 }

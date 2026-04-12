@@ -7,5 +7,5 @@ import java.util.List;
 public class DialogueTree {
     public String dialogueId;
     public String startNodeId; // Node đầu tiên khi bắt đầu
-    public List<DialogueNode> nodes = new ArrayList<>();
+    public ArrayList<DialogueNode> nodes = new ArrayList<>();
 }
