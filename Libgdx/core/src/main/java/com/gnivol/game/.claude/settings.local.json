@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew classes:*)",
+      "Bash(grep -r \"PlayerInteractionSystem\\\\|Collectible\\\\|interaction\" /c/Users/admin/Documents/GitHub/Gnivol/Libgdx/core/src/main/java/com/gnivol/game --include=*.java -l)",
+      "Bash(xargs grep:*)",
+      "Bash(./gradlew desktop:classes)"
+    ]
+  }
+}
