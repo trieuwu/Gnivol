@@ -18,277 +18,378 @@ import com.gnivol.game.Constants;
 import com.gnivol.game.GnivolGame;
 import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.input.InputHandler;
-import com.gnivol.game.model.RoomData;
-import com.gnivol.game.system.interaction.InteractionCallback;
-import com.gnivol.game.system.interaction.PlayerInteractionSystem;
-import com.gnivol.game.system.scene.RoomScene;
+import com.gnivol.game.system.scene.SceneController;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
 
-public class GameScreen extends BaseScreen {
+/**
+ * Màn hình chơi game chính.
+ *
+ * Sau refactor: GameScreen chỉ lo RENDER + INPUT.
+ * Toàn bộ logic tương tác, overlay, chuyển cảnh do SceneController điều phối.
+ *
+ * GameScreen implement SceneController.ViewListener để nhận thông báo
+ * khi nào cần hiện text, mở overlay, phát sound, v.v.
+ */
+public class GameScreen extends BaseScreen implements SceneController.ViewListener {
 
+    // SpriteBatch: dùng để vẽ texture (background, objects, overlay) lên màn hình
     private SpriteBatch batch;
-    private SceneManager sceneManager;
-    private ScreenFader screenFader;
-    private InputHandler inputHandler;
-    private PlayerInteractionSystem interactionSystem;
 
-    // UI inspect text
+    // SceneManager: quản lý phòng hiện tại, update + render scene
+    private SceneManager sceneManager;
+
+    // ScreenFader: hiệu ứng fade đen khi chuyển phòng
+    private ScreenFader screenFader;
+
+    // InputHandler: quản lý input (chuột, phím), multiplexer nhiều processor
+    private InputHandler inputHandler;
+
+    // Bộ điều phối logic
+    private SceneController sceneController;
+
+    // true = lần đầu vào GameScreen, cần load phòng ngủ
+    // false = resume từ PauseScreen, không load lại
+    private boolean firstShow = true;
+
+    // inspectLabel: Label hiện text mô tả khi click object
     private Label inspectLabel;
+
+    // inspectTable: Table chứa inspectLabel, đặt ở đáy màn hình
     private Table inspectTable;
+
+    // vietnameseFont: font chữ hỗ trợ tiếng Việt có dấu
     private BitmapFont vietnameseFont;
+
+    // fontGenerator: FreeType generator để tạo BitmapFont từ file .ttf
     private FreeTypeFontGenerator fontGenerator;
 
-    // Overlay system (tủ mở, xem chi tiết...)
+    // overlayTexture: ảnh overlay đang hiện (VD: ảnh tủ mở), null nếu không có overlay
     private Texture overlayTexture;
-    private boolean overlayActive;
-    private float overlayAlpha;       // fade-in animation
-    private ShapeRenderer dimRenderer; // vẽ nền mờ đen
 
+    // dimRenderer: vẽ hình chữ nhật đen bán trong suốt phủ lên scene khi mở overlay
+    private ShapeRenderer dimRenderer;
+
+    // Chuỗi chứa TẤT CẢ ký tự tiếng Việt (hoa + thường + dấu)
+    // FreeType cần biết trước ký tự nào sẽ dùng để tạo bitmap font
     private static final String VIETNAMESE_CHARS =
             "aăâbcdđeêfghijklmnoôơpqrstuưvwxyz"
                     + "AĂÂBCDĐEÊFGHIJKLMNOÔƠPQRSTUƯVWXYZ"
-                    + "àáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ"
+                    + "àáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùú��ũụừứửữựỳýỷỹỵ"
                     + "ÀÁẢÃẠẰẮẲẴẶẦẤẨẪẬÈÉẺẼẸỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌỒỐỔỖỘỜỚỞỠỢÙÚỦŨỤỪỨỬỮỰỲÝỶỸỴ"
                     + "0123456789.,;:!?'\"-()[]{}…—–/\\@#$%^&*+=<>~`| ";
 
+    /**
+     * Constructor: nhận GnivolGame (lớp chính) để lấy các manager dùng chung.
+     */
     public GameScreen(GnivolGame game) {
-        super(game);
+        super(game); // BaseScreen tạo camera + viewport (1280x720)
     }
+
+    // =========================================================================
+    // SHOW - gọi 1 lần khi chuyển sang GameScreen
+    // =========================================================================
 
     @Override
     public void show() {
-        sceneManager = game.getSceneManager();
-        screenFader = game.getScreenFader();
-        inputHandler = game.getInputHandler();
-        interactionSystem = game.getPlayerInteractionSystem();
+        // --- Lấy reference các manager từ GnivolGame ---
+        sceneManager = game.getSceneManager();       // quản lý phòng
+        screenFader = game.getScreenFader();          // hiệu ứng fade
+        inputHandler = game.getInputHandler();        // quản lý input
+        sceneController = game.getSceneController();  // bộ điều phối logic (MỚI)
+
+        // Tạo SpriteBatch để vẽ texture
         batch = new SpriteBatch();
+
+        // Tạo ShapeRenderer để vẽ nền mờ đen cho overlay
         dimRenderer = new ShapeRenderer();
 
-        // --- FreeType font tiếng Việt ---
+        // Đăng ký GameScreen làm ViewListener cho SceneController
+        // Từ giờ SceneController gọi viewListener.onShowInspectText()
+        // → chính là GameScreen.onShowInspectText()
+        sceneController.setViewListener(this);
+
+        // --- Tạo font tiếng Việt từ file .ttf ---
+        // Load file font arial.ttf
         fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+
+        // Cấu hình font
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = 22;
-        param.characters = FreeTypeFontGenerator.DEFAULT_CHARS + VIETNAMESE_CHARS;
-        param.color = Color.WHITE;
-        param.borderWidth = 1.5f;
-        param.borderColor = Color.BLACK;
+        param.size = 22;                                                    // cỡ chữ 22px
+        param.characters = FreeTypeFontGenerator.DEFAULT_CHARS + VIETNAMESE_CHARS; // ký tự cần render
+        param.color = Color.WHITE;                                          // màu chữ trắng
+        param.borderWidth = 1.5f;                                           // viền đen dày 1.5px
+        param.borderColor = Color.BLACK;                                    // màu viền đen
+
+        // Tạo BitmapFont từ cấu hình trên
         vietnameseFont = fontGenerator.generateFont(param);
 
-        // --- Inspect text UI ---
-        Label.LabelStyle labelStyle = new Label.LabelStyle(vietnameseFont, Color.WHITE);
-        inspectLabel = new Label("", labelStyle);
-        inspectLabel.setWrap(true);
-        inspectLabel.setAlignment(Align.center);
+        // --- Tạo UI inspect text (Label + Table) ---
 
+        // Tạo style cho Label: dùng font tiếng Việt, màu trắng
+        Label.LabelStyle labelStyle = new Label.LabelStyle(vietnameseFont, Color.WHITE);
+
+        // Tạo Label rỗng (text sẽ ��ược set sau khi click object)
+        inspectLabel = new Label("", labelStyle);
+        inspectLabel.setWrap(true);              // tự xuống dòng khi text dài
+        inspectLabel.setAlignment(Align.center); // căn giữa text
+
+        // Tạo Table chứa Label — Table giúp căn vị trí dễ dàng
         inspectTable = new Table();
-        inspectTable.setFillParent(true);
-        inspectTable.bottom().padBottom(30f);
-        inspectTable.add(inspectLabel).width(900f).pad(15f);
-        inspectTable.setVisible(false);
+        inspectTable.setFillParent(true);        // Table chiếm toàn bộ Stage
+        inspectTable.bottom().padBottom(30f);    // Label nằm ở đáy, cách đáy 30px
+        inspectTable.add(inspectLabel).width(900f).pad(15f); // Label rộng 900px, padding 15px
+        inspectTable.setVisible(false);          // Ban đầu ẩn — chỉ hiện khi click object
+
+        // Thêm Table vào Stage (Scene2D UI system)
         game.getStage().addActor(inspectTable);
 
-        // --- Interaction callback: GameScreen chỉ xử lý visual ---
-        interactionSystem.setCallback(new InteractionCallback() {
-            @Override
-            public void onShowInspectText(String text) {
-                showInspectText(text);
-            }
+        // --- Đăng ký input: chuyển MỌI click cho SceneController ---
 
-            @Override
-            public void onEmptyClick() {
-                hideInspectText();
-            }
-
-            @Override
-            public void onItemCollected(GameObject obj, String itemId) {
-                Gdx.app.log("GameScreen", "Item collected: " + itemId);
-                // TODO: Triệu — play pickup sound, ẩn sprite, animation
-            }
-
-            @Override
-            public void onDoorInteracted(GameObject obj) {
-                // Lấy targetScene từ RoomData
-                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
-                if (roomData == null || roomData.getObjects() == null) return;
-                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
-                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
-                            && roomObj.properties.targetScene != null) {
-                        changeSceneWithFade(roomObj.properties.targetScene);
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onObjectInteracted(GameObject obj) {
-                // Object có altTextures → mở overlay
-                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
-                if (roomData == null || roomData.getObjects() == null) return;
-                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
-                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
-                            && roomObj.properties.altTextures != null
-                            && !roomObj.properties.altTextures.isEmpty()) {
-                        String firstPath = roomObj.properties.altTextures.values().iterator().next();
-                        openOverlay(firstPath);
-                        return;
-                    }
-                }
-            }
-        });
-
-        // --- Input ---
+        // Xóa input processor cũ (nếu có từ screen trước)
         inputHandler.clear();
+
+        // Thêm Stage vào input (để Scene2D UI nhận click/touch)
         inputHandler.addStage(game.getStage());
+
+        // Thêm processor xử lý click chuột và phím
         inputHandler.addProcessor(new InputAdapter() {
+            /**
+             * Khi click chuột: chuyển hết cho SceneController.
+             * TRƯỚC refactor: GameScreen tự kiểm tra overlay, tự gọi interactionSystem.
+             * SAU refactor: SceneController.handleClick() lo toàn bộ.
+             */
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (overlayActive) {
-                    closeOverlay();
-                    return true;
-                }
-                return interactionSystem.handleClick(screenX, screenY, viewport);
+                return sceneController.handleClick(screenX, screenY, viewport);
             }
 
+            /**
+             * Khi nhấn ESC:
+             * 1. Overlay đang mở → đóng overlay
+             * 2. Overlay không mở → mở PauseScreen
+             */
             @Override
             public boolean keyDown(int keycode) {
-                if (keycode == Input.Keys.ESCAPE && overlayActive) {
-                    closeOverlay();
+                if (keycode == Input.Keys.ESCAPE) {
+                    if (sceneController.isOverlayActive()) {
+                        // Overlay đang mở → đóng overlay
+                        sceneController.handleClick(0, 0, viewport);
+                    } else {
+                        // Không có overlay → mở PauseScreen
+                        // "this" ở đây là InputAdapter, không phải GameScreen
+                        // Nên dùng "GameScreen.this" để trỏ đến GameScreen bên ngoài
+                        game.setScreen(new PauseScreen(game, GameScreen.this));
+                    }
                     return true;
                 }
                 return false;
             }
         });
+
+        // Kích hoạt input (set InputMultiplexer cho Gdx.input)
         inputHandler.activate();
 
-        // --- Load scene ---
-        sceneManager.changeScene(Constants.SCENE_BEDROOM);
-        screenFader.startFadeIn();
-        Gdx.app.log("GameScreen", "Game started");
-    }
-
-    // --- Overlay ---
-
-    private void openOverlay(String texturePath) {
-        try {
-            overlayTexture = new Texture(Gdx.files.internal(texturePath));
-            overlayActive = true;
-            overlayAlpha = 0f;
-            Gdx.app.log("Overlay", "Opened: " + texturePath);
-        } catch (Exception e) {
-            Gdx.app.error("Overlay", "Cannot load: " + texturePath, e);
+        // --- Load phòng đầu tiên (chỉ lần đầu, không load lại khi resume) ---
+        if (firstShow) {
+            sceneManager.changeScene(Constants.SCENE_BEDROOM);
+            screenFader.startFadeIn();
+            firstShow = false;
+            Gdx.app.log("GameScreen", "Game started");
+        } else {
+            Gdx.app.log("GameScreen", "Resumed from pause");
         }
     }
 
-    private void closeOverlay() {
-        overlayActive = false;
-        if (overlayTexture != null) {
-            overlayTexture.dispose();
-            overlayTexture = null;
-        }
-        hideInspectText();
-        Gdx.app.log("Overlay", "Closed");
-    }
+    // =========================================================================
+    // VIEW LISTENER — 5 method nhận thông báo từ SceneController
+    // GameScreen chỉ xử lý phần RENDER/SOUND, không có logic game
+    // =========================================================================
 
-    private void showInspectText(String text) {
+    /**
+     * SceneController bảo hiện inspect text.
+     * GameScreen: set text vào Label + chạy animation fade-in 0.3 giây.
+     */
+    @Override
+    public void onShowInspectText(String text) {
+        // Set nội dung text mới
         inspectLabel.setText(text);
+
+        // Hiện Table
         inspectTable.setVisible(true);
+
+        // Bắt đầu từ trong suốt (alpha = 0)
         inspectTable.getColor().a = 0f;
+
+        // Chạy animation fade-in trong 0.3 giây (alpha 0 → 1)
         inspectTable.addAction(Actions.fadeIn(0.3f));
     }
 
-    private void hideInspectText() {
+    /**
+     * SceneController bảo ẩn inspect text.
+     * GameScreen: chạy animation fade-out 0.3 giây, rồi ẩn Table.
+     */
+    @Override
+    public void onHideInspectText() {
+        // Chỉ ẩn nếu đang hiện
         if (inspectTable.isVisible()) {
+            // Chạy 2 action nối tiếp: fade-out → ẩn
             inspectTable.addAction(Actions.sequence(
-                    Actions.fadeOut(0.3f),
-                    Actions.visible(false)
+                    Actions.fadeOut(0.3f),    // alpha 1 → 0 trong 0.3 giây
+                    Actions.visible(false)    // sau đó ẩn Table hoàn toàn
             ));
         }
     }
 
-    // --- Render ---
+    /**
+     * SceneController bảo mở overlay.
+     * GameScreen: load texture từ file vào bộ nhớ GPU.
+     */
+    @Override
+    public void onOpenOverlay(String texturePath) {
+        try {
+            // Load file ảnh thành Texture (nằm trong bộ nhớ GPU)
+            overlayTexture = new Texture(Gdx.files.internal(texturePath));
+            Gdx.app.log("GameScreen", "Overlay texture loaded: " + texturePath);
+        } catch (Exception e) {
+            // File không tồn tại hoặc lỗi → log lỗi, không crash game
+            Gdx.app.error("GameScreen", "Cannot load overlay: " + texturePath, e);
+        }
+    }
 
+    /**
+     * SceneController bảo đóng overlay.
+     * GameScreen: dispose texture (giải phóng bộ nhớ GPU).
+     */
+    @Override
+    public void onCloseOverlay() {
+        if (overlayTexture != null) {
+            overlayTexture.dispose(); // Giải phóng bộ nhớ GPU
+            overlayTexture = null;    // Đặt null để tránh dùng texture đã dispose
+        }
+    }
+
+    /**
+     * SceneController bảo phát hiệu ứng nhặt đồ.
+     * GameScreen: TODO — sẽ phát sound + particle effect.
+     */
+    @Override
+    public void onPlayPickupEffect(GameObject obj, String itemId) {
+        Gdx.app.log("GameScreen", "Pickup effect: " + itemId);
+        // TODO: play pickup sound, particle effect
+    }
+
+    // =========================================================================
+    // RENDER — gọi 60 lần/giây, vẽ mọi thứ lên màn hình
+    // =========================================================================
+
+    /**
+     * Vẽ 1 frame. Thứ tự vẽ (từ dưới lên):
+     * 1. Background + objects (SceneManager)
+     * 2. Overlay nếu đang mở (nền mờ + ảnh căn giữa)
+     * 3. UI inspect text (Scene2D Stage)
+     * 4. Fade đen nếu đang chuyển phòng (ScreenFader)
+     *
+     * @param delta thời gian từ frame trước (giây)
+     */
     @Override
     public void render(float delta) {
+        // Xóa màn hình bằng màu đen
         ScreenUtils.clear(0, 0, 0, 1);
 
-        sceneManager.update(delta);
-        screenFader.update(delta);
-        game.getStage().act(delta);
+        // --- Cập nhật logic (TRƯỚC khi vẽ) ---
+        sceneManager.update(delta);      // cập nhật scene (animation object, v.v.)
+        sceneController.update(delta);   // cập nhật overlay alpha (fade-in dần)
+        screenFader.update(delta);       // cập nhật fade đen (state machine)
+        game.getStage().act(delta);      // cập nhật Scene2D UI (animation fade text)
 
-        // Scene
-        viewport.apply();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        sceneManager.render(batch);
-        batch.end();
+        // --- Vẽ scene (background + objects) ---
+        viewport.apply();                              // áp dụng viewport (giữ tỉ lệ 1280x720)
+        batch.setProjectionMatrix(camera.combined);    // đồng bộ camera với batch
+        batch.begin();                                 // bắt đầu batch (gom draw call)
+        sceneManager.render(batch);                    // vẽ background + tất cả object
+        batch.end();                                   // kết thúc batch (gửi lên GPU)
 
-        // Overlay (nền mờ + ảnh giữa màn hình)
-        if (overlayActive) {
-            // Fade in
-            overlayAlpha = Math.min(overlayAlpha + delta * 4f, 1f);
+        // --- Vẽ overlay (nếu đang mở) ---
+        if (sceneController.isOverlayActive()) {
+            // Đọc alpha từ SceneController (0→1, tăng dần mỗi frame)
+            float overlayAlpha = sceneController.getOverlayAlpha();
 
-            // Nền đen mờ
-            Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
-            Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
-            dimRenderer.setProjectionMatrix(camera.combined);
-            dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            dimRenderer.setColor(0f, 0f, 0f, 0.65f * overlayAlpha);
-            dimRenderer.rect(0, 0, 1280, 720);
-            dimRenderer.end();
-            Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+            // -- Vẽ nền đen mờ phủ toàn màn hình --
+            Gdx.gl.glEnable(Gdx.gl.GL_BLEND);         // bật blending để alpha hoạt động
+            Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA); // chế độ blend chuẩn
+            dimRenderer.setProjectionMatrix(camera.combined);  // đồng bộ camera
+            dimRenderer.begin(ShapeRenderer.ShapeType.Filled); // bắt đầu vẽ hình filled
+            dimRenderer.setColor(0f, 0f, 0f, 0.65f * overlayAlpha); // đen, 65% mờ × alpha hiện tại
+            dimRenderer.rect(0, 0, 1280, 720);         // vẽ hình chữ nhật phủ toàn màn hình
+            dimRenderer.end();                          // kết thúc
+            Gdx.gl.glDisable(Gdx.gl.GL_BLEND);         // tắt blending
 
-            // Ảnh overlay căn giữa
+            // -- Vẽ ảnh overlay căn giữa màn hình --
             if (overlayTexture != null) {
-                float maxW = 700f;
-                float maxH = 550f;
-                float imgW = overlayTexture.getWidth();
-                float imgH = overlayTexture.getHeight();
-                float scale = Math.min(maxW / imgW, maxH / imgH);
-                float drawW = imgW * scale;
-                float drawH = imgH * scale;
-                float drawX = (1280 - drawW) / 2f;
-                float drawY = (720 - drawH) / 2f;
+                // Tính toán scale để ảnh vừa khung 700×550 (giữ tỉ lệ gốc)
+                float maxW = 700f;                                // chiều rộng tối đa
+                float maxH = 550f;                                // chiều cao tối đa
+                float imgW = overlayTexture.getWidth();           // chiều rộng ���nh gốc (pixel)
+                float imgH = overlayTexture.getHeight();          // chiều cao ảnh gốc (pixel)
+                float scale = Math.min(maxW / imgW, maxH / imgH); // scale nhỏ hơn để vừa khung
+                float drawW = imgW * scale;                       // chiều rộng sau scale
+                float drawH = imgH * scale;                       // chiều cao sau scale
+                float drawX = (1280 - drawW) / 2f;               // X căn giữa màn hình
+                float drawY = (720 - drawH) / 2f;                // Y căn giữa màn hình
 
                 batch.begin();
-                batch.setColor(1f, 1f, 1f, overlayAlpha);
-                batch.draw(overlayTexture, drawX, drawY, drawW, drawH);
-                batch.setColor(Color.WHITE);
+                batch.setColor(1f, 1f, 1f, overlayAlpha);        // set alpha cho ảnh (fade-in)
+                batch.draw(overlayTexture, drawX, drawY, drawW, drawH); // vẽ ảnh
+                batch.setColor(Color.WHITE);                      // reset color về mặc định
                 batch.end();
             }
         }
 
-        // UI (inspect text)
+        // --- Vẽ UI (inspect text) ---
+        // Stage.draw() vẽ tất cả Actor đã thêm (inspectTable, v.v.)
         game.getStage().draw();
 
-        // Fade
+        // --- Vẽ fade đen (trên cùng) ---
+        // Nếu đang chuyển phòng → ScreenFader vẽ hình chữ nhật đen phủ lên tất cả
         screenFader.render();
     }
 
+    // =========================================================================
+    // RESIZE / HIDE / DISPOSE — lifecycle của Screen
+    // =========================================================================
+
+    /**
+     * Gọi khi thay đổi kích thước cửa sổ.
+     * Cập nhật viewport để giữ tỉ lệ 1280×720.
+     */
     @Override
     public void resize(int width, int height) {
-        super.resize(width, height);
-        game.getStage().getViewport().update(width, height, true);
+        super.resize(width, height);                                    // cập nhật viewport game
+        game.getStage().getViewport().update(width, height, true);      // cập nhật viewport UI
     }
 
+    /**
+     * Gọi khi rời GameScreen (chuyển sang screen khác).
+     * Dọn dẹp input và UI.
+     */
     @Override
     public void hide() {
-        inputHandler.clear();
-        if (inspectTable != null) inspectTable.remove();
-        closeOverlay();
+        inputHandler.clear();                            // xóa input processor
+        if (inspectTable != null) inspectTable.remove();  // xóa inspectTable khỏi Stage
+        onCloseOverlay();                                 // dispose overlay texture nếu đang mở
     }
 
+    /**
+     * Gọi khi GameScreen bị hủy hoàn toàn.
+     * Giải phóng TẤT CẢ tài nguyên (bộ nhớ GPU, font, v.v.).
+     */
     @Override
     public void dispose() {
-        if (batch != null) batch.dispose();
-        if (dimRenderer != null) dimRenderer.dispose();
-        if (vietnameseFont != null) vietnameseFont.dispose();
-        if (fontGenerator != null) fontGenerator.dispose();
-        if (overlayTexture != null) overlayTexture.dispose();
-    }
-
-    public void changeSceneWithFade(String targetSceneId) {
-        if (screenFader.isFading()) return;
-        screenFader.startFade(() -> sceneManager.changeScene(targetSceneId));
+        if (batch != null) batch.dispose();               // giải phóng SpriteBatch
+        if (dimRenderer != null) dimRenderer.dispose();   // giải phóng ShapeRenderer
+        if (vietnameseFont != null) vietnameseFont.dispose(); // giải phóng BitmapFont
+        if (fontGenerator != null) fontGenerator.dispose();   // giải phóng FreeType generator
+        if (overlayTexture != null) overlayTexture.dispose(); // giải phóng overlay texture
     }
 }
