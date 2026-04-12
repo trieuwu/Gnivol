@@ -41,6 +41,8 @@ public final class Constants {
     public static final String ASSETS_BACKGROUNDS = "textures/backgrounds/";
     public static final String ASSETS_OBJECTS = "textures/objects/";
     public static final String ASSETS_CHARACTERS = "textures/characters/";
+    public static final String DATA_ITEMS = "data/items.json";
+    public static final int MAX_INVENTORY_SLOTS = 8;
 
     private Constants() {}
 }
