@@ -37,12 +37,16 @@ public class GameScreen extends BaseScreen {
     private ScreenFader screenFader;
     private InputHandler inputHandler;
     private PlayerInteractionSystem interactionSystem;
+    private boolean firstShow = true;
     // Khai báo hệ thống hội thoại
     private DialogueEngine dialogueEngine;
     private DialogueUI dialogueUI;
     private java.util.Map<String, DialogueTree> dialogueDatabase;
 
     private RSUI rsUI;
+    private BitmapFont rsFont;
+    private FreeTypeFontGenerator rsFontGenerator;
+    private java.util.Set<String> finishedDialogues = new java.util.HashSet<>();
 
     // UI inspect text
     private Label inspectLabel;
@@ -124,7 +128,16 @@ public class GameScreen extends BaseScreen {
         inspectTable.setVisible(false);
         game.getStage().addActor(inspectTable);
 
-        Label.LabelStyle rsStyle = new Label.LabelStyle(vietnameseFont, Color.WHITE);
+        // --- RS UI font (IM Fell English) ---
+        rsFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IMFellEnglish.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter rsParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        rsParam.size = 24;
+        rsParam.color = Color.WHITE;
+        rsParam.borderWidth = 1.5f;
+        rsParam.borderColor = Color.BLACK;
+        rsFont = rsFontGenerator.generateFont(rsParam);
+
+        Label.LabelStyle rsStyle = new Label.LabelStyle(rsFont, Color.WHITE);
         rsUI = new RSUI(game.getStage(), rsStyle);
 
             // Lắng nghe sự thay đổi từ RSManager
@@ -172,42 +185,38 @@ public class GameScreen extends BaseScreen {
             }
             @Override
             public void onObjectInteracted(GameObject obj) {
-                // Object có altTextures → mở overlay
                 RoomData roomData = sceneManager.getCurrentScene().getRoomData();
                 if (roomData == null || roomData.getObjects() == null) return;
                 for (RoomData.RoomObject roomObj : roomData.getObjects()) {
-                    // Check nếu đồ vật này có gắn dialogueId trong file JSON
-                    if (roomObj.properties.dialogueId != null) {
+                    if (!roomObj.id.equals(obj.getId())) continue;
+                    if (roomObj.properties == null) return;
+
+                    // Dialogue: chỉ trigger nếu chưa xem
+                    if (roomObj.properties.dialogueId != null
+                            && !finishedDialogues.contains(roomObj.properties.dialogueId)) {
                         onDialogueTriggered(roomObj.properties.dialogueId);
                         return;
                     }
 
-                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null
-                            && roomObj.properties.altTextures != null
+                    // Overlay: mở ảnh phóng to
+                    if (roomObj.properties.altTextures != null
                             && !roomObj.properties.altTextures.isEmpty()) {
                         String firstPath = roomObj.properties.altTextures.values().iterator().next();
                         openOverlay(firstPath);
                         return;
                     }
+                    return;
                 }
             }
-            // Xử lý khi trigger dialogue
             @Override
             public void onDialogueTriggered(String dialogueId) {
-                // Tạm thời ẩn inspect text đi cho đỡ rối
                 hideInspectText();
 
-                // TODO: Load đoạn hội thoại dựa vào dialogueId
-                // 1. Lôi cây hội thoại từ Database ra
                 DialogueTree tree = dialogueDatabase.get(dialogueId);
                 if (tree != null) {
-                    // 2. Nạp đạn cho Engine
                     dialogueEngine.loadDialogue(tree);
-                    // 3. Hiển thị UI
                     dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                    Gdx.app.log("GameScreen", "Đang mở hội thoại: " + dialogueId);
-                } else {
-                    Gdx.app.error("GameScreen", "Không tìm thấy dữ liệu hội thoại cho ID: " + dialogueId);
+                    finishedDialogues.add(dialogueId);
                 }
             }
         });
@@ -231,8 +240,12 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean keyDown(int keycode) {
-                if (keycode == Input.Keys.ESCAPE && overlayActive) {
-                    closeOverlay();
+                if (keycode == Input.Keys.ESCAPE) {
+                    if (overlayActive) {
+                        closeOverlay();
+                    } else {
+                        game.setScreen(new PauseScreen(game, GameScreen.this));
+                    }
                     return true;
                 }
                 return false;
@@ -240,10 +253,33 @@ public class GameScreen extends BaseScreen {
         });
         inputHandler.activate();
 
-        // --- Load scene ---
-        sceneManager.changeScene(Constants.SCENE_BEDROOM);
-        screenFader.startFadeIn();
-        Gdx.app.log("GameScreen", "Game started");
+        // --- Load scene (chỉ lần đầu, không load lại khi resume từ PauseScreen) ---
+        if (firstShow) {
+            sceneManager.changeScene(Constants.SCENE_BEDROOM);
+            screenFader.startFadeIn();
+            firstShow = false;
+
+            // Hiện dialogue mở đầu ngay khi vào game
+            // intro_thought → kết thúc → tự động chạy intro_phone_call
+            DialogueTree introTree = dialogueDatabase.get("intro_thought");
+            if (introTree != null) {
+                dialogueEngine.loadDialogue(introTree);
+                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                finishedDialogues.add("intro_thought");
+
+                dialogueUI.setOnFinished(new Runnable() {
+                    @Override
+                    public void run() {
+                        DialogueTree phoneCall = dialogueDatabase.get("intro_phone_call");
+                        if (phoneCall != null) {
+                            dialogueEngine.loadDialogue(phoneCall);
+                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                            finishedDialogues.add("intro_phone_call");
+                        }
+                    }
+                });
+            }
+        }
     }
 
     // --- Overlay ---
@@ -364,6 +400,8 @@ public class GameScreen extends BaseScreen {
         if (vietnameseFont != null) vietnameseFont.dispose();
         if (fontGenerator != null) fontGenerator.dispose();
         if (overlayTexture != null) overlayTexture.dispose();
+        if (rsFont != null) rsFont.dispose();
+        if (rsFontGenerator != null) rsFontGenerator.dispose();
     }
 
     public void changeSceneWithFade(String targetSceneId) {
