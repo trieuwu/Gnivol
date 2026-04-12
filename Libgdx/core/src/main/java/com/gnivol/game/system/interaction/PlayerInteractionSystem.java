@@ -15,7 +15,8 @@ import com.gnivol.game.system.rs.RSEventType;
 import com.gnivol.game.system.rs.RSManager;
 import com.gnivol.game.system.scene.Scene;
 import com.gnivol.game.system.scene.SceneManager;
-
+import com.gnivol.game.data.ItemDatabase;
+import com.gnivol.game.model.ItemData;
 import java.util.List;
 
 /**
@@ -89,30 +90,32 @@ public class PlayerInteractionSystem {
      * Dispatch hành động dựa trên component của object.
      */
     private void dispatch(GameObject obj) {
-        // 1. Inspect text
+        if (obj.hasComponent(CollectibleComponent.class)) {
+            CollectibleComponent collectible = obj.getComponent(CollectibleComponent.class);
+            if (!collectible.isCollected) {
+                collectItem(obj, collectible);
+                return;
+            }
+        }
+
         if (obj.hasComponent(ItemInfoComponent.class)) {
             ItemInfoComponent info = obj.getComponent(ItemInfoComponent.class);
+
+            ItemData data = ItemDatabase.getInstance().getItemData(info.itemID);
+            if (data != null && data.description != null) {
+                Gdx.app.log("Examine", "Description: " + data.description);
+            }
+
             if (info.inspectText != null && callback != null) {
                 callback.onShowInspectText(info.inspectText);
             }
         }
 
-        // 2. Nhặt item (collectible chưa bị nhặt)
-        if (obj.hasComponent(CollectibleComponent.class)) {
-            CollectibleComponent collectible = obj.getComponent(CollectibleComponent.class);
-            if (!collectible.isCollected) {
-                collectItem(obj, collectible);
-                return; // Nhặt xong thì không dispatch thêm
-            }
-        }
-
-        // 3. Door → chuyển scene
         if ("door".equals(obj.getType())) {
             handleDoor(obj);
             return;
         }
 
-        // 4. Object có alt textures → mở overlay
         if (callback != null) {
             callback.onObjectInteracted(obj);
         }
@@ -124,35 +127,28 @@ public class PlayerInteractionSystem {
      */
     private void collectItem(GameObject obj, CollectibleComponent collectible) {
         ItemInfoComponent info = obj.getComponent(ItemInfoComponent.class);
-        if (info == null) return;
+        if (info == null || info.itemID == null) return;
 
-        String itemId = info.itemID;
-        if (itemId == null) return;
+        boolean isAdded = inventoryManager.addItem(info.itemID);
 
-        // addItem vào inventory
-        inventoryManager.addItem(itemId);
-        Gdx.app.log("Interact", "Collected: " + itemId);
+        if (isAdded) {
+            collectible.isCollected = true;
+            info.isPickedUp = true;
 
-        // setCollected
-        collectible.isCollected = true;
-        info.isPickedUp = true;
+            sceneManager.getCurrentScene().getEngine().removeEntity(obj.getEntity());
 
-        // Fire RSEvent nếu object có RSModifier
-        if (obj.hasComponent(RSModifierComponent.class)) {
-            RSModifierComponent rsMod = obj.getComponent(RSModifierComponent.class);
-            if (rsMod.rsChangeValue != 0) {
-                RSEvent event = new RSEvent(
-                    RSEventType.ITEM_INTERACTION,
-                    rsMod.rsChangeValue,
-                    itemId
-                );
-                rsManager.processEvent(event);
+            sceneManager.getCurrentScene().getGameObjects().remove(obj);
+
+            if (obj.hasComponent(RSModifierComponent.class)) {
+                RSModifierComponent rsMod = obj.getComponent(RSModifierComponent.class);
+                if (rsMod.rsChangeValue != 0) {
+                    rsManager.processEvent(new RSEvent(RSEventType.ITEM_INTERACTION, rsMod.rsChangeValue, info.itemID));
+                }
             }
-        }
 
-        // Callback để GameScreen cập nhật visual (ẩn object, animation, sound...)
-        if (callback != null) {
-            callback.onItemCollected(obj, itemId);
+            if (callback != null) {
+                callback.onItemCollected(obj, info.itemID);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.gnivol.game.system.scene;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.model.RoomData;
@@ -27,6 +28,7 @@ public abstract class Scene {
     // Dữ liệu phòng được load từ JSON
     protected final RoomData roomData;
 
+    protected final Engine engine;
     // Danh sách tất cả vật thể trong phòng
     protected final List<GameObject> gameObjects;
 
@@ -37,6 +39,7 @@ public abstract class Scene {
         this.sceneId = sceneId;
         this.roomData = roomData;
         this.gameObjects = new ArrayList<>();
+        this.engine = new Engine();
     }
 
     /**
@@ -97,5 +100,8 @@ public abstract class Scene {
             }
         }
         return null;
+    }
+    public com.badlogic.ashley.core.Engine getEngine() {
+        return engine;
     }
 }

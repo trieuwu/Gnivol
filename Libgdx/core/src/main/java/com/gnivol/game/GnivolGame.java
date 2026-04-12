@@ -12,7 +12,6 @@ import com.gnivol.game.screen.MainMenuScreen;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
 import com.gnivol.game.system.inventory.InventoryManager;
 import com.gnivol.game.system.rs.RSManager;
-import com.gnivol.game.system.scene.SceneController;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
 
@@ -51,10 +50,6 @@ public class GnivolGame extends Game {
     // PlayerInteractionSystem: phát hiện click trúng object + dispatch hành động
     private PlayerInteractionSystem playerInteractionSystem;
 
-    // SceneController: bộ điều phối logic trong scene (MỚI)
-    // Cầu nối giữa PlayerInteractionSystem và GameScreen
-    private SceneController sceneController;
-
     // AudioManager: lưu volume nhạc nền + hiệu ứng
     private AudioManager audioManager;
 
@@ -92,11 +87,6 @@ public class GnivolGame extends Game {
         //    đổi RS (RSManager)
         playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager);
 
-        // 7. SceneController: phụ thuộc SceneManager + ScreenFader + PlayerInteractionSystem
-        //    Vì nó cần: đổi phòng (SceneManager), fade (ScreenFader),
-        //    nhận callback click (PlayerInteractionSystem)
-        //    PHẢI tạo SAU PlayerInteractionSystem vì constructor sẽ gọi setCallback(this)
-        sceneController = new SceneController(sceneManager, screenFader, playerInteractionSystem);
         audioManager = new AudioManager();
 
         // Bắt đầu từ màn hình MainMenu
@@ -181,11 +171,6 @@ public class GnivolGame extends Game {
     /** PlayerInteractionSystem: phát hiện click trúng object */
     public PlayerInteractionSystem getPlayerInteractionSystem() {
         return playerInteractionSystem;
-    }
-
-    /** SceneController: bộ điều phối logic trong scene (MỚI) */
-    public SceneController getSceneController() {
-        return sceneController;
     }
 
     /** AudioManager: lưu volume */
