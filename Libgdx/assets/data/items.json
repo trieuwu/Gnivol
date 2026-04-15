@@ -1,58 +1,58 @@
 {
   "items": [
     {
-      "itemID": "phone",
-      "itemName": "Điện thoại bàn",
-      "description": "Chiếc điện thoại bàn cũ, dây bị đứt.",
-      "inspectText": "Màn hình nhấp nháy hiện dòng chữ kỳ lạ...",
-      "pickupSoundID": "sfx_pickup_phone",
-      "rsChangeValue": 5,
-      "isCursed": false
-    },
-    {
-      "itemID": "paper_fragment_1",
-      "itemName": "Mảnh giấy 1",
-      "description": "Nửa trên của một mảnh giấy rách. Viết: '3-1-...'",
-      "inspectText": "Có vẻ như nếu ghép đủ sẽ thấy một mật mã.",
-      "pickupSoundID": "sfx_pickup_paper",
+      "itemID": "ca_vat_final",
+      "itemName": "Cà vạt",
+      "description": "Một chiếc cà vạt kẻ sọc.",
+      "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau.",
+      "pickupSoundID": "sfx_pickup_fabric",
       "rsChangeValue": 0,
       "isCursed": false
     },
     {
-      "itemID": "paper_fragment_2",
-      "itemName": "Mảnh giấy 2",
-      "description": "Nửa dưới, viết: '...-4'",
-      "inspectText": "Ghép với mảnh giấy kia sẽ ra mật mã hoàn chỉnh.",
-      "pickupSoundID": "sfx_pickup_paper",
+      "itemID": "chuoi_chia_khoa",
+      "itemName": "Chuôi chìa khóa",
+      "description": "Một nửa chiếc chìa khóa bị gãy.",
+      "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
+      "pickupSoundID": "sfx_pickup_metal",
       "rsChangeValue": 0,
       "isCursed": false
     },
     {
-      "itemID": "password_note",
-      "itemName": "Mật mã: 3-1-4",
-      "description": "Hai mảnh giấy ghép lại. Mật mã: 3-1-4",
-      "inspectText": "Mật mã cho cái gì đó trong phòng này...",
-      "pickupSoundID": "sfx_merge",
-      "rsChangeValue": 10,
+      "itemID": "keo_502_final",
+      "itemName": "Keo 502",
+      "description": "Keo dính siêu chắc.",
+      "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
+      "pickupSoundID": "sfx_pickup_plastic",
+      "rsChangeValue": 0,
       "isCursed": false
     },
     {
-      "itemID": "drawer_key",
-      "itemName": "Chìa khóa ngăn kéo",
-      "description": "Chìa khóa nhỏ, bằng đồng, hơi rỉ sét.",
-      "inspectText": "Dùng để mở ngăn kéo?",
+      "itemID": "chia_khoa_fixed_final",
+      "itemName": "Chìa khóa (Đã sửa)",
+      "description": "Chiếc chìa khóa đã được dán lại bằng keo 502.",
+      "inspectText": "Vết dán rất chắc chắn. Nhìn có vẻ đủ cứng để vặn ổ khóa.",
       "pickupSoundID": "sfx_pickup_key",
       "rsChangeValue": 0,
       "isCursed": false
     },
     {
-      "itemID": "cursed_mirror",
-      "itemName": "Mảnh gương vỡ",
-      "description": "Phản chiếu hình ảnh méo mó...",
-      "inspectText": "Khuôn mặt trong gương không phải của bạn.",
-      "pickupSoundID": "sfx_pickup_glass",
-      "rsChangeValue": 20,
-      "isCursed": true
+      "itemID": "dien_thoai_final",
+      "itemName": "Điện thoại",
+      "description": "Điện thoại thông minh cũ.",
+      "inspectText": "Màn hình nứt nẻ đen thui, nhưng tôi có cảm giác nó vừa rung nhẹ...",
+      "pickupSoundID": "sfx_pickup_phone",
+      "rsChangeValue": -5,
+      "isCursed": false
+    },
+    {
+      "itemID": "chia_khoa_final",
+      "itemName": "Chìa khóa đồng",
+      "description": "Một chiếc chìa khóa bằng đồng khác.",
+      "inspectText": "Nó trông không giống chìa khóa ngăn kéo, có lẽ dành cho một cánh cửa nào đó?",
+      "pickupSoundID": "sfx_pickup_key",
+      "rsChangeValue": 0,
+      "isCursed": false
     }
   ]
 }

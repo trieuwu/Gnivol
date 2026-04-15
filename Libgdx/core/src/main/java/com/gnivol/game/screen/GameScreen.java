@@ -28,6 +28,7 @@ import com.gnivol.game.system.scene.RoomScene;
 import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
 import com.gnivol.game.ui.DialogueUI;
+import com.gnivol.game.ui.InventoryUI;
 import com.gnivol.game.ui.RSUI;
 
 public class GameScreen extends BaseScreen {
@@ -59,6 +60,7 @@ public class GameScreen extends BaseScreen {
     private boolean overlayActive;
     private float overlayAlpha;       // fade-in animation
     private ShapeRenderer dimRenderer; // vẽ nền mờ đen
+    private InventoryUI inventoryUI;
 
     private static final String VIETNAMESE_CHARS =
             "aăâbcdđeêfghijklmnoôơpqrstuưvwxyz"
@@ -90,6 +92,20 @@ public class GameScreen extends BaseScreen {
         param.borderColor = Color.BLACK;
         vietnameseFont = fontGenerator.generateFont(param);
 
+        inventoryUI = new InventoryUI(
+            game.getStage(),
+            game.getInventoryManager(),
+            game.getCraftingManager()
+        );
+
+        game.getInventoryManager().clearInventory(); // Xóa sạch túi trước khi nạp
+        game.getInventoryManager().addItem("ca_vat_final");
+        game.getInventoryManager().addItem("chia_khoa_final");
+        game.getInventoryManager().addItem("chuoi_chia_khoa");
+        game.getInventoryManager().addItem("dien_thoai_final");
+        game.getInventoryManager().addItem("keo_502_final");
+        game.getInventoryManager().addItem("chia_khoa_fixed_final");
+        inventoryUI.refreshUI();
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
         dialogueUI = new DialogueUI(game.getStage(), vietnameseFont, dialogueEngine);
@@ -168,6 +184,7 @@ public class GameScreen extends BaseScreen {
             public void onItemCollected(GameObject obj, String itemId) {
                 Gdx.app.log("GameScreen", "Item collected: " + itemId);
                 // TODO: Triệu — play pickup sound, ẩn sprite, animation
+                inventoryUI.refreshUI();
             }
 
             @Override
@@ -219,6 +236,20 @@ public class GameScreen extends BaseScreen {
                     finishedDialogues.add(dialogueId);
                 }
             }
+
+            @Override
+            public void onOpenPuzzleOverlay(String puzzleId) {
+                if (puzzleId.equals("puzzle_drawer")) {
+
+                    // Ví dụ: drawerPuzzleUI.show();
+                }
+            }
+
+            @Override
+            public void onPuzzleFailed(String puzzleId) {
+
+
+            }
         });
 
         // --- Input ---
@@ -234,6 +265,9 @@ public class GameScreen extends BaseScreen {
                 if (overlayActive) {
                     closeOverlay();
                     return true;
+                }
+                if (inventoryUI.isOpen()) {
+                    return false;
                 }
                 return interactionSystem.handleClick(screenX, screenY, viewport);
             }
