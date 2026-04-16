@@ -1,56 +1,83 @@
 package com.gnivol.game.system.puzzle;
 
-import com.badlogic.gdx.Gdx;
-import com.gnivol.game.system.interaction.InteractionCallback;
-import com.gnivol.game.system.rs.RSEvent;
-import com.gnivol.game.system.rs.RSEventType;
-import com.gnivol.game.system.rs.RSManager;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import java.util.HashSet;
 import java.util.Set;
+import com.gnivol.game.system.save.ISaveable;
 
-public class PuzzleManager {
-    private Set<String> solvedPuzzles;
-    private RSManager rsManager;
-    private InteractionCallback callback;
+public class PuzzleManager implements ISaveable {
 
-    public PuzzleManager(RSManager rsManager) {
-        this.rsManager = rsManager;
+    private final Set<String> solvedPuzzles;
+    private final Set<String> collectedItems = new HashSet<>();
+
+    public interface PuzzleCallback {
+        void onShowPuzzleOverlay(String puzzleId);
+    }
+
+    private PuzzleCallback callback;
+
+    public PuzzleManager() {
         this.solvedPuzzles = new HashSet<>();
     }
 
-    public void setCallback(InteractionCallback callback) {
+    public void markItemCollected(String itemId) {
+        collectedItems.add(itemId);
+    }
+
+    public boolean isItemCollected(String itemId) {
+        return collectedItems.contains(itemId);
+    }
+
+    public void setCallback(PuzzleCallback callback) {
         this.callback = callback;
     }
 
     public void openPuzzle(String puzzleId) {
         if (isPuzzleSolved(puzzleId)) {
-            Gdx.app.log("Puzzle", "Have done!");
+
             return;
         }
-        Gdx.app.log("Puzzle", "Showcase: " + puzzleId);
+
         if (callback != null) {
-            callback.onOpenPuzzleOverlay(puzzleId);
+            callback.onShowPuzzleOverlay(puzzleId);
         }
     }
 
     public boolean submitAnswer(String puzzleId, String answer) {
-        if (puzzleId.equals("puzzle_drawer")) {
-            if ("314".equals(answer)) {
-                solvedPuzzles.add(puzzleId);
-                rsManager.processEvent(new RSEvent(RSEventType.PUZZLE_SOLVED, 10, puzzleId));
-                Gdx.app.log("Puzzle", "Correct!");
+        if ("puzzle_drawer".equals(puzzleId)) {
+            if ("912".equals(answer)) {
+                markSolved(puzzleId);
                 return true;
-            } else {
-                rsManager.processEvent(new RSEvent(RSEventType.PUZZLE_FAILED, -5, puzzleId));
-                Gdx.app.log("Puzzle", "Wrong!");
-                if (callback != null) callback.onPuzzleFailed(puzzleId);
-                return false;
             }
         }
+
         return false;
     }
+
+
     public boolean isPuzzleSolved(String puzzleId) {
         return solvedPuzzles.contains(puzzleId);
     }
 
+
+    public void markSolved(String puzzleId) {
+        solvedPuzzles.add(puzzleId);
+    }
+
+
+    @Override
+    public void save(Json json) {
+        json.writeValue("solvedPuzzles", solvedPuzzles.toArray());
+    }
+
+    @Override
+    public void load(JsonValue jsonValue) {
+        solvedPuzzles.clear();
+        if (jsonValue.has("solvedPuzzles")) {
+            for (JsonValue val : jsonValue.get("solvedPuzzles")) {
+                solvedPuzzles.add(val.asString());
+            }
+        }
+    }
 }

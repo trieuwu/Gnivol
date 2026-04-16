@@ -62,6 +62,9 @@ public class GameScreen extends BaseScreen {
     private ShapeRenderer dimRenderer; // vẽ nền mờ đen
     private InventoryUI inventoryUI;
 
+    private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
+    private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
+
     private static final String VIETNAMESE_CHARS =
             "aăâbcdđeêfghijklmnoôơpqrstuưvwxyz"
                     + "AĂÂBCDĐEÊFGHIJKLMNOÔƠPQRSTUƯVWXYZ"
@@ -95,16 +98,51 @@ public class GameScreen extends BaseScreen {
         inventoryUI = new InventoryUI(
             game.getStage(),
             game.getInventoryManager(),
-            game.getCraftingManager()
+            game.getCraftingManager(),
+            vietnameseFont
         );
+
+        this.puzzleManager = game.getPuzzleManager();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Skin defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
+
+        puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
+
+        puzzleManager.setCallback(new com.gnivol.game.system.puzzle.PuzzleManager.PuzzleCallback() {
+            @Override
+            public void onShowPuzzleOverlay(String puzzleId) {
+                if ("puzzle_drawer".equals(puzzleId)) {
+                    puzzleDrawerUI.show();
+                }
+            }
+        });
+
+        puzzleDrawerUI.setListener(new com.gnivol.game.ui.PuzzleDrawerUI.PuzzleResultListener() {
+            @Override
+            public void onPuzzleSolved(String puzzleId) {
+                if ("puzzle_drawer".equals(puzzleId)) {
+                    // Thêm chìa khóa vào túi (Thay "bathroom_key" bằng ID chìa khóa thực tế trong items.json của bạn)
+                    game.getInventoryManager().addItem("chia_khoa_final");
+                    inventoryUI.refreshUI();
+
+                    // Bắn thông báo chúc mừng
+                    showNotification("Cạch! Ngăn kéo đã mở. Nhận được chìa khóa!", Color.GREEN);
+
+                    // (Tùy chọn) Đổi hình ảnh cái tủ thành trạng thái mở
+                    if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
+                        ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
+                    }
+                }
+            }
+        });
 
         game.getInventoryManager().clearInventory(); // Xóa sạch túi trước khi nạp
         game.getInventoryManager().addItem("ca_vat_final");
-        game.getInventoryManager().addItem("chia_khoa_final");
+    //    game.getInventoryManager().addItem("chia_khoa_final");
         game.getInventoryManager().addItem("chuoi_chia_khoa");
-        game.getInventoryManager().addItem("dien_thoai_final");
+       // game.getInventoryManager().addItem("dien_thoai_final");
         game.getInventoryManager().addItem("keo_502_final");
-        game.getInventoryManager().addItem("chia_khoa_fixed_final");
+     //   game.getInventoryManager().addItem("chia_khoa_fixed_final");
         inventoryUI.refreshUI();
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
@@ -181,10 +219,25 @@ public class GameScreen extends BaseScreen {
             }
 
             @Override
+            public void onInventoryFull() {
+                // Rương đầy -> Gọi hàm cốt lõi với chữ ĐỎ cảnh báo
+                showNotification("MAX INVENTORY!", Color.RED);
+
+                // (Tùy chọn) Thêm âm thanh báo lỗi ở đây:
+                // TODO: Triệu - play error sound
+            }
+
+            @Override
             public void onItemCollected(GameObject obj, String itemId) {
                 Gdx.app.log("GameScreen", "Item collected: " + itemId);
-                // TODO: Triệu — play pickup sound, ẩn sprite, animation
+
                 inventoryUI.refreshUI();
+
+                hideInspectText();
+
+                showItemNotification(itemId);
+
+                // TODO: Triệu — play pickup sound (Có thể gọi hàm phát âm thanh từ ItemData sau)
             }
 
             @Override
@@ -202,28 +255,37 @@ public class GameScreen extends BaseScreen {
             }
             @Override
             public void onObjectInteracted(GameObject obj) {
+                if ("drawer".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("puzzle_drawer")) {
+                        showNotification("Ngăn kéo đã trống rỗng.", Color.LIGHT_GRAY);
+                    } else {
+                        puzzleManager.openPuzzle("puzzle_drawer");
+                    }
+                    return;
+                }
                 RoomData roomData = sceneManager.getCurrentScene().getRoomData();
                 if (roomData == null || roomData.getObjects() == null) return;
                 for (RoomData.RoomObject roomObj : roomData.getObjects()) {
                     if (!roomObj.id.equals(obj.getId())) continue;
-                    if (roomObj.properties == null) return;
 
-                    // Dialogue: chỉ trigger nếu chưa xem
+                    if (roomObj.properties == null) continue;
+
                     if (roomObj.properties.dialogueId != null
                             && !finishedDialogues.contains(roomObj.properties.dialogueId)) {
                         onDialogueTriggered(roomObj.properties.dialogueId);
                         return;
+
                     }
 
-                    // Overlay: mở ảnh phóng to
                     if (roomObj.properties.altTextures != null
                             && !roomObj.properties.altTextures.isEmpty()) {
                         String firstPath = roomObj.properties.altTextures.values().iterator().next();
                         openOverlay(firstPath);
                         return;
                     }
-                    return;
+
                 }
+
             }
             @Override
             public void onDialogueTriggered(String dialogueId) {
@@ -241,15 +303,18 @@ public class GameScreen extends BaseScreen {
             public void onOpenPuzzleOverlay(String puzzleId) {
                 if (puzzleId.equals("puzzle_drawer")) {
 
-                    // Ví dụ: drawerPuzzleUI.show();
+                    //Ví dụ: drawerPuzzleUI.show();
                 }
             }
 
             @Override
             public void onPuzzleFailed(String puzzleId) {
 
-
             }
+
+
+
+
         });
 
         // --- Input ---
@@ -436,6 +501,36 @@ public class GameScreen extends BaseScreen {
         if (overlayTexture != null) overlayTexture.dispose();
         if (rsFont != null) rsFont.dispose();
         if (rsFontGenerator != null) rsFontGenerator.dispose();
+    }
+
+    private void showNotification(String text, Color color) {
+        Label.LabelStyle notifStyle = new Label.LabelStyle(vietnameseFont, color);
+        Label notifLabel = new Label(text, notifStyle);
+
+        notifLabel.setPosition((1280 - notifLabel.getPrefWidth()) / 2f, 75f);
+        notifLabel.getColor().a = 0f;
+        game.getStage().addActor(notifLabel);
+
+        notifLabel.addAction(Actions.sequence(
+            Actions.parallel(Actions.fadeIn(1f), Actions.moveBy(0, 50f, 1f)),
+            Actions.delay(3f),
+            Actions.parallel(Actions.fadeOut(1.5f), Actions.moveBy(0, -30f, 1.5f)),
+            Actions.removeActor()
+        ));
+    }
+
+    private void showItemNotification(String itemId) {
+        String itemName = itemId;
+        try {
+            com.gnivol.game.model.ItemData data = com.gnivol.game.data.ItemDatabase.getInstance().getItemData(itemId);
+            if (data != null && data.itemName != null) {
+                itemName = data.itemName;
+            }
+        } catch (Exception e) {
+            Gdx.app.error("Notification", "Item no name: " + itemId);
+        }
+
+        showNotification(itemName, Color.MAROON);
     }
 
     public void changeSceneWithFade(String targetSceneId) {

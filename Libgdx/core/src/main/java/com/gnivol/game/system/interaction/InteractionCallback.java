@@ -29,4 +29,5 @@ public interface InteractionCallback {
 
     void onPuzzleFailed(String puzzleId);
 
+    void onInventoryFull();
 }

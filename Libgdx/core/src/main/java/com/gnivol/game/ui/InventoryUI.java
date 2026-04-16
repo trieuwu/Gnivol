@@ -33,11 +33,35 @@ public class InventoryUI {
     private com.badlogic.gdx.utils.Array<ImageButton> backpackSlots = new com.badlogic.gdx.utils.Array<>();
     private com.badlogic.gdx.utils.Array<ImageButton> quickbarSlots = new com.badlogic.gdx.utils.Array<>();
 
-    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft) {
+    private Table tooltipTable;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label nameLabel;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label descLabel;
+    private com.badlogic.gdx.utils.Timer.Task longPressTask;
+
+    private com.badlogic.gdx.utils.ObjectMap<String, com.badlogic.gdx.utils.JsonValue> itemDatabase;
+    private com.badlogic.gdx.graphics.g2d.BitmapFont font;
+
+    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
         this.stage = stage;
         this.inventoryManager = inv;
         this.craftingManager = craft;
+        this.font = font;
+
+        loadItemData();
         setupUI();
+    }
+
+    private void loadItemData() {
+        itemDatabase = new com.badlogic.gdx.utils.ObjectMap<>();
+        try {
+            com.badlogic.gdx.utils.JsonReader jsonReader = new com.badlogic.gdx.utils.JsonReader();
+            com.badlogic.gdx.utils.JsonValue base = jsonReader.parse(Gdx.files.internal("data/items.json"));
+            for (com.badlogic.gdx.utils.JsonValue item : base.get("items")) {
+                itemDatabase.put(item.getString("itemID"), item);
+            }
+        } catch (Exception e) {
+            Gdx.app.error("InventoryUI", "Read Error", e);
+        }
     }
 
     private void setupUI() {
@@ -115,10 +139,44 @@ public class InventoryUI {
             final int index = i;
             final ImageButton slotBtn = new ImageButton(slotStyleBackpack);
 
-            slotBtn.addListener(new ClickListener() {
+            slotBtn.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    handleSlotClick(index, slotBtn, false);
+                public boolean touchDown(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y, int pointer, int button) {
+                    final String itemId = (index < inventoryManager.getItems().size()) ? inventoryManager.getItems().get(index) : null;
+                    if (itemId == null) return false;
+
+                    if (button == com.badlogic.gdx.Input.Buttons.RIGHT) {
+                        Vector2 stagePos = slotBtn.localToStageCoordinates(new Vector2(x, y));
+                        showTooltip(itemId, stagePos.x, stagePos.y);
+                        return true;
+                    }
+
+                    if (button == com.badlogic.gdx.Input.Buttons.LEFT) {
+                        longPressTask = com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                            @Override
+                            public void run() {
+                                Vector2 stagePos = slotBtn.localToStageCoordinates(new Vector2(x, y));
+                                showTooltip(itemId, stagePos.x, stagePos.y);
+                            }
+                        }, 0.5f);
+                    }
+                    return true;
+                }
+
+                @Override
+                public void touchUp(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y, int pointer, int button) {
+                    hideTooltip();
+
+
+                    if (button == com.badlogic.gdx.Input.Buttons.LEFT && (longPressTask == null || !longPressTask.isScheduled())) {
+
+                        handleSlotClick(index, slotBtn, false);
+                    }
+                }
+
+                @Override
+                public void exit(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
+                    hideTooltip();
                 }
             });
             gridTable.add(slotBtn).size(65, 65).pad(10f);
@@ -179,11 +237,57 @@ public class InventoryUI {
         backpackTable.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                // Trả về true để báo với Stage rằng sự kiện đã được xử lý ở đây
                 return true;
             }
         });
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle ttNameStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(this.font, Color.YELLOW);
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle ttDescStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(this.font, Color.WHITE);
+
+        nameLabel = new com.badlogic.gdx.scenes.scene2d.ui.Label("", ttNameStyle);
+        descLabel = new com.badlogic.gdx.scenes.scene2d.ui.Label("", ttDescStyle);
+        descLabel.setWrap(true);
+
+        tooltipTable = new Table();
+
+        com.badlogic.gdx.graphics.Pixmap ttPixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        ttPixmap.setColor(new Color(0, 0, 0, 0.85f));
+        ttPixmap.fill();
+        tooltipTable.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(ttPixmap))));
+        ttPixmap.dispose();
+
+        tooltipTable.add(nameLabel).left().row();
+        tooltipTable.add(descLabel).width(200f).left();
+        tooltipTable.pad(10f);
+        tooltipTable.setVisible(false);
+        tooltipTable.setTouchable(Touchable.disabled);
+
+        stage.addActor(tooltipTable);
+
     }
+
+    private void showTooltip(String itemId, float screenX, float screenY) {
+        if (itemId == null) return;
+
+        com.badlogic.gdx.utils.JsonValue itemData = itemDatabase.get(itemId);
+        String name = itemData != null ? itemData.getString("itemName", "Secret item") : "Secret item";
+        String desc = itemData != null ? itemData.getString("description", "No infomation") : "No information";
+
+        nameLabel.setText(name);
+        descLabel.setText(desc);
+
+        tooltipTable.pack();
+
+        tooltipTable.setPosition(screenX + 15, screenY - tooltipTable.getHeight() - 10);
+        tooltipTable.setVisible(true);
+        tooltipTable.toFront();
+    }
+
+    private void hideTooltip() {
+        tooltipTable.setVisible(false);
+        if (longPressTask != null) longPressTask.cancel();
+    }
+
     private void attemptCraft() {
         if (selectedItem1 != null && selectedItem2 != null) {
             String result = craftingManager.getMergeResult(selectedItem1, selectedItem2);
@@ -193,10 +297,18 @@ public class InventoryUI {
                 inventoryManager.removeItem(selectedItem2);
                 inventoryManager.addItem(result);
 
+                String itemName = result;
+                com.badlogic.gdx.utils.JsonValue itemData = itemDatabase.get(result);
+                if (itemData != null && itemData.getString("itemName", null) != null) {
+                    itemName = itemData.getString("itemName");
+                }
+                showNotification("Created: " + itemName, Color.GREEN);
+
                 refreshUI();
                 resetHighlights();
             } else {
                 Gdx.app.log("Crafting", "Failed: No valid combination");
+                showNotification("Merge Failed", Color.RED);
                 resetHighlights();
             }
 
@@ -255,6 +367,7 @@ public class InventoryUI {
             highlight1.setVisible(false);
             highlight1.clearActions();
             highlight2.setVisible(false);
+            highlight1.getColor().a = 1f;
         }
 
     public void refreshUI() {
@@ -293,6 +406,23 @@ public class InventoryUI {
     }
     public boolean isOpen() {
         return backpackTable != null && backpackTable.isVisible();
+    }
+
+    private void showNotification(String text, Color color) {
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle notifStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font, color);
+        com.badlogic.gdx.scenes.scene2d.ui.Label notifLabel = new com.badlogic.gdx.scenes.scene2d.ui.Label(text, notifStyle);
+
+        notifLabel.setPosition((1280 - notifLabel.getPrefWidth()) / 2f, 6f);
+        notifLabel.getColor().a = 0f;
+
+        stage.addActor(notifLabel);
+
+        notifLabel.addAction(Actions.sequence(
+            Actions.parallel(Actions.fadeIn(1f), Actions.moveBy(0, 30f, 1f)),
+            Actions.delay(3f),
+            Actions.parallel(Actions.fadeOut(1.5f), Actions.moveBy(0, -30f, 1.5f)),
+            Actions.removeActor()
+        ));
     }
 }
 

@@ -6,7 +6,7 @@
       "description": "Một chiếc cà vạt kẻ sọc.",
       "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau.",
       "pickupSoundID": "sfx_pickup_fabric",
-      "rsChangeValue": 0,
+      "rsChangeValue": -15,
       "isCursed": false
     },
     {
@@ -15,7 +15,7 @@
       "description": "Một nửa chiếc chìa khóa bị gãy.",
       "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
       "pickupSoundID": "sfx_pickup_metal",
-      "rsChangeValue": 0,
+      "rsChangeValue": 5,
       "isCursed": false
     },
     {
@@ -24,7 +24,7 @@
       "description": "Keo dính siêu chắc.",
       "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
       "pickupSoundID": "sfx_pickup_plastic",
-      "rsChangeValue": 0,
+      "rsChangeValue": 6
       "isCursed": false
     },
     {
@@ -33,7 +33,7 @@
       "description": "Chiếc chìa khóa đã được dán lại bằng keo 502.",
       "inspectText": "Vết dán rất chắc chắn. Nhìn có vẻ đủ cứng để vặn ổ khóa.",
       "pickupSoundID": "sfx_pickup_key",
-      "rsChangeValue": 0,
+      "rsChangeValue": 7,
       "isCursed": false
     },
     {
@@ -42,7 +42,7 @@
       "description": "Điện thoại thông minh cũ.",
       "inspectText": "Màn hình nứt nẻ đen thui, nhưng tôi có cảm giác nó vừa rung nhẹ...",
       "pickupSoundID": "sfx_pickup_phone",
-      "rsChangeValue": -5,
+      "rsChangeValue": 5,
       "isCursed": false
     },
     {
@@ -51,7 +51,7 @@
       "description": "Một chiếc chìa khóa bằng đồng khác.",
       "inspectText": "Nó trông không giống chìa khóa ngăn kéo, có lẽ dành cho một cánh cửa nào đó?",
       "pickupSoundID": "sfx_pickup_key",
-      "rsChangeValue": 0,
+      "rsChangeValue": 8,
       "isCursed": false
     }
   ]
