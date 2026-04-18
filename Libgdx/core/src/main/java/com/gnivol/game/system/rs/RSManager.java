@@ -88,4 +88,8 @@ public class RSManager {
     public void setRS(float value) {
         this.currentRS = Math.max(0, Math.min(value, maxRS));
     }
+
+    public void setCurrentRS(float currentRS) {
+        this.currentRS = currentRS;
+    }
 }

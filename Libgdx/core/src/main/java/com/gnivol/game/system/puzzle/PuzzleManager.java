@@ -81,18 +81,26 @@ public class PuzzleManager implements ISaveable {
     public void load(JsonValue jsonValue) {
         JsonValue pzJson = jsonValue.get("puzzleManager");
         solvedPuzzles.clear();
+        collectedItems.clear();
+
         if (pzJson != null) {
-            solvedPuzzles.clear();
             if (pzJson.has("solvedPuzzles")) {
                 for (JsonValue val : pzJson.get("solvedPuzzles")) {
-                    solvedPuzzles.add(val.asString());
+                    if (val.isString()) {
+                        solvedPuzzles.add(val.asString());
+                    } else if (val.isObject() && val.has("value")) {
+                        solvedPuzzles.add(val.getString("value"));
+                    }
                 }
             }
 
-            collectedItems.clear();
             if (pzJson.has("collectedItems")) {
                 for (JsonValue val : pzJson.get("collectedItems")) {
-                    collectedItems.add(val.asString());
+                    if (val.isString()) {
+                        collectedItems.add(val.asString());
+                    } else if (val.isObject() && val.has("value")) {
+                        collectedItems.add(val.getString("value"));
+                    }
                 }
             }
         }

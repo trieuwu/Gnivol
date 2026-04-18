@@ -45,7 +45,7 @@ public class InventoryManager implements ISaveable {
     public void save(Json json) {
         json.writeObjectStart("inventoryManager");
 
-        json.writeValue("items", items);
+        json.writeValue("items", items.toArray());
         json.writeObjectEnd();
     }
 
@@ -57,7 +57,11 @@ public class InventoryManager implements ISaveable {
             items.clear();
             if (itemsJson != null && itemsJson.isArray()) {
                 for (JsonValue item : itemsJson) {
-                    items.add(item.asString());
+                    if (item.isString()) {
+                        items.add(item.asString());
+                    } else if (item.isObject() && item.has("value")) {
+                        items.add(item.getString("value"));
+                    }
                 }
             }
         }

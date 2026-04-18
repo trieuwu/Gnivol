@@ -33,7 +33,7 @@ public class GnivolGame extends Game {
     private com.gnivol.game.system.save.GameSnapshot gameSnapshot;
     private com.gnivol.game.system.save.AutoSaveManager autoSaveManager;
     private com.gnivol.game.system.save.SaveUIController saveUIController;
-
+    public boolean isLoadedGame = false;
     @Override
     public void create() {
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
@@ -93,7 +93,39 @@ public class GnivolGame extends Game {
         if (rsManager != null) rsManager.reset();
         if (gameState != null) gameState.setCurrentRS(35);
 
+        isLoadedGame = false;
         Gdx.app.log("Game", "Cleared");
+    }
+
+    public boolean loadGame() {
+        com.badlogic.gdx.files.FileHandle file = Gdx.files.external(".gnivol/save_slot_1.json");
+        if (!file.exists()) {
+            Gdx.app.log("LoadGame", "Not found save_slot_1.json");
+            return false;
+        }
+        try {
+            String jsonStr = file.readString("UTF-8");
+            com.badlogic.gdx.utils.JsonReader reader = new com.badlogic.gdx.utils.JsonReader();
+            com.badlogic.gdx.utils.JsonValue root = reader.parse(jsonStr);
+
+            if (inventoryManager != null) inventoryManager.clearInventory();
+            if (puzzleManager != null) puzzleManager.reset();
+            if (sceneManager != null) sceneManager.reset();
+
+            if (gameState != null) gameState.load(root);
+            if (inventoryManager != null) inventoryManager.load(root);
+            if (puzzleManager != null) puzzleManager.load(root);
+
+            if (rsManager != null && gameState != null) {
+                 rsManager.setCurrentRS(gameState.getCurrentRS());
+            }
+            isLoadedGame = true;
+            Gdx.app.log("LoadGame", "Load game successful!");
+            return true;
+        } catch (Exception e) {
+            Gdx.app.error("LoadGame", "Error saving: ", e);
+            return false;
+        }
     }
 
     public Stage getStage() {return stage;}
@@ -119,4 +151,6 @@ public class GnivolGame extends Game {
     public com.gnivol.game.system.puzzle.PuzzleManager getPuzzleManager() {return puzzleManager;}
 
     public com.gnivol.game.model.GameState getGameState() {return gameState;}
+
+    public com.gnivol.game.system.save.AutoSaveManager getAutoSaveManager() { return autoSaveManager;}
 }

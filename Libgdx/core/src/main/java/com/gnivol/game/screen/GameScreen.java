@@ -48,7 +48,6 @@ public class GameScreen extends BaseScreen {
     private RSUI rsUI;
     private BitmapFont rsFont;
     private FreeTypeFontGenerator rsFontGenerator;
-    private java.util.Set<String> finishedDialogues = new java.util.HashSet<>();
 
     // UI inspect text
     private Label inspectLabel;
@@ -153,17 +152,15 @@ public class GameScreen extends BaseScreen {
                         ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
                     }
                     game.getStage().setKeyboardFocus(null);
+
+                    if (game.getAutoSaveManager() != null) {
+                        game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
+                    }
                 }
             }
         });
 
-        game.getInventoryManager().clearInventory(); // Xóa sạch túi trước khi nạp
-        game.getInventoryManager().addItem("ca_vat_final");
-    //    game.getInventoryManager().addItem("chia_khoa_final");
-        game.getInventoryManager().addItem("chuoi_chia_khoa");
-       // game.getInventoryManager().addItem("dien_thoai_final");
-        game.getInventoryManager().addItem("keo_502_final");
-     //   game.getInventoryManager().addItem("chia_khoa_fixed_final");
+
         inventoryUI.refreshUI();
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
@@ -215,11 +212,11 @@ public class GameScreen extends BaseScreen {
         Label.LabelStyle rsStyle = new Label.LabelStyle(rsFont, Color.WHITE);
         rsUI = new RSUI(game.getStage(), rsStyle);
 
-            // Lắng nghe sự thay đổi từ RSManager
             game.getRsManager().addListener(new RSListener() {
             @Override
             public void onRSChanged(float oldValue, float newValue) {
-                rsUI.updateRS(newValue); // Cập nhật số mỗi khi RS thay đổi
+                rsUI.updateRS(newValue);
+                game.getGameState().setCurrentRS(newValue);
             }
 
             @Override
@@ -227,6 +224,8 @@ public class GameScreen extends BaseScreen {
                 // Logic glitch đã có ở MonitorSystem
             }
         });
+
+        rsUI.updateRS(game.getRsManager().getRS());
         // --- Interaction callback: GameScreen chỉ xử lý visual ---
         interactionSystem.setCallback(new InteractionCallback() {
             @Override
@@ -253,12 +252,14 @@ public class GameScreen extends BaseScreen {
                 Gdx.app.log("GameScreen", "Item collected: " + itemId);
 
                 inventoryUI.refreshUI();
-
                 hideInspectText();
-
                 showItemNotification(itemId);
 
                 // TODO: Triệu — play pickup sound (Có thể gọi hàm phát âm thanh từ ItemData sau)
+
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
+                }
             }
 
             @Override
@@ -292,7 +293,7 @@ public class GameScreen extends BaseScreen {
                     if (roomObj.properties == null) continue;
 
                     if (roomObj.properties.dialogueId != null
-                            && !finishedDialogues.contains(roomObj.properties.dialogueId)) {
+                            && !game.getGameState().isDialogueFinished(roomObj.properties.dialogueId)) {
                         onDialogueTriggered(roomObj.properties.dialogueId);
                         return;
 
@@ -316,7 +317,7 @@ public class GameScreen extends BaseScreen {
                 if (tree != null) {
                     dialogueEngine.loadDialogue(tree);
                     dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                    finishedDialogues.add(dialogueId);
+                    game.getGameState().markDialogueFinished(dialogueId);
                 }
             }
 
@@ -454,32 +455,39 @@ public class GameScreen extends BaseScreen {
         });
         inputHandler.activate();
 
-        // --- Load scene (chỉ lần đầu, không load lại khi resume từ PauseScreen) ---
         if (firstShow) {
-            sceneManager.changeScene(Constants.SCENE_BEDROOM);
-            screenFader.startFadeIn();
-            firstShow = false;
+            if (game.isLoadedGame) {
+                String savedRoom = game.getGameState().getCurrentRoom();
+                if (savedRoom == null) savedRoom = Constants.SCENE_BEDROOM;
 
-            // Hiện dialogue mở đầu ngay khi vào game
-            // intro_thought → kết thúc → tự động chạy intro_phone_call
-            DialogueTree introTree = dialogueDatabase.get("intro_thought");
-            if (introTree != null) {
-                dialogueEngine.loadDialogue(introTree);
-                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                finishedDialogues.add("intro_thought");
-
-                dialogueUI.setOnFinished(new Runnable() {
-                    @Override
-                    public void run() {
-                        DialogueTree phoneCall = dialogueDatabase.get("intro_phone_call");
-                        if (phoneCall != null) {
-                            dialogueEngine.loadDialogue(phoneCall);
-                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                            finishedDialogues.add("intro_phone_call");
-                        }
-                    }
-                });
+                sceneManager.changeScene(savedRoom);
+                screenFader.startFadeIn();
             }
+            else {
+                sceneManager.changeScene(Constants.SCENE_BEDROOM);
+                screenFader.startFadeIn();
+
+                DialogueTree introTree = dialogueDatabase.get("intro_thought");
+                if (introTree != null) {
+                    dialogueEngine.loadDialogue(introTree);
+                    dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                    game.getGameState().markDialogueFinished("intro_thought");
+
+                    dialogueUI.setOnFinished(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogueTree phoneCall = dialogueDatabase.get("intro_phone_call");
+                            if (phoneCall != null) {
+                                dialogueEngine.loadDialogue(phoneCall);
+                                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                game.getGameState().markDialogueFinished("intro_phone_call");
+                            }
+                        }
+                    });
+                }
+            }
+            firstShow = false;
+            game.isLoadedGame = false;
         }
     }
 
@@ -743,6 +751,14 @@ public class GameScreen extends BaseScreen {
 
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
-        screenFader.startFade(() -> sceneManager.changeScene(targetSceneId));
+        screenFader.startFade(() -> {
+            sceneManager.changeScene(targetSceneId);
+
+            game.getGameState().setCurrentRoom(targetSceneId);
+
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
+            }
+        });
     }
 }

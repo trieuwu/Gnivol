@@ -18,9 +18,13 @@ public class AsyncFileWriter {
             try {
                 // Tạo thư mục/file ẩn ~/.gnivol ở thư mục gốc của máy tính
                 FileHandle file = Gdx.files.external(".gnivol/" + path);
+
+                if (!file.parent().exists()) {
+                    file.parent().mkdirs();
+                }
+
                 file.writeString(json, false, "UTF-8");
 
-                // Trả callback về luồng chính (Main Thread) của LibGDX để update UI
                 Gdx.app.postRunnable(callback::onSuccess);
             } catch (Exception e) {
                 Gdx.app.postRunnable(() -> callback.onError(e));

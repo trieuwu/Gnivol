@@ -87,7 +87,19 @@ public class MainMenuScreen extends BaseScreen {
         });
 
         // Nút Load Game
-        TextButton loadBtn = new TextButton("Load Game", buttonStyle);
+        TextButton loadGameBtn = new TextButton("Load Game", buttonStyle);
+        loadGameBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean isLoaded = game.loadGame();
+                if (isLoaded) {
+                    game.setScreen(new GameScreen(game));
+                } else {
+                    Gdx.app.log("MainMenu", "No data save to load!");
+                    // TODO: Bạn có thể code thêm một dòng thông báo chữ đỏ "No Save Data" lướt qua màn hình ở đây
+                }
+            }
+        });
 
         // Nút Settings
         TextButton settingBtn = new TextButton("Settings", buttonStyle);
@@ -112,7 +124,7 @@ public class MainMenuScreen extends BaseScreen {
         float btnWidth = 25f;
         table.add(Title).left().width(btnWidth).padBottom(25f).row();
         table.add(newGameBtn).left().width(btnWidth).padBottom(25f).row();
-        table.add(loadBtn).left().width(btnWidth).padBottom(25f).row();
+        table.add(loadGameBtn).left().width(btnWidth).padBottom(25f).row();
         table.add(settingBtn).left().width(btnWidth).padBottom(25f).row();
         table.add(quitBtn).left().width(btnWidth).padBottom(25f).row();
         stage.addActor(table);
