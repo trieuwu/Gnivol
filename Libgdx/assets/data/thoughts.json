@@ -1,0 +1,12 @@
+{
+  "fridge": {
+    "LOW": "Lạnh quá... Có thứ gì đó đang cào ở bên trong... Không được mở!",
+    "MID": "Một chiếc tủ lạnh trống rỗng. Mùi ẩm mốc bốc lên khe khẽ...",
+    "HIGH": "Thịt đang thối rữa bên trong. Rất tốt. Mọi thứ nên trở về với cát bụi."
+  },
+  "bed": {
+    "LOW": "Có ai đó đang trốn dưới gầm giường... Tôi nghe thấy tiếng thở...",
+    "MID": "Giường của tôi. Nhưng tôi không hề thấy buồn ngủ.",
+    "HIGH": "Nơi hoàn hảo để chìm vào giấc ngủ vĩnh hằng."
+  }
+}
