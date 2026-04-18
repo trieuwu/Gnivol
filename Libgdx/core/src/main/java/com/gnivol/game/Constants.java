@@ -22,7 +22,7 @@ public final class Constants {
     public static final float RS_META_THRESHOLD = 80f;
 
     // Inventory
-    public static final int INVENTORY_MAX_SLOTS = 8;
+    public static final int INVENTORY_MAX_SLOTS = 20;
 
     // Save
     public static final String SAVE_FILE_NAME = "save.json";
@@ -41,6 +41,8 @@ public final class Constants {
     public static final String ASSETS_BACKGROUNDS = "textures/backgrounds/";
     public static final String ASSETS_OBJECTS = "textures/objects/";
     public static final String ASSETS_CHARACTERS = "textures/characters/";
+    public static final String DATA_ITEMS = "data/items.json";
+    public static final int MAX_INVENTORY_SLOTS = 25;
 
     private Constants() {}
 }
