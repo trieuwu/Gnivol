@@ -218,7 +218,7 @@ public class InventoryUI {
 
         stage.addActor(topTable);
 
-        highlightTexture = new Texture(Gdx.files.internal("images/thinking_final.png"));
+        highlightTexture = new Texture(Gdx.files.internal("images/item_frame.png"));
 
         highlight1 = new Image(highlightTexture);
         highlight1.setSize(95, 95);
