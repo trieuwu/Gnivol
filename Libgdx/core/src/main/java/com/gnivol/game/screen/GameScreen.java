@@ -13,14 +13,17 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.gnivol.game.Constants;
 import com.gnivol.game.GnivolGame;
 import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.model.RoomData;
+import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.model.dialogue.DialogueTree;
 import com.gnivol.game.system.dialogue.DialogueEngine;
+import com.gnivol.game.system.dialogue.ThoughtManager;
 import com.gnivol.game.system.interaction.InteractionCallback;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
 import com.gnivol.game.system.rs.RSListener;
@@ -29,6 +32,8 @@ import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.system.scene.ScreenFader;
 import com.gnivol.game.ui.DialogueUI;
 import com.gnivol.game.ui.RSUI;
+
+import java.util.*;
 
 public class GameScreen extends BaseScreen {
 
@@ -41,12 +46,12 @@ public class GameScreen extends BaseScreen {
     // Khai báo hệ thống hội thoại
     private DialogueEngine dialogueEngine;
     private DialogueUI dialogueUI;
-    private java.util.Map<String, DialogueTree> dialogueDatabase;
+    private Map<String, DialogueTree> dialogueDatabase;
 
     private RSUI rsUI;
     private BitmapFont rsFont;
     private FreeTypeFontGenerator rsFontGenerator;
-    private java.util.Set<String> finishedDialogues = new java.util.HashSet<>();
+    private Set<String> finishedDialogues = new HashSet<>();
 
     // UI inspect text
     private Label inspectLabel;
@@ -92,16 +97,16 @@ public class GameScreen extends BaseScreen {
 
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
-        dialogueUI = new DialogueUI(game.getStage(), vietnameseFont, dialogueEngine);
+        dialogueUI = new DialogueUI(game.getStage(), vietnameseFont, dialogueEngine, game.getRsManager());
 
         // --- ĐỌC FILE DIALOGUES.JSON ---
-        dialogueDatabase = new java.util.HashMap<>();
-        com.badlogic.gdx.utils.Json json = new com.badlogic.gdx.utils.Json();
+        dialogueDatabase = new HashMap<>();
+        Json json = new Json();
         json.setIgnoreUnknownFields(true);
         try {
             // Đọc file json và ép kiểu nó thành 1 mảng các DialogueTree
-            java.util.ArrayList<DialogueTree> treeList = json.fromJson(
-                java.util.ArrayList.class,
+            ArrayList<DialogueTree> treeList = json.fromJson(
+                ArrayList.class,
                 DialogueTree.class,
                 Gdx.files.internal("data/dialogues.json")
             );
@@ -195,6 +200,16 @@ public class GameScreen extends BaseScreen {
                     if (roomObj.properties.dialogueId != null
                             && !finishedDialogues.contains(roomObj.properties.dialogueId)) {
                         onDialogueTriggered(roomObj.properties.dialogueId);
+                        return;
+                    }
+                    // Chạy Inner Thought
+                    hideInspectText();
+                    ThoughtManager thoughtManager = new ThoughtManager();
+                    DialogueTree thoughtTree = thoughtManager.getThoughtTree(obj.getId(), game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        // Nạp thẳng cái Tree ảo này vào Engine
+                        dialogueEngine.loadDialogue(thoughtTree);
+                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
                         return;
                     }
 
@@ -329,6 +344,9 @@ public class GameScreen extends BaseScreen {
 
         sceneManager.update(delta);
         screenFader.update(delta);
+        if (dialogueUI != null) {
+            dialogueUI.update(delta);
+        }
         game.getStage().act(delta);
 
         // Scene

@@ -85,7 +85,7 @@
             "content": "Cậu điên à Linh? Cái quái gì đang xảy ra thế?!",
             "nextNodeId": "call_end_A",
             "textEffects": false,
-            "rsChange": 10
+            "rsChange": 35
           },
           {
             "id": "choice_B",
