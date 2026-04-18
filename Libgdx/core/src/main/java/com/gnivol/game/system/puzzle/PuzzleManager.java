@@ -66,18 +66,48 @@ public class PuzzleManager implements ISaveable {
     }
 
 
+
     @Override
     public void save(Json json) {
+        json.writeObjectStart("puzzleManager");
+
         json.writeValue("solvedPuzzles", solvedPuzzles.toArray());
+        json.writeValue("collectedItems", collectedItems.toArray());
+
+        json.writeObjectEnd();
     }
 
     @Override
     public void load(JsonValue jsonValue) {
+        JsonValue pzJson = jsonValue.get("puzzleManager");
         solvedPuzzles.clear();
-        if (jsonValue.has("solvedPuzzles")) {
-            for (JsonValue val : jsonValue.get("solvedPuzzles")) {
-                solvedPuzzles.add(val.asString());
+        collectedItems.clear();
+
+        if (pzJson != null) {
+            if (pzJson.has("solvedPuzzles")) {
+                for (JsonValue val : pzJson.get("solvedPuzzles")) {
+                    if (val.isString()) {
+                        solvedPuzzles.add(val.asString());
+                    } else if (val.isObject() && val.has("value")) {
+                        solvedPuzzles.add(val.getString("value"));
+                    }
+                }
+            }
+
+            if (pzJson.has("collectedItems")) {
+                for (JsonValue val : pzJson.get("collectedItems")) {
+                    if (val.isString()) {
+                        collectedItems.add(val.asString());
+                    } else if (val.isObject() && val.has("value")) {
+                        collectedItems.add(val.getString("value"));
+                    }
+                }
             }
         }
+    }
+
+    public void reset() {
+        solvedPuzzles.clear();
+        collectedItems.clear();
     }
 }

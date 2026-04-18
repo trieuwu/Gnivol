@@ -44,13 +44,6 @@ public class SceneManager {
         this.roomDataMap = new HashMap<>();
     }
 
-    /**
-     * Chuyển hẳn sang scene mới. Scene cũ bị exit() + dispose().
-     *
-     * Luồng: currentScene.exit() → load RoomData → tạo Scene mới → scene.enter()
-     *
-     * @param sceneId ID phòng (VD: "room_bedroom")
-     */
     public void changeScene(String sceneId) {
         // 1. Exit scene cũ (nếu có)
         if (currentScene != null) {
@@ -83,10 +76,6 @@ public class SceneManager {
         Gdx.app.log("SceneManager", "Changed to scene: " + sceneId);
     }
 
-    /**
-     * Push scene mới lên stack. Scene cũ bị TẠM DỪNG (không dispose).
-     * Dùng khi muốn quay lại scene cũ (VD: mở puzzle overlay).
-     */
     public void pushScene(String sceneId) {
         if (currentScene != null) {
             sceneStack.push(currentScene);
@@ -103,9 +92,6 @@ public class SceneManager {
         }
     }
 
-    /**
-     * Pop scene trên cùng, quay lại scene trước đó.
-     */
     public void popScene() {
         if (currentScene != null) {
             currentScene.exit();
@@ -120,27 +106,19 @@ public class SceneManager {
         }
     }
 
-    /**
-     * Update scene hiện tại. Gọi mỗi frame từ GameScreen.
-     */
     public void update(float delta) {
         if (currentScene != null) {
             currentScene.update(delta);
         }
     }
 
-    /**
-     * Render scene hiện tại. Gọi mỗi frame từ GameScreen.
-     */
     public void render(SpriteBatch batch) {
         if (currentScene != null) {
             currentScene.render(batch);
         }
     }
 
-    /**
-     * Dispose tất cả. Gọi khi thoát game.
-     */
+
     public void dispose() {
         if (currentScene != null) {
             currentScene.exit();
@@ -153,13 +131,19 @@ public class SceneManager {
         roomDataMap.clear();
     }
 
-    // --- Getter ---
+    public void reset() {
+        if (currentScene != null) {
+            currentScene.exit();
+            currentScene.dispose();
+            currentScene = null;
+        }
+        sceneStack.clear();
+        roomDataMap.clear();
+    }
 
     public Scene getCurrentScene() {
         return currentScene;
     }
-
-    // --- Listener interface ---
 
     public interface SceneChangeListener {
         void onSceneChanged(String newSceneId);

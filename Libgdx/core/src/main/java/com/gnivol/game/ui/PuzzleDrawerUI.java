@@ -95,6 +95,10 @@ public class PuzzleDrawerUI {
 
     public void hide() {
         window.setVisible(false);
+        if (window.getStage() != null) {
+            window.getStage().setKeyboardFocus(null);
+            window.getStage().setScrollFocus(null);
+        }
     }
 
     private void checkAnswer() {
