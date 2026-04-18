@@ -24,4 +24,10 @@ public interface InteractionCallback {
     void onObjectInteracted(GameObject obj);
 
     void onDialogueTriggered(String dialogueId);
+
+    void onOpenPuzzleOverlay(String puzzleId);
+
+    void onPuzzleFailed(String puzzleId);
+
+    void onInventoryFull();
 }

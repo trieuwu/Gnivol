@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gnivol.game.data.DataManager;
 import com.gnivol.game.model.RoomData;
+import com.gnivol.game.system.puzzle.PuzzleManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,18 +36,14 @@ public class SceneManager {
     // Callback khi chuyển scene xong (dùng cho ScreenFader)
     private SceneChangeListener changeListener;
 
-    public SceneManager() {
+    private final PuzzleManager puzzleManager;
+
+    public SceneManager(PuzzleManager puzzleManager) {
+        this.puzzleManager = puzzleManager;
         this.sceneStack = new Stack<>();
         this.roomDataMap = new HashMap<>();
     }
 
-    /**
-     * Chuyển hẳn sang scene mới. Scene cũ bị exit() + dispose().
-     *
-     * Luồng: currentScene.exit() → load RoomData → tạo Scene mới → scene.enter()
-     *
-     * @param sceneId ID phòng (VD: "room_bedroom")
-     */
     public void changeScene(String sceneId) {
         // 1. Exit scene cũ (nếu có)
         if (currentScene != null) {
@@ -68,7 +65,7 @@ public class SceneManager {
         }
 
         // 3. Tạo scene mới và enter
-        currentScene = new RoomScene(sceneId, roomData);
+        currentScene = new RoomScene(sceneId, roomData, puzzleManager);
         currentScene.enter();
 
         // 4. Thông báo listener (nếu có)
@@ -79,10 +76,6 @@ public class SceneManager {
         Gdx.app.log("SceneManager", "Changed to scene: " + sceneId);
     }
 
-    /**
-     * Push scene mới lên stack. Scene cũ bị TẠM DỪNG (không dispose).
-     * Dùng khi muốn quay lại scene cũ (VD: mở puzzle overlay).
-     */
     public void pushScene(String sceneId) {
         if (currentScene != null) {
             sceneStack.push(currentScene);
@@ -94,14 +87,11 @@ public class SceneManager {
         }
 
         if (roomData != null) {
-            currentScene = new RoomScene(sceneId, roomData);
+            currentScene = new RoomScene(sceneId, roomData, puzzleManager);
             currentScene.enter();
         }
     }
 
-    /**
-     * Pop scene trên cùng, quay lại scene trước đó.
-     */
     public void popScene() {
         if (currentScene != null) {
             currentScene.exit();
@@ -116,27 +106,19 @@ public class SceneManager {
         }
     }
 
-    /**
-     * Update scene hiện tại. Gọi mỗi frame từ GameScreen.
-     */
     public void update(float delta) {
         if (currentScene != null) {
             currentScene.update(delta);
         }
     }
 
-    /**
-     * Render scene hiện tại. Gọi mỗi frame từ GameScreen.
-     */
     public void render(SpriteBatch batch) {
         if (currentScene != null) {
             currentScene.render(batch);
         }
     }
 
-    /**
-     * Dispose tất cả. Gọi khi thoát game.
-     */
+
     public void dispose() {
         if (currentScene != null) {
             currentScene.exit();
@@ -149,13 +131,19 @@ public class SceneManager {
         roomDataMap.clear();
     }
 
-    // --- Getter ---
+    public void reset() {
+        if (currentScene != null) {
+            currentScene.exit();
+            currentScene.dispose();
+            currentScene = null;
+        }
+        sceneStack.clear();
+        roomDataMap.clear();
+    }
 
     public Scene getCurrentScene() {
         return currentScene;
     }
-
-    // --- Listener interface ---
 
     public interface SceneChangeListener {
         void onSceneChanged(String newSceneId);

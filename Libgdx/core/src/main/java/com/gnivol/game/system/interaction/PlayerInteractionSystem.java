@@ -18,13 +18,8 @@ import com.gnivol.game.system.scene.SceneManager;
 import com.gnivol.game.data.ItemDatabase;
 import com.gnivol.game.model.ItemData;
 import java.util.List;
+import com.gnivol.game.system.puzzle.PuzzleManager;
 
-/**
- * Xử lý tương tác của người chơi với object trong scene.
- *
- * Flow: unproject mouse → loop objects → bounds.contains → dispatch hành động.
- * Theo plan tuần 3 (Tùng): nhặt item → addItem → setCollected → fire RSEvent.
- */
 public class PlayerInteractionSystem {
 
     private final SceneManager sceneManager;
@@ -36,10 +31,13 @@ public class PlayerInteractionSystem {
     // Callback để GameScreen xử lý phần visual (inspect text, overlay, scene change)
     private InteractionCallback callback;
 
-    public PlayerInteractionSystem(SceneManager sceneManager, InventoryManager inventoryManager, RSManager rsManager) {
+    private final PuzzleManager puzzleManager;
+
+    public PlayerInteractionSystem(SceneManager sceneManager, InventoryManager inventoryManager, RSManager rsManager, PuzzleManager puzzleManager) {
         this.sceneManager = sceneManager;
         this.inventoryManager = inventoryManager;
         this.rsManager = rsManager;
+        this.puzzleManager = puzzleManager;
     }
 
     public void setCallback(InteractionCallback callback) {
@@ -129,15 +127,20 @@ public class PlayerInteractionSystem {
         ItemInfoComponent info = obj.getComponent(ItemInfoComponent.class);
         if (info == null || info.itemID == null) return;
 
+        if (inventoryManager.getItems().size() >= 25) {
+            if (callback != null) {
+                callback.onInventoryFull();
+            }
+            return;
+        }
+
         boolean isAdded = inventoryManager.addItem(info.itemID);
 
         if (isAdded) {
             collectible.isCollected = true;
             info.isPickedUp = true;
 
-            sceneManager.getCurrentScene().getEngine().removeEntity(obj.getEntity());
-
-            sceneManager.getCurrentScene().getGameObjects().remove(obj);
+            puzzleManager.markItemCollected(info.itemID);
 
             if (obj.hasComponent(RSModifierComponent.class)) {
                 RSModifierComponent rsMod = obj.getComponent(RSModifierComponent.class);
@@ -145,6 +148,13 @@ public class PlayerInteractionSystem {
                     rsManager.processEvent(new RSEvent(RSEventType.ITEM_INTERACTION, rsMod.rsChangeValue, info.itemID));
                 }
             }
+
+            if (obj.getEntity() != null) {
+                obj.getEntity().removeAll();
+            }
+
+            sceneManager.getCurrentScene().getEngine().removeEntity(obj.getEntity());
+            sceneManager.getCurrentScene().getGameObjects().remove(obj);
 
             if (callback != null) {
                 callback.onItemCollected(obj, info.itemID);

@@ -2,9 +2,13 @@ package com.gnivol.game.system.inventory;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.gnivol.game.Constants;
+import com.gnivol.game.system.save.ISaveable;
 
-public class InventoryManager {
+public class InventoryManager implements ISaveable {
     private ArrayList<String> items;
 
     public InventoryManager() {
@@ -36,6 +40,33 @@ public class InventoryManager {
             Gdx.app.log("Inventory", "Remove item: " + itemID);
         }
     }
+
+    @Override
+    public void save(Json json) {
+        json.writeObjectStart("inventoryManager");
+
+        json.writeValue("items", items.toArray());
+        json.writeObjectEnd();
+    }
+
+    @Override
+    public void load(JsonValue jsonValue) {
+        JsonValue invJson = jsonValue.get("inventoryManager");
+        if (invJson != null) {
+            JsonValue itemsJson = invJson.get("items");
+            items.clear();
+            if (itemsJson != null && itemsJson.isArray()) {
+                for (JsonValue item : itemsJson) {
+                    if (item.isString()) {
+                        items.add(item.asString());
+                    } else if (item.isObject() && item.has("value")) {
+                        items.add(item.getString("value"));
+                    }
+                }
+            }
+        }
+    }
+
 
     public boolean hasItem(String itemID) {
         return items.contains(itemID);

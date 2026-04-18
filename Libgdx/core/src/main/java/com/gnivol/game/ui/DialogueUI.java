@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.gnivol.game.GnivolGame;
 import com.gnivol.game.model.dialogue.Choice;
 import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.system.dialogue.DialogueEngine;
@@ -29,24 +30,23 @@ public class DialogueUI {
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
-    private TextButton.TextButtonStyle btnHoverStyle;
 
     private String fullContentText = "";      // Chứa toàn bộ nội dung câu thoại
     private float typeTimer = 0f;             // Đồng hồ đếm ngược để gõ chữ
-    private int typeIndex = 0;                // // Vị trí chữ đang gõ tới đâu
+    private int typeIndex = 0;                // Vị trí chữ đang gõ tới đâu
     private final float TYPE_SPEED = 0.05f;   // 0.05 giây hiện 1 chữ
-    private boolean isTyping = false;         // Đang goc hay đã gõ xong
+    private boolean isTyping = false;         // Đang gõ hay đã gõ xong
     private final RSManager rsManager;
+    private GnivolGame game;
     // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
     private Runnable onFinished;
 
-    public DialogueUI(Stage stage, BitmapFont font, DialogueEngine engine,RSManager rsManager) {
+    public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
+        this.game = game;
         this.engine = engine;
         this.rsManager = rsManager;
-        // 1. Tạo style chữ từ font tiếng Việt của bạn
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        // Tạo nút bấm (có nền xám mờ để phân biệt)
         Pixmap btnPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         btnPix.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
         btnPix.fill();
@@ -96,7 +96,7 @@ public class DialogueUI {
         });
 
         speakerLabel = new Label("", labelStyle);
-        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f); // Tên màu vàng nhạt
+        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f);
 
         contentLabel = new Label("", labelStyle);
         contentLabel.setWrap(true);
@@ -146,11 +146,18 @@ public class DialogueUI {
             }
         }
 
-        // 2. THÊM !isThought VÀO ĐÂY (Nghĩa là: Có RSManager VÀ KHÔNG PHẢI là suy nghĩ thì mới Glitch)
+        // Replace {player} placeholder
+        String rawText = node.content;
+        if (game != null && game.getGameState() != null) {
+            String playerName = game.getGameState().getPlayerName();
+            rawText = rawText.replace("{player}", playerName);
+        }
+
+        // Glitch text nếu có RSManager và không phải suy nghĩ
         if (rsManager != null && !isThought) {
-            fullContentText = GlitchTextRenderer.applyGlitch(node.content, rsManager.getRS());
+            fullContentText = GlitchTextRenderer.applyGlitch(rawText, rsManager.getRS());
         } else {
-            fullContentText = node.content; // Suy nghĩ thì lấy nguyên văn chữ gốc
+            fullContentText = rawText;
         }
 
         typeIndex = 0;
@@ -196,6 +203,11 @@ public class DialogueUI {
             for (int i = 0; i < node.choices.size(); i++) {
                 final int index = i;
                 Choice choice = node.choices.get(i);
+
+                String choiceText = choice.content;
+                if (game != null && game.getGameState() != null) {
+                    choiceText = choiceText.replace("{player}", game.getGameState().getPlayerName());
+                }
 
                 TextButton btn = new TextButton(choice.content, btnStyle);
                 if (choice.rsChange < 0) {
