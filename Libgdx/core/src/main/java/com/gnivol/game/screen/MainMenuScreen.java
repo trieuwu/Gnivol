@@ -28,6 +28,8 @@ public class MainMenuScreen extends BaseScreen {
 
     @Override
     public void show() {
+        game.getStage().clear();
+
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         Gdx.input.setInputProcessor(stage);
 
@@ -67,6 +69,7 @@ public class MainMenuScreen extends BaseScreen {
         newGameBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.resetGameState();
                 game.setScreen(new GameScreen(game));
             }
         });

@@ -78,6 +78,8 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void show() {
+        game.getStage().clear();
+
         sceneManager = game.getSceneManager();
         screenFader = game.getScreenFader();
         inputHandler = game.getInputHandler();
@@ -121,17 +123,15 @@ public class GameScreen extends BaseScreen {
             @Override
             public void onPuzzleSolved(String puzzleId) {
                 if ("puzzle_drawer".equals(puzzleId)) {
-                    // Thêm chìa khóa vào túi (Thay "bathroom_key" bằng ID chìa khóa thực tế trong items.json của bạn)
                     game.getInventoryManager().addItem("chia_khoa_final");
                     inventoryUI.refreshUI();
 
-                    // Bắn thông báo chúc mừng
                     showNotification("Cạch! Ngăn kéo đã mở. Nhận được chìa khóa!", Color.GREEN);
 
-                    // (Tùy chọn) Đổi hình ảnh cái tủ thành trạng thái mở
                     if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
                         ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
                     }
+                    game.getStage().setKeyboardFocus(null);
                 }
             }
         });
@@ -146,7 +146,7 @@ public class GameScreen extends BaseScreen {
         inventoryUI.refreshUI();
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
-        dialogueUI = new DialogueUI(game.getStage(), vietnameseFont, dialogueEngine);
+        dialogueUI = new DialogueUI(game, game.getStage(), vietnameseFont, dialogueEngine);
 
         // --- ĐỌC FILE DIALOGUES.JSON ---
         dialogueDatabase = new java.util.HashMap<>();

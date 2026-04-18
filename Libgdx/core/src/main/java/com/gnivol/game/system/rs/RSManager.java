@@ -69,6 +69,12 @@ public class RSManager {
             }
         }
     }
+    public void reset() {
+        float oldRS = this.currentRS;
+        this.currentRS = 35f;
+
+        notifyListeners(oldRS, this.currentRS);
+    }
 
     // --- Getters ---
     public float getRS() { return currentRS; }

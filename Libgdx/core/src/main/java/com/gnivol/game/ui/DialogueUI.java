@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.gnivol.game.GnivolGame;
 import com.gnivol.game.model.dialogue.Choice;
 import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.system.dialogue.DialogueEngine;
@@ -27,18 +28,17 @@ public class DialogueUI {
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
-    private TextButton.TextButtonStyle btnHoverStyle;
 
+    private GnivolGame game;
     // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
     private Runnable onFinished;
 
-    public DialogueUI(Stage stage, BitmapFont font, DialogueEngine engine) {
+    public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine) {
+        this.game = game;
         this.engine = engine;
 
-        // 1. Tạo style chữ từ font tiếng Việt của bạn
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        // Tạo nút bấm (có nền xám mờ để phân biệt)
         Pixmap btnPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         btnPix.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
         btnPix.fill();
@@ -81,7 +81,7 @@ public class DialogueUI {
         });
 
         speakerLabel = new Label("", labelStyle);
-        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f); // Tên màu vàng nhạt
+        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f);
 
         contentLabel = new Label("", labelStyle);
         contentLabel.setWrap(true);
@@ -116,13 +116,25 @@ public class DialogueUI {
 
         rootTable.setVisible(true);
         speakerLabel.setText(node.speaker != null ? node.speaker : "");
-        contentLabel.setText(node.content);
+
+        String rawText = node.content;
+        if (game != null && game.getGameState() != null) {
+            String playerName = game.getGameState().getPlayerName();
+            rawText = rawText.replace("{player}", playerName);
+        }
+        contentLabel.setText(rawText);
+
         choicesTable.clearChildren();
 
         if (node.hasChoice()) {
             for (int i = 0; i < node.choices.size(); i++) {
                 final int index = i;
                 Choice choice = node.choices.get(i);
+
+                String choiceText = choice.content;
+                if (game != null && game.getGameState() != null) {
+                    choiceText = choiceText.replace("{player}", game.getGameState().getPlayerName());
+                }
 
                 TextButton btn = new TextButton(choice.content, btnStyle);
                 if (choice.rsChange < 0) {

@@ -66,18 +66,40 @@ public class PuzzleManager implements ISaveable {
     }
 
 
+
     @Override
     public void save(Json json) {
+        json.writeObjectStart("puzzleManager");
+
         json.writeValue("solvedPuzzles", solvedPuzzles.toArray());
+        json.writeValue("collectedItems", collectedItems.toArray());
+
+        json.writeObjectEnd();
     }
 
     @Override
     public void load(JsonValue jsonValue) {
+        JsonValue pzJson = jsonValue.get("puzzleManager");
         solvedPuzzles.clear();
-        if (jsonValue.has("solvedPuzzles")) {
-            for (JsonValue val : jsonValue.get("solvedPuzzles")) {
-                solvedPuzzles.add(val.asString());
+        if (pzJson != null) {
+            solvedPuzzles.clear();
+            if (pzJson.has("solvedPuzzles")) {
+                for (JsonValue val : pzJson.get("solvedPuzzles")) {
+                    solvedPuzzles.add(val.asString());
+                }
+            }
+
+            collectedItems.clear();
+            if (pzJson.has("collectedItems")) {
+                for (JsonValue val : pzJson.get("collectedItems")) {
+                    collectedItems.add(val.asString());
+                }
             }
         }
+    }
+
+    public void reset() {
+        solvedPuzzles.clear();
+        collectedItems.clear();
     }
 }
