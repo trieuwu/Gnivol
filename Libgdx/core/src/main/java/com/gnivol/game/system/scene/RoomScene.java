@@ -28,8 +28,11 @@ public class RoomScene extends Scene {
 
     private static final float BG_MARGIN = 40f;
 
-    public RoomScene(String sceneId, RoomData roomData) {
+    private final com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
+
+    public RoomScene(String sceneId, RoomData roomData, com.gnivol.game.system.puzzle.PuzzleManager puzzleManager) {
         super(sceneId, roomData);
+        this.puzzleManager = puzzleManager;
         this.objectTextures = new HashMap<>();
         this.altTextures = new HashMap<>();
         this.objectStates = new HashMap<>();
@@ -43,6 +46,12 @@ public class RoomScene extends Scene {
 
         if (roomData != null && roomData.getObjects() != null) {
             for (RoomData.RoomObject objData : roomData.getObjects()) {
+                if (objData.properties != null && objData.properties.itemId != null) {
+                    if (puzzleManager.isItemCollected(objData.properties.itemId)) {
+                        continue;
+                    }
+                }
+
                 GameObject obj = new GameObject(objData.id, objData.type);
 
                 TransformComponent transform = new TransformComponent();
@@ -131,7 +140,8 @@ public class RoomScene extends Scene {
 
         if (roomData == null || roomData.getObjects() == null) return;
         for (RoomData.RoomObject objData : roomData.getObjects()) {
-            // Chọn texture theo state hiện tại
+            if (findObjectById(objData.id) == null) continue;
+
             String state = objectStates.getOrDefault(objData.id, "default");
             Texture tex;
             if ("default".equals(state)) {

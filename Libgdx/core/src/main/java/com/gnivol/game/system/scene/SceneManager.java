@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gnivol.game.data.DataManager;
 import com.gnivol.game.model.RoomData;
+import com.gnivol.game.system.puzzle.PuzzleManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +36,10 @@ public class SceneManager {
     // Callback khi chuyển scene xong (dùng cho ScreenFader)
     private SceneChangeListener changeListener;
 
-    public SceneManager() {
+    private final PuzzleManager puzzleManager;
+
+    public SceneManager(PuzzleManager puzzleManager) {
+        this.puzzleManager = puzzleManager;
         this.sceneStack = new Stack<>();
         this.roomDataMap = new HashMap<>();
     }
@@ -68,7 +72,7 @@ public class SceneManager {
         }
 
         // 3. Tạo scene mới và enter
-        currentScene = new RoomScene(sceneId, roomData);
+        currentScene = new RoomScene(sceneId, roomData, puzzleManager);
         currentScene.enter();
 
         // 4. Thông báo listener (nếu có)
@@ -94,7 +98,7 @@ public class SceneManager {
         }
 
         if (roomData != null) {
-            currentScene = new RoomScene(sceneId, roomData);
+            currentScene = new RoomScene(sceneId, roomData, puzzleManager);
             currentScene.enter();
         }
     }

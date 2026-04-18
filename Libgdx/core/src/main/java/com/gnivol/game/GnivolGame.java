@@ -10,6 +10,7 @@ import com.gnivol.game.audio.AudioManager;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.screen.MainMenuScreen;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
+import com.gnivol.game.system.inventory.CraftingManager;
 import com.gnivol.game.system.inventory.InventoryManager;
 import com.gnivol.game.system.rs.RSManager;
 import com.gnivol.game.system.scene.SceneManager;
@@ -44,15 +45,16 @@ public class GnivolGame extends Game {
     // RSManager: quản lý chỉ số Reality Stability
     private RSManager rsManager;
 
-    // InventoryManager: quản lý kho đồ người chơi (max 8 slot)
+    // InventoryManager: quản lý kho đồ người chơi (max 25 slot)
     private InventoryManager inventoryManager;
-
+    private CraftingManager craftingManager;
     // PlayerInteractionSystem: phát hiện click trúng object + dispatch hành động
     private PlayerInteractionSystem playerInteractionSystem;
 
     // AudioManager: lưu volume nhạc nền + hiệu ứng
     private AudioManager audioManager;
 
+    private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     /**
      * Gọi 1 lần khi game khởi động.
      * Khởi tạo TẤT CẢ manager theo đúng thứ tự dependency.
@@ -65,11 +67,9 @@ public class GnivolGame extends Game {
         // Tạo Ashley ECS Engine (quản lý Entity + System)
         ashleyEngine = new Engine();
 
-        // --- Khởi tạo các manager (thứ tự quan trọng vì có dependency) ---
+        puzzleManager = new com.gnivol.game.system.puzzle.PuzzleManager();
 
-        // 1. SceneManager: không phụ thuộc ai
-        sceneManager = new SceneManager();
-
+        sceneManager = new SceneManager(puzzleManager);
         // 2. ScreenFader: không phụ thuộc ai, tốc độ fade 2.5 (fade trong ~0.4 giây)
         screenFader = new ScreenFader(2.5f, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
 
@@ -81,11 +81,11 @@ public class GnivolGame extends Game {
 
         // 5. InventoryManager: không phụ thuộc ai
         inventoryManager = new InventoryManager();
-
+        craftingManager = new CraftingManager();
         // 6. PlayerInteractionSystem: phụ thuộc SceneManager + InventoryManager + RSManager
         //    Vì khi click object, nó cần: tìm object (SceneManager), nhặt đồ (InventoryManager),
         //    đổi RS (RSManager)
-        playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager);
+        playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager, puzzleManager);
 
         audioManager = new AudioManager();
 
@@ -168,6 +168,9 @@ public class GnivolGame extends Game {
         return inventoryManager;
     }
 
+    public CraftingManager getCraftingManager() {
+        return craftingManager;
+    }
     /** PlayerInteractionSystem: phát hiện click trúng object */
     public PlayerInteractionSystem getPlayerInteractionSystem() {
         return playerInteractionSystem;
@@ -176,5 +179,9 @@ public class GnivolGame extends Game {
     /** AudioManager: lưu volume */
     public AudioManager getAudioManager() {
         return audioManager;
+    }
+
+    public com.gnivol.game.system.puzzle.PuzzleManager getPuzzleManager() {
+        return puzzleManager;
     }
 }
