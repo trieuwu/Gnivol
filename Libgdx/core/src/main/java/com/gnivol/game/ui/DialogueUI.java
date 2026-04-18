@@ -14,9 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.gnivol.game.GnivolGame;
 import com.gnivol.game.model.dialogue.Choice;
 import com.gnivol.game.model.dialogue.DialogueNode;
 import com.gnivol.game.system.dialogue.DialogueEngine;
+import com.gnivol.game.system.dialogue.GlitchTextRenderer;
+import com.gnivol.game.system.rs.RSManager;
 
 public class DialogueUI {
     private Table rootTable;
@@ -27,18 +30,23 @@ public class DialogueUI {
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
-    private TextButton.TextButtonStyle btnHoverStyle;
 
+    private String fullContentText = "";      // Chứa toàn bộ nội dung câu thoại
+    private float typeTimer = 0f;             // Đồng hồ đếm ngược để gõ chữ
+    private int typeIndex = 0;                // Vị trí chữ đang gõ tới đâu
+    private final float TYPE_SPEED = 0.05f;   // 0.05 giây hiện 1 chữ
+    private boolean isTyping = false;         // Đang gõ hay đã gõ xong
+    private final RSManager rsManager;
+    private GnivolGame game;
     // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
     private Runnable onFinished;
 
-    public DialogueUI(Stage stage, BitmapFont font, DialogueEngine engine) {
+    public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
+        this.game = game;
         this.engine = engine;
-
-        // 1. Tạo style chữ từ font tiếng Việt của bạn
+        this.rsManager = rsManager;
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        // Tạo nút bấm (có nền xám mờ để phân biệt)
         Pixmap btnPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         btnPix.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
         btnPix.fill();
@@ -72,8 +80,15 @@ public class DialogueUI {
         dialogBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Chỉ cho phép click next nếu KHÔNG có lựa chọn (bắt buộc phải bấm nút A/B)
-                if (engine.getCurrentNode() != null && !engine.getCurrentNode().hasChoice()) {
+                if (isTyping) {
+                    // Đang gõ thì click để hiện full text luôn
+                    typeIndex = fullContentText.length();
+                    isTyping = false;
+                    updateContentLabel();
+                    showChoices();
+                }
+                else if (engine.getCurrentNode() != null && !engine.getCurrentNode().hasChoice()) {
+                    // Đã gõ xong và không có lựa chọn -> đi tiếp
                     engine.advance();
                     displayNode(engine.getCurrentNode());
                 }
@@ -81,7 +96,7 @@ public class DialogueUI {
         });
 
         speakerLabel = new Label("", labelStyle);
-        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f); // Tên màu vàng nhạt
+        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f);
 
         contentLabel = new Label("", labelStyle);
         contentLabel.setWrap(true);
@@ -108,15 +123,80 @@ public class DialogueUI {
             rootTable.setVisible(false);
             if (onFinished != null) {
                 Runnable callback = onFinished;
-                onFinished = null;  // chỉ chạy 1 lần
+                onFinished = null;
                 callback.run();
             }
             return;
         }
 
         rootTable.setVisible(true);
-        speakerLabel.setText(node.speaker != null ? node.speaker : "");
-        contentLabel.setText(node.content);
+
+        boolean isThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
+
+        // Xử lý Inner Thoughts (Suy nghĩ trong đầu)
+        if (isThought) {
+            speakerLabel.setText("");
+            contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Màu xám nhạt
+        } else {
+            speakerLabel.setText(node.speaker);
+            contentLabel.setColor(Color.WHITE);
+            // Tone shift nếu RS > 65
+            if (rsManager != null && rsManager.getRS() > 65f) {
+                contentLabel.setColor(1f, 0.4f, 0.4f, 1f); // Đỏ rùng rợn
+            }
+        }
+
+        // Replace {player} placeholder
+        String rawText = node.content;
+        if (game != null && game.getGameState() != null) {
+            String playerName = game.getGameState().getPlayerName();
+            rawText = rawText.replace("{player}", playerName);
+        }
+
+        // Glitch text nếu có RSManager và không phải suy nghĩ
+        if (rsManager != null && !isThought) {
+            fullContentText = GlitchTextRenderer.applyGlitch(rawText, rsManager.getRS());
+        } else {
+            fullContentText = rawText;
+        }
+
+        typeIndex = 0;
+        isTyping = true;
+        typeTimer = 0f;
+
+        updateContentLabel(); // Hiện khung thoại trống trơn trước
+        choicesTable.clearChildren(); // Giấu hết nút bấm đi, bao giờ gõ xong mới hiện
+    }
+
+    // Hàm này sẽ được GameScreen gọi liên tục 60 lần/giây
+    public void update(float delta) {
+        if (!rootTable.isVisible()) return;
+
+        if (isTyping) {
+            typeTimer += delta;
+            // Cứ qua 0.05 giây thì nhích thêm 1 ký tự
+            if (typeTimer >= TYPE_SPEED) {
+                typeTimer = 0f;
+                typeIndex++;
+                if (typeIndex >= fullContentText.length()) {
+                    // Gõ xong rồi
+                    typeIndex = fullContentText.length();
+                    isTyping = false;
+                    showChoices(); // Gõ xong mới ném nút A/B ra
+                }
+                updateContentLabel();
+            }
+        }
+    }
+
+    private void updateContentLabel() {
+        contentLabel.setText(fullContentText.substring(0, typeIndex));
+    }
+
+    private void showChoices() {
+        DialogueNode node = engine.getCurrentNode();
+        if (node == null) return;
+
         choicesTable.clearChildren();
 
         if (node.hasChoice()) {
@@ -124,9 +204,14 @@ public class DialogueUI {
                 final int index = i;
                 Choice choice = node.choices.get(i);
 
+                String choiceText = choice.content;
+                if (game != null && game.getGameState() != null) {
+                    choiceText = choiceText.replace("{player}", game.getGameState().getPlayerName());
+                }
+
                 TextButton btn = new TextButton(choice.content, btnStyle);
                 if (choice.rsChange < 0) {
-                    btn.setColor(1f, 0.5f, 0.5f, 1f); // Lựa chọn nguy hiểm -> Nút hơi đỏ
+                    btn.setColor(1f, 0.5f, 0.5f, 1f);
                 }
 
                 btn.addListener(new ClickListener() {
@@ -139,7 +224,6 @@ public class DialogueUI {
                 choicesTable.add(btn).width(600).pad(5).row();
             }
         } else {
-            // Gợi ý nhấp nháy cho người chơi biết click để tiếp tục
             Label hintLabel = new Label("▼ Click để tiếp tục", labelStyle);
             hintLabel.setColor(0.6f, 0.6f, 0.6f, 1f);
             choicesTable.add(hintLabel).align(Align.right).padRight(20);

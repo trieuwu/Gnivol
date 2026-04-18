@@ -27,6 +27,7 @@ public class InventoryUI {
 
     private Table quickbarTable;
     private Table backpackTable;
+    private Table topTable;
 
     private String selectedItem1 = null;
     private String selectedItem2 = null;
@@ -84,7 +85,7 @@ public class InventoryUI {
         ImageButton.ImageButtonStyle slotStyleBackpack = new ImageButton.ImageButtonStyle();
         slotStyleBackpack.up = transBg;
 
-        Table topTable = new Table();
+        topTable = new Table();
         topTable.setFillParent(true);
         topTable.top().left().pad(20f);
 
@@ -423,6 +424,22 @@ public class InventoryUI {
             Actions.parallel(Actions.fadeOut(1.5f), Actions.moveBy(0, -30f, 1.5f)),
             Actions.removeActor()
         ));
+    }
+    public void setVisible(boolean visible) {
+        if (topTable != null) topTable.setVisible(visible);
+        if (!visible) {
+            if (quickbarTable != null) quickbarTable.setVisible(false);
+            if (backpackTable != null && backpackTable.isVisible()) {
+                backpackTable.setVisible(false);
+                resetHighlights();
+            }
+        } else {
+            if (backpackTable != null && backpackTable.isVisible()) {
+                if (quickbarTable != null) quickbarTable.setVisible(false);
+            } else {
+                if (quickbarTable != null) quickbarTable.setVisible(true);
+            }
+        }
     }
 }
 
