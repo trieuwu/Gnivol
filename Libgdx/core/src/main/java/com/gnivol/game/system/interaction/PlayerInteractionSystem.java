@@ -15,15 +15,11 @@ import com.gnivol.game.system.rs.RSEventType;
 import com.gnivol.game.system.rs.RSManager;
 import com.gnivol.game.system.scene.Scene;
 import com.gnivol.game.system.scene.SceneManager;
-
+import com.gnivol.game.data.ItemDatabase;
+import com.gnivol.game.model.ItemData;
 import java.util.List;
+import com.gnivol.game.system.puzzle.PuzzleManager;
 
-/**
- * Xử lý tương tác của người chơi với object trong scene.
- *
- * Flow: unproject mouse → loop objects → bounds.contains → dispatch hành động.
- * Theo plan tuần 3 (Tùng): nhặt item → addItem → setCollected → fire RSEvent.
- */
 public class PlayerInteractionSystem {
 
     private final SceneManager sceneManager;
@@ -35,10 +31,13 @@ public class PlayerInteractionSystem {
     // Callback để GameScreen xử lý phần visual (inspect text, overlay, scene change)
     private InteractionCallback callback;
 
-    public PlayerInteractionSystem(SceneManager sceneManager, InventoryManager inventoryManager, RSManager rsManager) {
+    private final PuzzleManager puzzleManager;
+
+    public PlayerInteractionSystem(SceneManager sceneManager, InventoryManager inventoryManager, RSManager rsManager, PuzzleManager puzzleManager) {
         this.sceneManager = sceneManager;
         this.inventoryManager = inventoryManager;
         this.rsManager = rsManager;
+        this.puzzleManager = puzzleManager;
     }
 
     public void setCallback(InteractionCallback callback) {
@@ -89,30 +88,32 @@ public class PlayerInteractionSystem {
      * Dispatch hành động dựa trên component của object.
      */
     private void dispatch(GameObject obj) {
-        // 1. Inspect text
+        if (obj.hasComponent(CollectibleComponent.class)) {
+            CollectibleComponent collectible = obj.getComponent(CollectibleComponent.class);
+            if (!collectible.isCollected) {
+                collectItem(obj, collectible);
+                return;
+            }
+        }
+
         if (obj.hasComponent(ItemInfoComponent.class)) {
             ItemInfoComponent info = obj.getComponent(ItemInfoComponent.class);
+
+            ItemData data = ItemDatabase.getInstance().getItemData(info.itemID);
+            if (data != null && data.description != null) {
+                Gdx.app.log("Examine", "Description: " + data.description);
+            }
+
             if (info.inspectText != null && callback != null) {
                 callback.onShowInspectText(info.inspectText);
             }
         }
 
-        // 2. Nhặt item (collectible chưa bị nhặt)
-        if (obj.hasComponent(CollectibleComponent.class)) {
-            CollectibleComponent collectible = obj.getComponent(CollectibleComponent.class);
-            if (!collectible.isCollected) {
-                collectItem(obj, collectible);
-                return; // Nhặt xong thì không dispatch thêm
-            }
-        }
-
-        // 3. Door → chuyển scene
         if ("door".equals(obj.getType())) {
             handleDoor(obj);
             return;
         }
 
-        // 4. Object có alt textures → mở overlay
         if (callback != null) {
             callback.onObjectInteracted(obj);
         }
@@ -124,35 +125,40 @@ public class PlayerInteractionSystem {
      */
     private void collectItem(GameObject obj, CollectibleComponent collectible) {
         ItemInfoComponent info = obj.getComponent(ItemInfoComponent.class);
-        if (info == null) return;
+        if (info == null || info.itemID == null) return;
 
-        String itemId = info.itemID;
-        if (itemId == null) return;
-
-        // addItem vào inventory
-        inventoryManager.addItem(itemId);
-        Gdx.app.log("Interact", "Collected: " + itemId);
-
-        // setCollected
-        collectible.isCollected = true;
-        info.isPickedUp = true;
-
-        // Fire RSEvent nếu object có RSModifier
-        if (obj.hasComponent(RSModifierComponent.class)) {
-            RSModifierComponent rsMod = obj.getComponent(RSModifierComponent.class);
-            if (rsMod.rsChangeValue != 0) {
-                RSEvent event = new RSEvent(
-                    RSEventType.ITEM_INTERACTION,
-                    rsMod.rsChangeValue,
-                    itemId
-                );
-                rsManager.processEvent(event);
+        if (inventoryManager.getItems().size() >= 25) {
+            if (callback != null) {
+                callback.onInventoryFull();
             }
+            return;
         }
 
-        // Callback để GameScreen cập nhật visual (ẩn object, animation, sound...)
-        if (callback != null) {
-            callback.onItemCollected(obj, itemId);
+        boolean isAdded = inventoryManager.addItem(info.itemID);
+
+        if (isAdded) {
+            collectible.isCollected = true;
+            info.isPickedUp = true;
+
+            puzzleManager.markItemCollected(info.itemID);
+
+            if (obj.hasComponent(RSModifierComponent.class)) {
+                RSModifierComponent rsMod = obj.getComponent(RSModifierComponent.class);
+                if (rsMod.rsChangeValue != 0) {
+                    rsManager.processEvent(new RSEvent(RSEventType.ITEM_INTERACTION, rsMod.rsChangeValue, info.itemID));
+                }
+            }
+
+            if (obj.getEntity() != null) {
+                obj.getEntity().removeAll();
+            }
+
+            sceneManager.getCurrentScene().getEngine().removeEntity(obj.getEntity());
+            sceneManager.getCurrentScene().getGameObjects().remove(obj);
+
+            if (callback != null) {
+                callback.onItemCollected(obj, info.itemID);
+            }
         }
     }
 

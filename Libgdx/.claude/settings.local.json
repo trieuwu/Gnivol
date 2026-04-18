@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew desktop:run)"
+      "Bash(./gradlew desktop:run)",
+      "Bash(./gradlew core:compileJava)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

@@ -1,66 +1,117 @@
-{
-  "id": "scene1_phone_call",
-  "nodes": [
-    {
-      "id": "start",
-      "content": "Alo? Hnil à? Nghe tao nói này... tao vừa đạt đượ 1 chiến tích hiển hách lắm.",
-      "textEffects": false,
-      "hasChoice": false,
-      "isClosed": false,
-      "next": "friend_reveal"
-    },
-    {
-      "id": "friend_reveal",
-      "content": "Sau bao nhiêu ngày thức trắng cày game, uống Sting thay nước lã... cuối cùng tao cũng biết được rồi. Ngày 23 tháng 1 năm 2040 là ngày tao sẽ chết, mày nhớ đến hôm đó để chúc mừng tao nha",
-      "textEffects": false,
-      "hasChoice": false,
-      "isClosed": false,
-      "next": "hnil_response"
-    },
-    {
-      "id": "hnil_response",
-      "content": "...",
-      "textEffects": false,
-      "hasChoice": true,
-      "isClosed": false,
-      "choices": [
-        {
-          "id": "choice_normal",
-          "content": "Mày nói cái gì vậy? Nghe có gì hay ho mà khoe?",
-          "textEffects": false,
-          "isClosed": false,
-          "hasNextNode": true,
-          "rsChange": -100,
-          "nextNode": "bad_end",
-          "hasChosen": false
-        },
-        {
-          "id": "choice_lore",
-          "content": "Chúc mừng. Thành quả xứng đáng đấy. Đến hôm mày chết, tao sẽ có mặt. Còn bây giờ... tao cũng phải đi tắm đêm đây, tao cũng sắp đạt được thành tựu này rồi ",
-          "textEffects": false,
-          "isClosed": false,
-          "hasNextNode": true,
-          "rsChange": 0,
-          "nextNode": "end_call",
-          "hasChosen": false
-        }
-      ]
-    },
-    {
-      "id": "bad_end",
-      "content": "...Khoan đã. Mày không phải Hnil. Hnil sẽ không bao giờ nói thế. Mày là ai?",
-      "textEffects": true,
-      "hasChoice": false,
-      "isClosed": true,
-      "next": null
-    },
-    {
-      "id": "end_call",
-      "content": "...Ừ. Vậy nhé. Tắt máy đây.",
-      "textEffects": false,
-      "hasChoice": false,
-      "isClosed": true,
-      "next": null
-    }
-  ]
-}
+[
+  {
+    "dialogueId": "intro_thought",
+    "startNodeId": "thought_01",
+    "nodes": [
+      {
+        "id": "thought_01",
+        "speaker": "Suy nghĩ",
+        "content": "Sáng rồi sao...? Tiếng chuông reo nhức óc quá, khoan sâu cả vào màng nhĩ.",
+        "textEffects": false,
+        "nextNodeId": "thought_02",
+        "choices": []
+      },
+      {
+        "id": "thought_02",
+        "speaker": "Suy nghĩ",
+        "content": "Ai lại gọi vào giờ này cơ chứ... Mình phải nhấc máy thôi.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "intro_phone_call",
+    "startNodeId": "call_01",
+    "nodes": [
+      {
+        "id": "call_01",
+        "speaker": "Linh",
+        "content": "Alo... Khụ khụ! Hnil đấy à...? Cậu nghe rõ tớ không...?",
+        "textEffects": false,
+        "nextNodeId": "call_02",
+        "choices": []
+      },
+      {
+        "id": "call_02",
+        "speaker": "Hnil",
+        "content": "Tớ đây. Mới sáng sớm có chuyện gì thế? Cậu ốm à?",
+        "textEffects": false,
+        "nextNodeId": "call_03",
+        "choices": []
+      },
+      {
+        "id": "call_03",
+        "speaker": "Linh",
+        "content": "Không... Khụ khụ! Tớ... tớ có tin mừng này! Khụ khụ!",
+        "textEffects": false,
+        "nextNodeId": "call_04",
+        "choices": []
+      },
+      {
+        "id": "call_04",
+        "speaker": "Hnil",
+        "content": "Tin mừng gì mà cậu ho như cuốc kêu thế? Uống ngụm nước rồi nói từ từ tớ xem nào.",
+        "textEffects": false,
+        "nextNodeId": "call_05",
+        "choices": []
+      },
+      {
+        "id": "call_05",
+        "speaker": "Linh",
+        "content": "Phản ứng chán thế... Khụ khụ! Tớ ho thế này là điềm tốt đấy. Khụ... Tớ sắp chết rồi!",
+        "textEffects": false,
+        "nextNodeId": "call_06",
+        "choices": []
+      },
+      {
+        "id": "call_06",
+        "speaker": "Linh",
+        "content": "Bác sĩ bảo ung thư giai đoạn cuối rồi. Khụ! Hai tháng nữa thôi... Cậu mau chúc mừng tớ đi! Nhanh lên!!!",
+        "textEffects": false,
+        "nextNodeId": "call_07",
+        "choices": []
+      },
+      {
+        "id": "call_07",
+        "speaker": "Hnil",
+        "content": "(Giọng cô ấy bỗng vỡ òa trong niềm vui sướng kì dị... Cảm giác buồn nôn trào lên cổ họng mình.)",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "choice_A",
+            "content": "Cậu điên à Linh? Cái quái gì đang xảy ra thế?!",
+            "nextNodeId": "call_end_A",
+            "textEffects": false,
+            "rsChange": 10
+          },
+          {
+            "id": "choice_B",
+            "content": "Tuyệt thật đấy... Ước gì tớ cũng được như cậu.",
+            "nextNodeId": "call_end_B",
+            "textEffects": false,
+            "rsChange": -35
+          }
+        ]
+      },
+      {
+        "id": "call_end_A",
+        "speaker": "Linh",
+        "content": "Khụ khụ... Cậu lúc nào cũng vậy. Chẳng bao giờ hiểu cho tớ... Tít... tít... tít...",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "call_end_B",
+        "speaker": "Linh",
+        "content": "Khụ... HAH... HAHAHA! Tớ biết mà! Tớ đợi cậu ở d... Tít... tít... tít...",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  }
+]

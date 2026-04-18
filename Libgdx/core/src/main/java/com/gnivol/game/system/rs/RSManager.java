@@ -6,13 +6,15 @@ import java.util.List;
 public class RSManager {
     private float currentRS;
     private final float maxRS;
-    private final float threshold;
+    private final float minThreshold;
+    private final float maxThreshold;
     private final List<RSListener> listeners;
 
     public RSManager() {
-        this.currentRS = 0f;
+        this.currentRS = 35f;
         this.maxRS = 100;
-        this.threshold = 50;
+        this.minThreshold = 35f;
+        this.maxThreshold = 65f;
         this.listeners = new ArrayList<>();
     }
 
@@ -25,6 +27,7 @@ public class RSManager {
 
     public void addRS(float amount) {
         float oldValue = currentRS;
+        boolean wasAbove = isAboveThreshold();
         currentRS += amount;
         clampRS();
         float newValue = currentRS;
@@ -35,10 +38,13 @@ public class RSManager {
 
         // Cập nhật tất cả thay đổi theo từng Event
         notifyListeners(oldValue, newValue);
-        // Check vượt ngưỡng để bật tắt glitch, sound
-        notifyThresholdCross(isAbove);
+        // Chỉ gọi khi trạng thái bị đảo ngược
+        if(isAbove != wasAbove){
+            // Check vượt ngưỡng để bật tắt glitch, sound
+            notifyThresholdCross(isAbove);
+        }
     }
-    /** Giữ RS trong khoảng [0, maxRS] */
+    /** Giữ RS trong khoảng [minThreshold, maxThreshold] */
     private void clampRS() {
         currentRS = Math.max(0, Math.min(currentRS, maxRS));
     }
@@ -66,7 +72,7 @@ public class RSManager {
 
     // --- Getters ---
     public float getRS() { return currentRS; }
-    public boolean isAboveThreshold() { return (currentRS) >= threshold; }
+    public boolean isAboveThreshold() { return ((currentRS) < minThreshold) || ((currentRS) > maxThreshold); }
 
     // --- Listener management ---
     public void addListener(RSListener listener) { listeners.add(listener); }

@@ -2,6 +2,7 @@ package com.gnivol.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,6 +22,7 @@ public class MainMenuScreen extends BaseScreen {
     private BitmapFont titleFont;
     private BitmapFont buttonFont;
     private FreeTypeFontGenerator fontGenerator;
+    private Texture backgroundTexture;
 
     public MainMenuScreen(GnivolGame game) {
         super(game);
@@ -30,17 +32,12 @@ public class MainMenuScreen extends BaseScreen {
     public void show() {
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         Gdx.input.setInputProcessor(stage);
+        backgroundTexture = new Texture(Gdx.files.internal("textures/backgrounds/final_login_bg.png"));
 
         // FreeType font
-        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IMFellEnglish.ttf"));
 
-        FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        titleParam.size = 64;
-        titleParam.color = Color.WHITE;
-        titleParam.borderWidth = 2f;
-        titleParam.borderColor = Color.DARK_GRAY;
-        titleFont = fontGenerator.generateFont(titleParam);
-
+        //Options
         FreeTypeFontGenerator.FreeTypeFontParameter btnParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         btnParam.size = 28;
         btnParam.color = Color.WHITE;
@@ -48,21 +45,36 @@ public class MainMenuScreen extends BaseScreen {
         btnParam.borderColor = Color.BLACK;
         buttonFont = fontGenerator.generateFont(btnParam);
 
-        // Styles
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = buttonFont;
         buttonStyle.fontColor = Color.WHITE;
         buttonStyle.overFontColor = Color.YELLOW;
 
-        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);
+        //Title
+        FreeTypeFontGenerator.FreeTypeFontParameter btnTitle = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        btnTitle.size = 36;
+        btnTitle.color = Color.WHITE;
+        btnTitle.borderWidth = 1.21f;
+        btnTitle.borderColor = Color.BLACK;
+        titleFont = fontGenerator.generateFont(btnTitle);
 
-        // Layout
+        TextButton.TextButtonStyle titleStyle = new TextButton.TextButtonStyle();
+        titleStyle.font = titleFont;
+        titleStyle.fontColor = Color.WHITE;
+        titleStyle.overFontColor = Color.YELLOW;
+
+
+
+        // Layout - căn trái, nằm phía dưới
         Table table = new Table();
         table.setFillParent(true);
-        table.center();
+        table.left().bottom();            // Căn sang trái + xuống dưới
+        table.padLeft(125f);              // Cách mép trái 100px
+        table.padBottom(150f);             // Cách mép dưới 80px
 
-        table.add(new Label("GNIVOL", titleStyle)).padBottom(80f).row();
 
+
+        // Nút New Game
         TextButton newGameBtn = new TextButton("New Game", buttonStyle);
         newGameBtn.addListener(new ClickListener() {
             @Override
@@ -70,14 +82,20 @@ public class MainMenuScreen extends BaseScreen {
                 game.setScreen(new GameScreen(game));
             }
         });
-        table.add(newGameBtn).padBottom(25f).row();
 
+        // Nút Load Game
         TextButton loadBtn = new TextButton("Load Game", buttonStyle);
-        table.add(loadBtn).padBottom(25f).row();
 
+        // Nút Settings
         TextButton settingBtn = new TextButton("Settings", buttonStyle);
-        table.add(settingBtn).padBottom(25f).row();
+        settingBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingScreen(game, MainMenuScreen.this));
+            }
+        });
 
+        // Nút Quit
         TextButton quitBtn = new TextButton("Quit", buttonStyle);
         quitBtn.addListener(new ClickListener() {
             @Override
@@ -85,14 +103,24 @@ public class MainMenuScreen extends BaseScreen {
                 Gdx.app.exit();
             }
         });
-        table.add(quitBtn).padBottom(25f).row();
 
+        TextButton Title = new TextButton("GNIVOL", titleStyle);
+
+        float btnWidth = 25f;
+        table.add(Title).left().width(btnWidth).padBottom(25f).row();
+        table.add(newGameBtn).left().width(btnWidth).padBottom(25f).row();
+        table.add(loadBtn).left().width(btnWidth).padBottom(25f).row();
+        table.add(settingBtn).left().width(btnWidth).padBottom(25f).row();
+        table.add(quitBtn).left().width(btnWidth).padBottom(25f).row();
         stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
+        stage.getBatch().begin();
+        stage.getBatch().draw(backgroundTexture, 0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+        stage.getBatch().end();
         stage.act(delta);
         stage.draw();
     }
@@ -111,5 +139,6 @@ public class MainMenuScreen extends BaseScreen {
         if (titleFont != null) titleFont.dispose();
         if (buttonFont != null) buttonFont.dispose();
         if (fontGenerator != null) fontGenerator.dispose();
+        if (backgroundTexture != null) backgroundTexture.dispose();
     }
 }

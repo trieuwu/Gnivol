@@ -110,6 +110,7 @@ public class RoomData {
         // Texture thay thế theo trạng thái: state → đường dẫn texture
         // VD: {"open": "textures/objects/wardrobe_open.png", "taken": "textures/objects/wardrobe_open_taken.png"}
         public HashMap<String, String> altTextures;
+        public String dialogueId;
 
         /** Constructor mặc định — BẮT BUỘC cho JSON parser */
         public Properties() {}
