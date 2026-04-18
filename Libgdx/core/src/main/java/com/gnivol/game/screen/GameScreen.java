@@ -430,7 +430,14 @@ public class GameScreen extends BaseScreen {
         screenFader.update(delta);
         game.getStage().act(delta);
 
-        // Scene
+        if (dialogueUI != null && inventoryUI != null) {
+            if (dialogueUI.isVisible()) {
+                inventoryUI.setVisible(false);
+            } else {
+                inventoryUI.setVisible(true);
+            }
+        }
+
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
