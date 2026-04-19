@@ -70,6 +70,7 @@ public class GameScreen extends BaseScreen {
 
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
+    private com.gnivol.game.ui.LaserUI laserUI;
 
     // Debug overlay (F1 để bật/tắt)
     private boolean debugMode = false;
@@ -135,6 +136,8 @@ public class GameScreen extends BaseScreen {
         com.badlogic.gdx.scenes.scene2d.ui.Skin defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
 
         puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
+
+        laserUI = new com.gnivol.game.ui.LaserUI(defaultSkin, game.getStage());
 
         puzzleManager.setCallback(new com.gnivol.game.system.puzzle.PuzzleManager.PuzzleCallback() {
             @Override
@@ -305,7 +308,7 @@ public class GameScreen extends BaseScreen {
 
                     }
                     // Chạy Inner Thought
-                    hideInspectText();
+                    // hideInspectText();
                     ThoughtManager thoughtManager = new ThoughtManager();
                     DialogueTree thoughtTree = thoughtManager.getThoughtTree(obj.getId(), game.getRsManager().getRS());
                     if (thoughtTree != null) {
@@ -772,8 +775,11 @@ public class GameScreen extends BaseScreen {
         if (screenFader.isFading()) return;
         screenFader.startFade(() -> {
             sceneManager.changeScene(targetSceneId);
-
             game.getGameState().setCurrentRoom(targetSceneId);
+
+            if ("room_bathroom".equals(targetSceneId)) {
+                laserUI.show();
+            }
 
             if (game.getAutoSaveManager() != null) {
                 game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
