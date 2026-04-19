@@ -25,7 +25,7 @@ public class LaserScreen extends BaseScreen {
     private int playerY = 0;
     private int currentTime = 0;
 
-    private Texture texFloor, texWall, texLaserGen, texDanger, texPlayer, texGoal;
+    private Texture texFloor, texWall, texLaserGen, texDanger, texPlayer, texGoal, texBackground;
     private float cellSize;
     private float offsetX, offsetY;
 
@@ -112,16 +112,19 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0.1f, 0.1f, 0.1f, 1);
+        ScreenUtils.clear(0, 0, 0, 1);
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
 
-        cellSize = Math.min(viewport.getWorldWidth(), viewport.getWorldHeight()) / (logic.N + 2f);
-        offsetX = (viewport.getWorldWidth() - (cellSize * logic.N)) / 2f;
-        offsetY = (viewport.getWorldHeight() - (cellSize * logic.N)) / 2f;
+        float cellSize = Math.min(viewport.getWorldWidth(), viewport.getWorldHeight()) / (logic.N + 2f);
+        float offsetX = (viewport.getWorldWidth() - (cellSize * logic.N)) / 2f;
+        float offsetY = (viewport.getWorldHeight() - (cellSize * logic.N)) / 2f;
 
         batch.begin();
+
+        batch.draw(texBackground, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+
         for (int x = 0; x < logic.N; x++) {
             for (int y = 0; y < logic.N; y++) {
                 float drawX = offsetX + x * cellSize;
@@ -133,7 +136,9 @@ public class LaserScreen extends BaseScreen {
                 batch.draw(currentTex, drawX, drawY, cellSize, cellSize);
 
                 if (logic.grid[x][y] == 0 && logic.isTileDangerous(x, y, currentTime)) {
+            //        batch.setColor(1f, 1f, 1f, 0.6f);
                     batch.draw(texDanger, drawX, drawY, cellSize, cellSize);
+                //    batch.setColor(Color.WHITE);
                 }
 
                 if (x == logic.N - 1 && y == logic.N - 1) {
@@ -149,12 +154,14 @@ public class LaserScreen extends BaseScreen {
     }
 
     private void createTextures() {
-        texFloor = createColorTexture(new Color(0.2f, 0.2f, 0.2f, 1f));
-        texWall = createColorTexture(Color.GRAY);
-        texLaserGen = createColorTexture(Color.GOLD);
-        texDanger = createColorTexture(new Color(1, 0, 0, 0.5f));
-        texPlayer = createColorTexture(Color.LIME);
-        texGoal = createColorTexture(Color.CYAN);
+        texBackground = new Texture(Gdx.files.internal("textures/backgrounds/phuonganh.png"));
+        texFloor = new Texture(Gdx.files.internal("images/item_frame.png"));
+        texWall = new Texture(Gdx.files.internal("images/Merge_button_glitch.png"));
+        texLaserGen = new Texture(Gdx.files.internal("images/nerdy_kid1_final.char.png"));
+
+        texDanger = new Texture(Gdx.files.internal("images/item/ca_vat_final.png"));
+        texPlayer = new Texture(Gdx.files.internal("images/linh_dep.char.png"));
+        texGoal = new Texture(Gdx.files.internal("images/NPC1.char.png"));
     }
 
     private Texture createColorTexture(Color color) {
@@ -168,6 +175,7 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void dispose() {
+        texBackground.dispose();
         batch.dispose();
         texFloor.dispose(); texWall.dispose(); texLaserGen.dispose();
         texDanger.dispose(); texPlayer.dispose(); texGoal.dispose();
