@@ -27,6 +27,17 @@ public class LaserUI {
     // Các texture màu cơ bản (Dùng tạm để test)
     private Texture texFloor, texWall, texLaserGen, texDanger, texPlayer, texGoal;
 
+    public interface LaserResultListener {
+        void onLaserSolved(String puzzleId);
+    }
+
+    private LaserResultListener listener;
+    private final String puzzleId = "puzzle_laser";
+
+    public void setListener(LaserResultListener listener) {
+        this.listener = listener;
+    }
+
     public LaserUI(Skin skin, Stage stage) {
         this.stage = stage;
         this.logic = new LaserLogic();
@@ -86,7 +97,10 @@ public class LaserUI {
                 else if (playerX == logic.N - 1 && playerY == logic.N - 1) {
                     Gdx.app.log("LaserGame", "YOU WON!");
                     hide();
-                    // TODO: Gọi callback để thưởng vật phẩm hoặc mở cửa
+
+                    if (listener != null) {
+                        listener.onLaserSolved(puzzleId);
+                    }
                 }
             }
         }
