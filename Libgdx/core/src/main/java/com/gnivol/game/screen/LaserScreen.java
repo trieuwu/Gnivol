@@ -83,14 +83,13 @@ public class LaserScreen extends BaseScreen {
 
     private void onWin() {
         game.getPuzzleManager().markSolved("puzzle_laser");
-        game.getInventoryManager().addItem("chuoi_chia_khoa");
-        game.getInventoryManager().addItem("keo_502_final");
+        game.getInventoryManager().addItem("ca_vat_final");
 
         game.setScreen(previousScreen);
 
         if (previousScreen instanceof GameScreen) {
             ((GameScreen) previousScreen).showNotification(
-                "Minigame Solved! Nhận được Chuỗi chìa khóa & Keo 502.",
+                "Minigame Solved! Nhận được Cà vạt.",
                 Color.GREEN
             );
         }

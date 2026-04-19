@@ -143,13 +143,7 @@ public class GameScreen extends BaseScreen {
             @Override
             public void onLaserSolved(String puzzleId) {
                 puzzleManager.markSolved(puzzleId);
-
-                game.getInventoryManager().addItem("chuoi_chia_khoa");
-                game.getInventoryManager().addItem("keo_502_final");
                 inventoryUI.refreshUI();
-
-                showNotification("Minigame Solved. Got Chuôi chìa khóa & Keo 502.", Color.GREEN);
-
                 if (game.getAutoSaveManager() != null) {
                     game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
                 }
@@ -284,6 +278,13 @@ public class GameScreen extends BaseScreen {
                 inventoryUI.refreshUI();
                 hideInspectText();
                 showItemNotification(itemId);
+
+                if ("keo_502_final".equals(itemId)) {
+                    com.gnivol.game.system.scene.Scene currentScene = sceneManager.getCurrentScene();
+                    if (currentScene instanceof com.gnivol.game.system.scene.RoomScene) {
+                        ((com.gnivol.game.system.scene.RoomScene) currentScene).changeBackground("images/bathroom_no_bottle.png");
+                    }
+                }
 
                 // TODO: Triệu — play pickup sound (Có thể gọi hàm phát âm thanh từ ItemData sau)
 

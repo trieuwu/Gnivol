@@ -40,6 +40,13 @@ public class RoomScene extends Scene {
 
     @Override
     public void enter() {
+        if ("room_bathroom".equals(sceneId)) {
+            if (puzzleManager.isItemCollected("keo_502_final")) {
+                roomData.setBackground("images/bathroom_no_bottle.png");
+            } else {
+                roomData.setBackground("images/bathroom_bottle.png");
+            }
+        }
         if (roomData.getBackground() != null) {
             backgroundTexture = new Texture(Gdx.files.internal(roomData.getBackground()));
         }
@@ -162,6 +169,14 @@ public class RoomScene extends Scene {
         }
     }
 
+    public void changeBackground(String newBackgroundPath) {
+        if (backgroundTexture != null) {
+            backgroundTexture.dispose();
+        }
+        backgroundTexture = new Texture(Gdx.files.internal(newBackgroundPath));
+        roomData.setBackground(newBackgroundPath);
+    }
+
     /**
      * Đổi trạng thái visual của object.
      * VD: setObjectState("wardrobe", "open") → swap sang altTexture "open"
@@ -198,4 +213,6 @@ public class RoomScene extends Scene {
         gameObjects.clear();
         Gdx.app.log("RoomScene", "Disposed scene: " + sceneId);
     }
+
+
 }

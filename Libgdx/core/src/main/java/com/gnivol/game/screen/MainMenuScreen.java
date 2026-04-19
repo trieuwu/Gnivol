@@ -34,7 +34,7 @@ public class MainMenuScreen extends BaseScreen {
 
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         Gdx.input.setInputProcessor(stage);
-        backgroundTexture = new Texture(Gdx.files.internal("textures/backgrounds/final_login_bg.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("images/final_login_bg.png"));
 
         // FreeType font
         fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IMFellEnglish.ttf"));
