@@ -388,7 +388,7 @@ public class GameScreen extends BaseScreen {
         FontManager fm = game.getFontManager();
         com.gnivol.game.system.scene.Scene currentScene = sceneManager.getCurrentScene();
         if (currentScene == null || currentScene.getRoomData() == null) return;
-        
+
         com.badlogic.gdx.math.Vector3 mouseWorld = new com.badlogic.gdx.math.Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouseWorld, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
 
