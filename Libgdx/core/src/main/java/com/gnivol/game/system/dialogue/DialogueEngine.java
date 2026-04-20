@@ -14,6 +14,16 @@ public class DialogueEngine {
     private DialogueNode currentNode;
     private RSManager rsManager;
 
+    public interface DialogueCutsceneListener {
+        void onCutsceneTriggered(String cutsceneId);
+    }
+
+    private DialogueCutsceneListener cutsceneListener;
+
+    public void setCutsceneListener(DialogueCutsceneListener l) {
+        this.cutsceneListener = l;
+    }
+
     public DialogueEngine(RSManager rsManager) {
         nodeMap = new HashMap<>();
         this.rsManager = rsManager;
@@ -26,6 +36,7 @@ public class DialogueEngine {
             nodeMap.put(node.id, node);
         }
         currentNode = nodeMap.get(tree.startNodeId);
+        checkCutsceneTrigger();
     }
 
     public DialogueNode getCurrentNode() {
@@ -45,6 +56,7 @@ public class DialogueEngine {
         // Xóa node khi kết thúc treeDialogue
         nodeMap.remove(finishedNodeId);
         Gdx.app.log("DialogueEngine", "Đã xóa node: " + finishedNodeId);
+        checkCutsceneTrigger();
     }
 
     // Xử lý khi người chơi bấm vào một lựa chọn
@@ -67,11 +79,20 @@ public class DialogueEngine {
                 currentNode = nodeMap.get(selectedChoice.nextNodeId);
                 nodeMap.remove(finishedNodeId);
                 Gdx.app.log("DialogueEngine", "Đã tiêu hủy node sau lựa chọn: " + finishedNodeId);
+                checkCutsceneTrigger();
             }
         }
     }
 
     public boolean isFinished() {
         return currentNode == null;
+    }
+
+    private void checkCutsceneTrigger() {
+        if (currentNode != null
+                && currentNode.onEnterCutscene != null
+                && cutsceneListener != null) {
+            cutsceneListener.onCutsceneTriggered(currentNode.onEnterCutscene);
+        }
     }
 }

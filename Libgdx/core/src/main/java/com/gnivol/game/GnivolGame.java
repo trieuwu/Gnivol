@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.ashley.core.Engine;
 import com.gnivol.game.audio.AudioManager;
+import com.gnivol.game.data.FlagManager;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.screen.LoginScreen;
 import com.gnivol.game.screen.MainMenuScreen;
@@ -28,6 +29,7 @@ public class GnivolGame extends Game {
     private CraftingManager craftingManager;
     private PlayerInteractionSystem playerInteractionSystem;
     private AudioManager audioManager;
+    private FlagManager flagManager;
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.model.GameState gameState;
     private com.gnivol.game.system.save.GameSnapshot gameSnapshot;
@@ -46,6 +48,7 @@ public class GnivolGame extends Game {
         inventoryManager = new InventoryManager();
         craftingManager = new CraftingManager();
         rsManager = new RSManager();
+        flagManager = new FlagManager();
         gameState = new com.gnivol.game.model.GameState();
 
         sceneManager = new SceneManager(puzzleManager);
@@ -58,6 +61,7 @@ public class GnivolGame extends Game {
         gameSnapshot.register(gameState);
         gameSnapshot.register(inventoryManager);
         gameSnapshot.register(puzzleManager);
+        gameSnapshot.register(flagManager);
 
         setScreen(new LoginScreen(this));
     }
@@ -91,6 +95,7 @@ public class GnivolGame extends Game {
         if (puzzleManager != null) puzzleManager.reset();
         if (sceneManager != null) sceneManager.reset();
         if (rsManager != null) rsManager.reset();
+        if (flagManager != null) flagManager.reset();
         if (gameState != null) gameState.setCurrentRS(35);
 
         isLoadedGame = false;
@@ -111,10 +116,12 @@ public class GnivolGame extends Game {
             if (inventoryManager != null) inventoryManager.clearInventory();
             if (puzzleManager != null) puzzleManager.reset();
             if (sceneManager != null) sceneManager.reset();
+            if (flagManager != null) flagManager.reset();
 
             if (gameState != null) gameState.load(root);
             if (inventoryManager != null) inventoryManager.load(root);
             if (puzzleManager != null) puzzleManager.load(root);
+            if (flagManager != null) flagManager.load(root);
 
             if (rsManager != null && gameState != null) {
                  rsManager.setCurrentRS(gameState.getCurrentRS());
@@ -147,6 +154,8 @@ public class GnivolGame extends Game {
     public PlayerInteractionSystem getPlayerInteractionSystem() {return playerInteractionSystem;}
 
     public AudioManager getAudioManager() {return audioManager;}
+
+    public FlagManager getFlagManager() {return flagManager;}
 
     public com.gnivol.game.system.puzzle.PuzzleManager getPuzzleManager() {return puzzleManager;}
 

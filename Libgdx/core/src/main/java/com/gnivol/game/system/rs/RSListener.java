@@ -6,4 +6,7 @@ public interface RSListener {
 
     // Nếu RS vượt 50 sẽ gọi glitch, sound đặc biệt (check RS liên tục để bật tắt glitch, sound)
     void onThresholdCrossed(boolean isAbove);
+
+    // Gọi khi RS vượt qua ngưỡng cụ thể (50 = glitch, 65 = map unlock)
+    default void onSpecificThreshold(float threshold, boolean crossed) {}
 }

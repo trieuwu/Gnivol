@@ -43,6 +43,18 @@ public class RSManager {
             // Check vượt ngưỡng để bật tắt glitch, sound
             notifyThresholdCross(isAbove);
         }
+
+        // Specific thresholds: 50 (glitch), 65 (map unlock)
+        if (oldValue < 50f && newValue >= 50f) {
+            notifySpecificThreshold(50f, true);
+        } else if (oldValue >= 50f && newValue < 50f) {
+            notifySpecificThreshold(50f, false);
+        }
+        if (oldValue < maxThreshold && newValue >= maxThreshold) {
+            notifySpecificThreshold(maxThreshold, true);
+        } else if (oldValue >= maxThreshold && newValue < maxThreshold) {
+            notifySpecificThreshold(maxThreshold, false);
+        }
     }
     /** Giữ RS trong khoảng [minThreshold, maxThreshold] */
     private void clampRS() {
@@ -79,6 +91,7 @@ public class RSManager {
     // --- Getters ---
     public float getRS() { return currentRS; }
     public boolean isAboveThreshold() { return ((currentRS) < minThreshold) || ((currentRS) > maxThreshold); }
+    public boolean isMapUnlocked() { return currentRS >= maxThreshold; }
 
     // --- Listener management ---
     public void addListener(RSListener listener) { listeners.add(listener); }
@@ -91,5 +104,15 @@ public class RSManager {
 
     public void setCurrentRS(float currentRS) {
         this.currentRS = currentRS;
+    }
+
+    private void notifySpecificThreshold(float threshold, boolean crossed) {
+        for (RSListener listener : listeners) {
+            try {
+                listener.onSpecificThreshold(threshold, crossed);
+            } catch (Exception e) {
+                Gdx.app.error("RS", "Specific threshold listener error", e);
+            }
+        }
     }
 }
