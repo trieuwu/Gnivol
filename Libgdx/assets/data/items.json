@@ -11,7 +11,7 @@
     },
     {
       "itemID": "chuoi_chia_khoa",
-      "itemName": "Chuôi chìa khóa",
+      "itemName": "Chìa khóa gãy",
       "description": "Một nửa chiếc chìa khóa bị gãy.",
       "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
       "pickupSoundID": "sfx_pickup_metal",

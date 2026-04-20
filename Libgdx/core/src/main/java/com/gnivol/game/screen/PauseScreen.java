@@ -21,9 +21,6 @@ public class PauseScreen extends BaseScreen {
     private final GameScreen gameScreen;
     private Stage stage;
     private ShapeRenderer dimRenderer;
-    private BitmapFont titleFont;
-    private BitmapFont buttonFont;
-    private FreeTypeFontGenerator fontGenerator;
 
     public PauseScreen(GnivolGame game, GameScreen gameScreen) {
         super(game);
@@ -35,32 +32,14 @@ public class PauseScreen extends BaseScreen {
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         dimRenderer = new ShapeRenderer();
 
-        // IM Fell English font
-        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IMFellEnglish.ttf"));
+        com.gnivol.game.system.FontManager fm = game.getFontManager();
 
-        FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        titleParam.size = 52;
-        titleParam.color = Color.WHITE;
-        titleParam.borderWidth = 2f;
-        titleParam.borderColor = Color.DARK_GRAY;
-        titleFont = fontGenerator.generateFont(titleParam);
-
-        FreeTypeFontGenerator.FreeTypeFontParameter btnParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        btnParam.size = 28;
-        btnParam.color = Color.WHITE;
-        btnParam.borderWidth = 1f;
-        btnParam.borderColor = Color.BLACK;
-        buttonFont = fontGenerator.generateFont(btnParam);
-
-        // Style
-        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);
-
+        Label.LabelStyle titleStyle = new Label.LabelStyle(fm.fontTitle, Color.WHITE);
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.font = buttonFont;
+        buttonStyle.font = fm.fontButton;
         buttonStyle.fontColor = Color.WHITE;
         buttonStyle.overFontColor = Color.YELLOW;
 
-        // Layout
         Table table = new Table();
         table.setFillParent(true);
         table.center();
@@ -137,8 +116,5 @@ public class PauseScreen extends BaseScreen {
     public void dispose() {
         if (stage != null) stage.dispose();
         if (dimRenderer != null) dimRenderer.dispose();
-        if (titleFont != null) titleFont.dispose();
-        if (buttonFont != null) buttonFont.dispose();
-        if (fontGenerator != null) fontGenerator.dispose();
     }
 }

@@ -10,6 +10,7 @@ import com.gnivol.game.audio.AudioManager;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.screen.LoginScreen;
 import com.gnivol.game.screen.MainMenuScreen;
+import com.gnivol.game.system.FontManager;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
 import com.gnivol.game.system.inventory.CraftingManager;
 import com.gnivol.game.system.inventory.InventoryManager;
@@ -34,8 +35,11 @@ public class GnivolGame extends Game {
     private com.gnivol.game.system.save.AutoSaveManager autoSaveManager;
     private com.gnivol.game.system.save.SaveUIController saveUIController;
     public boolean isLoadedGame = false;
+    private FontManager fontManager;
+
     @Override
     public void create() {
+        fontManager = new FontManager();
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         ashleyEngine = new Engine();
         screenFader = new ScreenFader(2.5f, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
@@ -84,6 +88,8 @@ public class GnivolGame extends Game {
         if (sceneManager != null) sceneManager.dispose();
         if (screenFader != null) screenFader.dispose();
         if (getScreen() != null) getScreen().dispose();
+        fontManager.dispose();
+        super.dispose();
     }
 
     public void resetGameState() {
@@ -153,4 +159,6 @@ public class GnivolGame extends Game {
     public com.gnivol.game.model.GameState getGameState() {return gameState;}
 
     public com.gnivol.game.system.save.AutoSaveManager getAutoSaveManager() { return autoSaveManager;}
+
+    public FontManager getFontManager() {return fontManager;}
 }
