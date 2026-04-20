@@ -1,0 +1,11 @@
+[
+  {
+    "id": "hand_under_bed",
+    "steps": [
+      {"type": "flash", "color": "white", "duration": 0.1},
+      {"type": "wait", "duration": 0.2},
+      {"type": "dialogue", "id": "bed_jumpscare"},
+      {"type": "rs_change", "value": 8}
+    ]
+  }
+]

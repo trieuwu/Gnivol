@@ -24,7 +24,7 @@
       "description": "Keo dính siêu chắc.",
       "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
       "pickupSoundID": "sfx_pickup_plastic",
-      "rsChangeValue": 6
+      "rsChangeValue": 6,
       "isCursed": false
     },
     {

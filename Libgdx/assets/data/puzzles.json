@@ -1,0 +1,14 @@
+[
+  {
+    "id": "puzzle_drawer",
+    "type": "number_input",
+    "answer": "912",
+    "hint": "Mật mã ngăn kéo"
+  },
+  {
+    "id": "qr_proptit",
+    "type": "number_input",
+    "answer": "910",
+    "hint": "Sinh nhật CLB ProPTIT"
+  }
+]
