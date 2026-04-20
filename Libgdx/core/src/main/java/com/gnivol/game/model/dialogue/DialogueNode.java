@@ -11,6 +11,8 @@ public class DialogueNode {
     public boolean textEffects;      // Hiệu ứng glitch/rung text
     public String nextNodeId;        // Dùng khi KHÔNG CÓ choice (chuyển thẳng tới node này)
 
+    public String onEnterCutscene;  // cutscene ID to trigger when entering this node
+
     // Danh sách các lựa chọn. Nếu list rỗng -> NodeNoChoice.
     public ArrayList<Choice> choices = new ArrayList<>();
 

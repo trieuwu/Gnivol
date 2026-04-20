@@ -31,6 +31,11 @@ public final class Constants {
     // Scene IDs
     public static final String SCENE_BEDROOM = "room_bedroom";
     public static final String SCENE_BATHROOM = "room_bathroom";
+    public static final String SCENE_HALLWAY = "room_hallway";
+    public static final String SCENE_OPPOSITE = "room_opposite";
+
+    // RS
+    public static final float RS_MAP_UNLOCK = 65f;
 
     // Asset paths
     public static final String ASSETS_DATA = "data/";

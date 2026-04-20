@@ -50,6 +50,11 @@ public class PuzzleManager implements ISaveable {
                 markSolved(puzzleId);
                 return true;
             }
+        } else if ("qr_proptit".equals(puzzleId)) {
+            if ("910".equals(answer)) {
+                markSolved(puzzleId);
+                return true;
+            }
         }
 
         return false;
