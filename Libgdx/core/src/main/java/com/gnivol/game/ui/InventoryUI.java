@@ -42,10 +42,19 @@ public class InventoryUI {
     private com.badlogic.gdx.utils.ObjectMap<String, com.badlogic.gdx.utils.JsonValue> itemDatabase;
     private com.badlogic.gdx.graphics.g2d.BitmapFont font;
 
-    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
+    private com.gnivol.game.system.rs.RSManager rsManager;
+    private ImageButton useBtn;
+    private ImageButton mergeBtn;
+    private TextureRegionDrawable mergeNormalBg;
+    private TextureRegionDrawable mergeGlitchBg;
+    private TextureRegionDrawable useNormalBg;
+    private TextureRegionDrawable useGlitchBg;
+
+    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.gnivol.game.system.rs.RSManager rsManager, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
         this.stage = stage;
         this.inventoryManager = inv;
         this.craftingManager = craft;
+        this.rsManager = rsManager; // LƯU LẠI
         this.font = font;
 
         loadItemData();
@@ -100,6 +109,9 @@ public class InventoryUI {
                 quickbarTable.setVisible(!isBackpackVisible);
                 if (!isBackpackVisible) {
                     resetHighlights();
+                } else {
+
+                    updateButtonStates();
                 }
             }
         });
@@ -190,8 +202,20 @@ public class InventoryUI {
         backpackTable.add(gridTable).row();
 
 
-        Texture mergeTex = new Texture(Gdx.files.internal("images/Merge_button.png"));
-        ImageButton mergeBtn = new ImageButton(new TextureRegionDrawable(new TextureRegion(mergeTex)));
+        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button.png"))));
+        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button_glitch.png"))));
+        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button.png"))));
+        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button_glitch.png"))));
+
+        useBtn = new ImageButton(useNormalBg);
+        useBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("InventoryUI", "Nút USE được bấm (Chưa có chức năng)");
+            }
+        });
+
+        mergeBtn = new ImageButton(mergeNormalBg);
         mergeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -204,10 +228,11 @@ public class InventoryUI {
         gridLayer.add(gridTable).center();
         overlayStack.add(gridLayer);
 
-        Table mergeLayer = new Table();
-        mergeLayer.bottom().padBottom(40f); // Tăng giảm số này để đẩy nút lên/xuống
-        mergeLayer.add(mergeBtn).size(450, 150);
-        overlayStack.add(mergeLayer);
+        Table actionLayer = new Table();
+        actionLayer.bottom().padBottom(30f);
+        actionLayer.add(useBtn).size(280, 140).padRight(-50f);
+        actionLayer.add(mergeBtn).size(280, 140);
+        overlayStack.add(actionLayer);
 
         backpackTable.add(overlayStack).expand().fill();
 
@@ -330,6 +355,16 @@ public class InventoryUI {
             Vector2 btnPos = new Vector2(0, 0);
             clickedBtn.localToStageCoordinates(btnPos);
 
+            float slotWidth = clickedBtn.getWidth();
+            float slotHeight = clickedBtn.getHeight();
+
+            float expandSize = 14f; // Tăng thêm 14 pixel (Bạn có thể sửa số này cho vừa mắt)
+            float newWidth = slotWidth + expandSize;
+            float newHeight = slotHeight + expandSize;
+            // Dịch tọa độ X, Y lùi lại một nửa độ nở để khung luôn căn giữa
+            float newX = btnPos.x - (7f);
+            float newY = btnPos.y - (7f);
+
             if (isQuickbar) {
                 if (selectedItem1 != null && selectedItem1.equals(itemId) && highlight1.isVisible()) {
                     resetHighlights();
@@ -337,7 +372,9 @@ public class InventoryUI {
                 else {
                     resetHighlights();
                     selectedItem1 = itemId;
-                    highlight1.setPosition(btnPos.x - 5, btnPos.y - 5);
+
+                    highlight1.setSize(newWidth, newHeight);
+                    highlight1.setPosition(newX, newY);
                     highlight1.setVisible(true);
                     highlight1.clearActions();
                     highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
@@ -347,17 +384,22 @@ public class InventoryUI {
 
             if (selectedItem1 == null) {
                 selectedItem1 = itemId;
-                highlight1.setPosition(btnPos.x - 5, btnPos.y - 5); // Căn chỉnh cho khớp viền
-                highlight1.setVisible(true);
 
+                highlight1.setSize(newWidth+2, newHeight+7);
+                highlight1.setPosition(newX, newY+2);
+                highlight1.setVisible(true);
                 highlight1.clearActions();
                 highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
             } else if (selectedItem1.equals(itemId) && selectedItem2 == null) {
                 resetHighlights();
             } else if (selectedItem2 == null) {
                 selectedItem2 = itemId;
-                highlight2.setPosition(btnPos.x - 5, btnPos.y - 5);
+
+                highlight2.setSize(newWidth+2, newHeight+7);
+                highlight2.setPosition(newX, newY+2);
                 highlight2.setVisible(true);
+                highlight2.clearActions();
+                highlight2.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
             } else {
                 resetHighlights();
             }
@@ -367,8 +409,10 @@ public class InventoryUI {
             selectedItem2 = null;
             highlight1.setVisible(false);
             highlight1.clearActions();
-            highlight2.setVisible(false);
             highlight1.getColor().a = 1f;
+            highlight2.setVisible(false);
+            highlight2.clearActions();
+            highlight2.getColor().a = 1f;
         }
 
     public void refreshUI() {
@@ -441,6 +485,32 @@ public class InventoryUI {
             }
         }
     }
+
+    public String getSelectedItem() {
+        if (backpackTable != null && !backpackTable.isVisible()) {
+            return selectedItem1;
+        }
+        return null;
+    }
+
+    public void clearSelection() {
+        resetHighlights();
+    }
+
+    public void updateButtonStates() {
+        if (rsManager == null) return;
+
+        boolean isGlitch = rsManager.isAboveThreshold();
+
+        if (isGlitch) {
+            useBtn.getStyle().imageUp = useGlitchBg;
+            mergeBtn.getStyle().imageUp = mergeGlitchBg;
+        } else {
+            useBtn.getStyle().imageUp = useNormalBg;
+            mergeBtn.getStyle().imageUp = mergeNormalBg;
+        }
+    }
+
 }
 
 

@@ -11,7 +11,7 @@
     },
     {
       "itemID": "chuoi_chia_khoa",
-      "itemName": "Chuôi chìa khóa",
+      "itemName": "Chìa khóa gãy",
       "description": "Một nửa chiếc chìa khóa bị gãy.",
       "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
       "pickupSoundID": "sfx_pickup_metal",
@@ -24,7 +24,7 @@
       "description": "Keo dính siêu chắc.",
       "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
       "pickupSoundID": "sfx_pickup_plastic",
-      "rsChangeValue": 6
+      "rsChangeValue": 6,
       "isCursed": false
     },
     {

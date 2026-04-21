@@ -37,11 +37,21 @@ public class SceneManager {
     private SceneChangeListener changeListener;
 
     private final PuzzleManager puzzleManager;
+    private com.gnivol.game.audio.AudioManager audioManager;
+    private final Map<String, String> sceneBgmMap = new HashMap<String, String>();
 
     public SceneManager(PuzzleManager puzzleManager) {
         this.puzzleManager = puzzleManager;
         this.sceneStack = new Stack<>();
         this.roomDataMap = new HashMap<>();
+    }
+
+    public void setAudioManager(com.gnivol.game.audio.AudioManager am) {
+        this.audioManager = am;
+    }
+
+    public void setSceneBGM(String sceneId, String bgmId) {
+        sceneBgmMap.put(sceneId, bgmId);
     }
 
     public void changeScene(String sceneId) {
@@ -71,6 +81,13 @@ public class SceneManager {
         // 4. Thông báo listener (nếu có)
         if (changeListener != null) {
             changeListener.onSceneChanged(sceneId);
+        }
+
+        if (audioManager != null) {
+            String bgmId = sceneBgmMap.get(sceneId);
+            if (bgmId != null) {
+                audioManager.crossfadeBGM(bgmId, 1.5f);
+            }
         }
 
         Gdx.app.log("SceneManager", "Changed to scene: " + sceneId);
