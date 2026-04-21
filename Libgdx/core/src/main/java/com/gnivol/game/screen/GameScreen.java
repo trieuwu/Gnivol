@@ -437,6 +437,7 @@ public class GameScreen extends BaseScreen {
                     // Chạy Inner Thought (chỉ khi không có overlay)
                     DialogueTree thoughtTree = new ThoughtManager().getThoughtTree(obj.getId(), game.getRsManager().getRS());
                     if (thoughtTree != null) {
+                        hideInspectText();
                         dialogueEngine.loadDialogue(thoughtTree);
                         dialogueUI.displayNode(dialogueEngine.getCurrentNode());
                         return;

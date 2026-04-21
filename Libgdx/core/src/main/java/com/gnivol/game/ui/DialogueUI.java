@@ -1,5 +1,6 @@
 package com.gnivol.game.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +27,11 @@ public class DialogueUI {
     private Label speakerLabel;
     private Label contentLabel;
     private Table choicesTable;
+
+    // --- THÊM 3 BIẾN NÀY CHO KHUNG SUY NGHĨ ---
+    private Table thoughtTable;
+    private Label thoughtLabel;
+    private Label activeTypingLabel; // Con trỏ quyết định gõ chữ vào khung nào
 
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
@@ -59,9 +65,28 @@ public class DialogueUI {
         btnStyle.up = btnBg;
 
         // 2. Tạo nền đen mờ 80% cho khung hội thoại
-        Pixmap bgPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        bgPix.setColor(new Color(0f, 0f, 0f, 0.85f));
-        bgPix.fill();
+        int texWidth = 512; // Chiều ngang để tính toán dải màu (càng to càng mượt)
+        int texHeight = 2;  // Chiều cao 2px là đủ vì LibGDX sẽ tự kéo giãn nó theo khung thoại
+        Pixmap bgPix = new Pixmap(texWidth, texHeight, Pixmap.Format.RGBA8888);
+
+        float centerX = texWidth / 2f;
+
+        // Chạy vòng lặp tô màu từng pixel theo chiều ngang
+        for (int x = 0; x < texWidth; x++) {
+            // Tính khoảng cách từ điểm hiện tại đến tâm
+            float distanceToCenter = Math.abs(x - centerX);
+
+            // Tính độ mờ (Alpha): Ở giữa = 1 (Đậm), càng ra xa mép = 0 (Trong suốt)
+            float alpha = 1f - (distanceToCenter / centerX);
+
+            // Giới hạn max alpha là 0.85 (85%) để khung thoại không bị đen kịt mà vẫn nhìn xuyên được cảnh game
+            float finalAlpha = alpha * 0.85f;
+
+            // Set màu đen với độ mờ vừa tính được và vẽ 1 đường dọc
+            bgPix.setColor(new Color(0f, 0f, 0f, finalAlpha));
+            bgPix.drawLine(x, 0, x, texHeight);
+        }
+
         TextureRegionDrawable transparentBlackBg = new TextureRegionDrawable(new TextureRegion(new Texture(bgPix)));
         bgPix.dispose();
 
@@ -95,17 +120,28 @@ public class DialogueUI {
             }
         });
 
+        Pixmap linePix = new Pixmap(1, 2, Pixmap.Format.RGBA8888);
+        linePix.setColor(new Color(0.8f, 0.7f, 0.4f, 0.6f)); // Màu vàng nhạt, hơi mờ
+        linePix.fill();
+        TextureRegionDrawable lineDrawable = new TextureRegionDrawable(new TextureRegion(new Texture(linePix)));
+        linePix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Image separatorLine = new com.badlogic.gdx.scenes.scene2d.ui.Image(lineDrawable);
         speakerLabel = new Label("", labelStyle);
-        speakerLabel.setColor(1f, 0.9f, 0.5f, 1f);
+        speakerLabel.setAlignment(Align.center); // Căn giữa
+        speakerLabel.setColor(Color.valueOf("#F3C300")); // Mã màu vàng Gold giống hình
 
         contentLabel = new Label("", labelStyle);
         contentLabel.setWrap(true);
-        contentLabel.setAlignment(Align.topLeft);
+        contentLabel.setAlignment(Align.center); // Căn giữa
 
         choicesTable = new Table();
 
-        dialogBox.add(speakerLabel).align(Align.left).padBottom(10).row();
-        dialogBox.add(contentLabel).width(800).height(100).align(Align.topLeft).row();
+        // 3. Xếp hình vào Bảng (Table) theo thứ tự: Tên -> Đường kẻ -> Nội dung
+        dialogBox.add(speakerLabel).expandX().center().padBottom(5).row();
+        // Chiều rộng đường kẻ tùy chỉnh (ví dụ 600px), chiều cao 2px
+        dialogBox.add(separatorLine).width(600).height(2).center().padBottom(15).row();
+        dialogBox.add(contentLabel).width(800).minHeight(50).center().row();
 
         rootTable.add(choicesTable).padBottom(10).row();
         rootTable.add(dialogBox).width(900);
@@ -116,6 +152,32 @@ public class DialogueUI {
 
     public void setOnFinished(Runnable onFinished) {
         this.onFinished = onFinished;
+    }
+
+    // --- Thêm biến lưu vị trí gốc để không bị lệch sau khi rung ---
+    private float originalDialogueX, originalDialogueY;
+    private float originalThoughtX, originalThoughtY;
+
+    // --- Hàm tạo hiệu ứng rung lắc (Shake Action) ---
+    private void applyShakeEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
+        target.clearActions(); // Xóa các rung lắc cũ
+
+        if (rs < 35f || rs > 65f) {
+            // Tính cường độ rung dựa trên độ lệch (càng xa 50 rung càng mạnh)
+            float intensity = (Math.abs(rs - 50f) - 15f) / 35f;
+            float amount = 4f * intensity; // Tối đa rung 4 pixel
+            float duration = 0.03f; // Tốc độ giựt (càng nhỏ càng nhanh)
+
+            target.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.forever(
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(amount, amount, duration),
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(-amount * 2, -amount, duration),
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(amount, -amount, duration),
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(amount, amount * 2, duration),
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(-amount, -amount, duration)
+                )
+            ));
+        }
     }
 
     public void displayNode(DialogueNode node) {
