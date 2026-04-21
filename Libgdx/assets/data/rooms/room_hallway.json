@@ -1,0 +1,78 @@
+{
+  "roomId": "room_hallway",
+  "roomName": "Sảnh chung",
+  "background": "images/hall_final.png",
+  "objects": [
+    {
+      "id": "door_back_bedroom",
+      "type": "door",
+      "x": 874,
+      "y": 0,
+      "w": 200,
+      "h": 100,
+      "properties": {
+        "targetScene": "room_bedroom",
+        "inspectText": "Quay lại phòng của tôi. Cảm giác ngoài này không an toàn chút nào.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "door_neighbor",
+      "type": "interactable",
+      "x": 634,
+      "y": 209,
+      "w": 160,
+      "h": 370,
+      "properties": {
+        "inspectText": "Cửa phòng đối diện. Những vết tay kia... là máu hay sơn vậy?",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs",
+      "type": "interactable",
+      "x": 0,
+      "y": 0,
+      "w": 440,
+      "h": 450,
+      "properties": {
+        "inspectText": "Cầu thang tối om. Trông gai cả ốc, tôi không muốn xuống đó bây giờ.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "creepy_painting",
+      "type": "interactable",
+      "x": 929,
+      "y": 273,
+      "w": 170,
+      "h": 350,
+      "properties": {
+        "inspectText": "Một bức tranh kỳ quái. Ánh mắt nó như đang nhìn chằm chằm vào tôi...",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "doorbell",
+      "type": "interactable",
+      "x": 803,
+      "y": 378,
+      "w": 40,
+      "h": 60,
+      "properties": {
+        "inspectText": "Nút chuông cửa đã bám đầy bụi.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    }
+  ]
+}

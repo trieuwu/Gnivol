@@ -53,6 +53,11 @@ public class RoomScene extends Scene {
 
         if (roomData != null && roomData.getObjects() != null) {
             for (RoomData.RoomObject objData : roomData.getObjects()) {
+                if (objData.id == null || objData.id.trim().isEmpty()) {
+                    Gdx.app.error("RoomScene", "🚨 LỖI JSON: Phát hiện một object bị thiếu 'id' ở phòng: " + sceneId);
+                    continue;
+                }
+
                 if (objData.properties != null && objData.properties.itemId != null) {
                     if (puzzleManager.isItemCollected(objData.properties.itemId)) {
                         continue;
@@ -147,6 +152,7 @@ public class RoomScene extends Scene {
 
         if (roomData == null || roomData.getObjects() == null) return;
         for (RoomData.RoomObject objData : roomData.getObjects()) {
+            if (objData.id == null) continue;
             if (findObjectById(objData.id) == null) continue;
 
             String state = objectStates.getOrDefault(objData.id, "default");

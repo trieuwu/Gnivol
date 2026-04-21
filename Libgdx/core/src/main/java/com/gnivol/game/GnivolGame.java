@@ -59,7 +59,6 @@ public class GnivolGame extends Game {
         playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager, puzzleManager);
 
         gameSnapshot = new com.gnivol.game.system.save.GameSnapshot();
-        saveUIController = new com.gnivol.game.system.save.SaveUIController(stage);
         autoSaveManager = new com.gnivol.game.system.save.AutoSaveManager(gameSnapshot, saveUIController);
 
         gameSnapshot.register(gameState);

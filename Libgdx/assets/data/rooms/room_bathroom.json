@@ -45,6 +45,34 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "sink",
+      "type": "interactable",
+      "x": 921,
+      "y": 152,
+      "w": 200,
+      "h": 100,
+      "properties": {
+        "inspectText": "Bồn rửa mặt cáu bẩn. Bên dưới có một bảng điện tử bị hở mạch.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "toilet",
+      "type": "interactable",
+      "x": 482,
+      "y": 0,
+      "w": 200,
+      "h": 220,
+      "properties": {
+        "inspectText": "Một chiếc bồn cầu cũ kỹ. Nước bên trong có màu đùng đục...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
     }
   ]
 }

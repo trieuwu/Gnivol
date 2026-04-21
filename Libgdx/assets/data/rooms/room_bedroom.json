@@ -171,6 +171,36 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "door_left_hallway",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 70,
+      "h": 600,
+      "properties": {
+        "targetScene": "room_hallway",
+        "inspectText": "Mở cửa ra sảnh chung.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "go_under_bed",
+      "type": "door",
+      "x": 287,
+      "y": 0,
+      "w": 100,
+      "h": 80,
+      "properties": {
+        "targetScene": "room_under_bed",
+        "inspectText": "Chui xuống gầm giường xem có gì không.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
     }
   ]
 }

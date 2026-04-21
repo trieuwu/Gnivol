@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -60,7 +61,7 @@ public class GameScreen extends BaseScreen {
 
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
-    private com.gnivol.game.ui.LaserUI laserUI;
+    private com.badlogic.gdx.scenes.scene2d.ui.Skin defaultSkin;
 
     private boolean debugMode = false;
     private ShapeRenderer debugRenderer;
@@ -68,6 +69,11 @@ public class GameScreen extends BaseScreen {
     private RoomData.RoomObject dragTarget;
     private boolean dragResizing;
     private float dragOffsetX, dragOffsetY;
+
+    private com.gnivol.game.system.scene.CutsceneManager cutsceneManager;
+    private boolean isFlashing = false;
+    private float flashAlpha = 0f;
+    private Color flashColor = Color.WHITE;
 
     public GameScreen(GnivolGame game) {
         super(game);
@@ -87,22 +93,26 @@ public class GameScreen extends BaseScreen {
 
         FontManager fm = game.getFontManager();
 
-
-        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), fm.fontVietnamese);
+        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
         inventoryUI.refreshUI();
 
         this.puzzleManager = game.getPuzzleManager();
-        com.badlogic.gdx.scenes.scene2d.ui.Skin defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
+        defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
 
         puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
-        laserUI = new com.gnivol.game.ui.LaserUI(defaultSkin, game.getStage());
-
 
         setupPuzzleListeners();
 
         dialogueEngine = new DialogueEngine(game.getRsManager());
         dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
         loadDialogueDatabase();
+        dialogueUI.setOnFinished(() -> {
+            // NẾU ĐANG TRONG CUTSCENE THÌ BÁO KẾT THÚC THOẠI
+            if (cutsceneManager.isPlaying()) {
+                cutsceneManager.onDialogueFinished();
+            }
+            // ... logic intro cũ giữ nguyên ...
+        });
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
         inspectLabel = new Label("", labelStyle);
@@ -136,22 +146,38 @@ public class GameScreen extends BaseScreen {
             handleFirstShow();
             firstShow = false;
         }
+
+        cutsceneManager = new com.gnivol.game.system.scene.CutsceneManager();
+        cutsceneManager.setRSManager(game.getRsManager());
+        cutsceneManager.setAudioManager(game.getAudioManager());
+        cutsceneManager.loadCutscenes("data/cutscenes.json");
+
+        cutsceneManager.setListener(new com.gnivol.game.system.scene.CutsceneManager.CutsceneListener() {
+            @Override
+            public void onFlash(String color, float duration) {
+                isFlashing = true;
+                flashAlpha = 1f;
+                if ("white".equalsIgnoreCase(color)) flashColor = Color.WHITE;
+                else if ("red".equalsIgnoreCase(color)) flashColor = Color.RED;
+            }
+
+            @Override
+            public void onDialogue(String dialogueId) {
+                triggerDialogue(dialogueId);
+            }
+
+            @Override public void onShowSprite(String sprite, float duration) {}
+            @Override public void onShake(float intensity, float duration) {}
+            @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
+            @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
+            @Override public void onSwapSprite(String target, String newSprite) {}
+            @Override public void onCutsceneFinished(String cutsceneId) { Gdx.app.log("Cutscene", "Finished: " + cutsceneId); }
+        });
+
     }
 
     private void setupPuzzleListeners() {
-        laserUI.setListener(puzzleId -> {
-            puzzleManager.markSolved(puzzleId);
-            inventoryUI.refreshUI();
-            if (game.getAutoSaveManager() != null) {
-                game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
-            }
-        });
-
-        puzzleManager.setCallback(puzzleId -> {
-            if ("puzzle_drawer".equals(puzzleId)) puzzleDrawerUI.show();
-            else if ("puzzle_laser".equals(puzzleId)) laserUI.show();
-        });
-
+        // Chỉ còn lắng nghe kết quả từ ngăn kéo (drawer)
         puzzleDrawerUI.setListener(puzzleId -> {
             if ("puzzle_drawer".equals(puzzleId)) {
                 game.getInventoryManager().addItem("chia_khoa_final");
@@ -162,6 +188,16 @@ public class GameScreen extends BaseScreen {
                 }
                 game.getStage().setKeyboardFocus(null);
                 if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
+            }
+        });
+
+        // Xử lý sự kiện mở minigame
+        puzzleManager.setCallback(puzzleId -> {
+            if ("puzzle_drawer".equals(puzzleId)) {
+                puzzleDrawerUI.show();
+            } else if ("puzzle_laser".equals(puzzleId)) {
+                // CHUYỂN SANG MÀN HÌNH LASERSCREEN ĐỘC LẬP
+                game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
             }
         });
     }
@@ -199,6 +235,39 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public void onDoorInteracted(GameObject obj) {
+                if ("door_left_hallway".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("main_door_unlocked")) {
+                        changeSceneWithFade("room_hallway");
+                    }
+                    else if (puzzleManager.isPuzzleSolved("key_broke_on_door")) {
+                        if ("chia_khoa_fixed_final".equals(inventoryUI.getSelectedItem())) {
+                            game.getInventoryManager().removeItem("chia_khoa_fixed_final");
+                            inventoryUI.clearSelection();
+                            puzzleManager.markSolved("main_door_unlocked"); // Lưu cờ cửa đã mở
+                            showNotification("Cạch! Cửa đã được mở khóa.", Color.GREEN);
+                            inventoryUI.refreshUI();
+                            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("unlock_main_door");
+                        } else {
+                            onDialogueTriggered("door_need_fixed_key");
+                        }
+                    }
+                    else {
+                        if ("chia_khoa_final".equals(inventoryUI.getSelectedItem())) {
+                            game.getInventoryManager().removeItem("chia_khoa_final");
+                            inventoryUI.clearSelection();
+                            game.getInventoryManager().addItem("chuoi_chia_khoa");
+                            puzzleManager.markSolved("key_broke_on_door");
+                            inventoryUI.refreshUI();
+                            onDialogueTriggered("key_broke");
+                            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("key_broke");
+                        }
+                        else {
+                            onDialogueTriggered("door_locked_no_key");
+                        }
+                    }
+                    return;
+                }
+
                 RoomData roomData = sceneManager.getCurrentScene().getRoomData();
                 for (RoomData.RoomObject roomObj : roomData.getObjects()) {
                     if (roomObj.id.equals(obj.getId()) && roomObj.properties != null && roomObj.properties.targetScene != null) {
@@ -210,11 +279,102 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public void onObjectInteracted(GameObject obj) {
+                if ("door_neighbor".equals(obj.getId())) {
+                    if ("axe".equals(inventoryUI.getSelectedItem())) {
+                        changeSceneWithFade("room_opposite");
+                    } else {
+
+                        if (!game.getFlagManager().get("neighbor_door_checked")) {
+                            game.getFlagManager().set("neighbor_door_checked", true);
+
+                            game.getRsManager().setCurrentRS(game.getRsManager().getRS() + 5f);
+                        }
+
+
+                        onDialogueTriggered("neighbor_door_smell");
+                    }
+                    return;
+                }
+
+                if ("stairs".equals(obj.getId())) {
+                    if (game.getFlagManager().get("fingerprint_ok")) {
+                        changeSceneWithFade("room_downstairs_placeholder");
+                    } else {
+                        hideInspectText();
+                        onDialogueTriggered("stairs_need_fingerprint");
+                    }
+                    return;
+                }
+
+                if ("bed".equals(obj.getId())) {
+                    if (!game.getFlagManager().get("first_time_bed")) {
+                        game.getFlagManager().set("first_time_bed");
+                        hideInspectText();
+
+                        cutsceneManager.play("hand_under_bed");
+                    }
+                    return;
+                }
+
                 if ("drawer".equals(obj.getId())) {
                     if (puzzleManager.isPuzzleSolved("puzzle_drawer")) showNotification("Ngăn kéo đã trống rỗng.", Color.LIGHT_GRAY);
                     else puzzleManager.openPuzzle("puzzle_drawer");
                     return;
                 }
+
+                if ("toilet".equals(obj.getId())) {
+                    if (game.getFlagManager().get("toilet_clogged")) {
+                        showNotification("Bồn cầu đã bị tắc cứng bởi chiếc cà vạt.", Color.LIGHT_GRAY);
+                        return;
+                    }
+
+                    if ("ca_vat_final".equals(inventoryUI.getSelectedItem())) {
+                        hideInspectText();
+
+                        com.badlogic.gdx.scenes.scene2d.ui.Dialog confirmDialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", defaultSkin) {
+                            @Override
+                            protected void result(Object object) {
+                                if (object.equals(true)) {
+                                    game.getFlagManager().set("toilet_clogged", true);
+                                    game.getInventoryManager().removeItem("ca_vat_final");
+                                    inventoryUI.clearSelection();
+                                    inventoryUI.refreshUI();
+                                    showNotification("Bạn ném vải vào và xả nước... Ục ục... Bồn cầu đã tắc!", Color.GREEN);
+                                    if (game.getAutoSaveManager() != null) {
+                                        game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
+                                    }
+                                }
+                            }
+                        };
+
+                        Label.LabelStyle lblStyle = new Label.LabelStyle(game.getFontManager().fontVietnamese, Color.WHITE);
+                        confirmDialog.text(new Label("Ném vải vào bồn cầu?", lblStyle));
+
+                        TextButton.TextButtonStyle btnStyle = defaultSkin.get(TextButton.TextButtonStyle.class);
+                        TextButton.TextButtonStyle viBtnStyle = new TextButton.TextButtonStyle(btnStyle);
+                        viBtnStyle.font = game.getFontManager().fontVietnamese;
+
+                        confirmDialog.button(new TextButton("Có", viBtnStyle), true);
+                        confirmDialog.button(new TextButton("Không", viBtnStyle), false);
+                        confirmDialog.show(game.getStage());
+
+                    } else {
+                        showInspectText("Hệ thống xả nước có vẻ vẫn hoạt động bình thường.");
+                    }
+                    return;
+                }
+
+                if ("sink".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("puzzle_laser")) {
+                        // Nếu đã giải xong
+                        showNotification("Mạch điện đã được nối xong. Nước đã chảy lại bình thường.", Color.LIGHT_GRAY);
+                    } else {
+                        // Nếu chưa giải, mở minigame laser lên
+                        puzzleManager.openPuzzle("puzzle_laser");
+                    }
+                    return; // Kết thúc sự kiện
+                }
+
                 RoomData roomData = sceneManager.getCurrentScene().getRoomData();
                 for (RoomData.RoomObject roomObj : roomData.getObjects()) {
                     if (!roomObj.id.equals(obj.getId()) || roomObj.properties == null) continue;
@@ -237,13 +397,7 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public void onDialogueTriggered(String dialogueId) {
-                hideInspectText();
-                DialogueTree tree = dialogueDatabase.get(dialogueId);
-                if (tree != null) {
-                    dialogueEngine.loadDialogue(tree);
-                    dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                    game.getGameState().markDialogueFinished(dialogueId);
-                }
+                triggerDialogue(dialogueId);
             }
             @Override public void onOpenPuzzleOverlay(String puzzleId) {}
             @Override public void onPuzzleFailed(String puzzleId) {}
@@ -364,7 +518,23 @@ public class GameScreen extends BaseScreen {
         if (overlayActive) renderOverlay(delta);
         if (debugMode) renderDebugOverlay();
         game.getStage().draw();
+
+
+        if (cutsceneManager != null) cutsceneManager.update(delta);
+        if (isFlashing) {
+            flashAlpha -= delta * 4f; // Tốc độ biến mất của ánh sáng
+            if (flashAlpha <= 0) isFlashing = false;
+
+            Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+            dimRenderer.setProjectionMatrix(camera.combined);
+            dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            dimRenderer.setColor(flashColor.r, flashColor.g, flashColor.b, flashAlpha);
+            dimRenderer.rect(0, 0, 1280, 720);
+            dimRenderer.end();
+        }
+
         screenFader.render();
+
     }
 
     private void renderOverlay(float delta) {
@@ -466,6 +636,17 @@ public class GameScreen extends BaseScreen {
         });
     }
 
+    public void triggerDialogue(String dialogueId) {
+        hideInspectText();
+        com.gnivol.game.model.dialogue.DialogueTree tree = dialogueDatabase.get(dialogueId);
+        if (tree != null) {
+            dialogueEngine.loadDialogue(tree);
+            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+            game.getGameState().markDialogueFinished(dialogueId);
+        }
+    }
+
+
     private void openOverlay(String path) { try { overlayTexture = new Texture(Gdx.files.internal(path)); overlayActive = true; overlayAlpha = 0; } catch (Exception e) { Gdx.app.error("Overlay", "Error", e); } }
     private void closeOverlay() { overlayActive = false; if (overlayTexture != null) overlayTexture.dispose(); overlayTexture = null; hideInspectText(); }
     private void showInspectText(String text) { inspectLabel.setText(text); inspectTable.setVisible(true); inspectTable.getColor().a = 0f; inspectTable.addAction(Actions.fadeIn(0.3f)); }
@@ -497,5 +678,6 @@ public class GameScreen extends BaseScreen {
         if (dimRenderer != null) dimRenderer.dispose();
         if (debugRenderer != null) debugRenderer.dispose();
         if (overlayTexture != null) overlayTexture.dispose();
+        if (defaultSkin != null) defaultSkin.dispose();
     }
 }

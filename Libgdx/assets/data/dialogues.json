@@ -113,5 +113,130 @@
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "key_broke",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Cạch... RẮC! Thôi xong! Chìa khóa cũ giòn quá, gãy làm đôi rồi!",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Hnil",
+        "content": "Một nửa đang kẹt cứng trong ổ, mình chỉ còn cầm cái chuôi... Phải tìm cách gắn nó lại thật chắc mới vặn được.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "door_need_fixed_key",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Nửa cái chìa vẫn đang kẹt trong ổ. Mình cần bôi thứ gì đó thật dính vào cái chuôi này để nối chúng lại.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "door_locked_no_key",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Cửa chính đã bị khóa trái. Mình không thể ra ngoài nếu không tìm thấy chìa khóa.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "neighbor_door_smell",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Cửa khóa chặt rồi... Ục... Có mùi hôi thối nồng nặc bốc ra từ khe cửa.",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Hnil",
+        "content": "Mùi hương này... giống hệt như mùi thịt thối rữa. Mình cần một thứ gì đó đủ mạnh để phá nát cánh cửa này, một cái rìu chẳng hạn.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "stairs_need_fingerprint",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Một chiếc máy quét vân tay ẩn dưới tay vịn cầu thang? Hệ thống an ninh ở đây thật đáng kinh ngạc.",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Hnil",
+        "content": "Thiết bị báo 'Truy cập bị từ chối'. Mình cần vân tay của một cư dân ở đây mới có thể xuống tầng dưới được.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "bed_jumpscare",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hnil",
+        "content": "Cái giường này... cảm giác lạnh lẽo đến rợn người.",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Hnil",
+        "content": "Á!!! Có... có một bàn tay vừa quờ ra từ dưới gầm giường?!",
+        "textEffects": true,
+        "nextNodeId": "node_3",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "Hnil",
+        "content": "Biến mất rồi... Chết tiệt, tim mình như sắp nhảy ra ngoài vậy. Chuyện quái gì đang diễn ra thế này?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
   }
+
 ]
