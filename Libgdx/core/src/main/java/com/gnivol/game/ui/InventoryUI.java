@@ -42,10 +42,19 @@ public class InventoryUI {
     private com.badlogic.gdx.utils.ObjectMap<String, com.badlogic.gdx.utils.JsonValue> itemDatabase;
     private com.badlogic.gdx.graphics.g2d.BitmapFont font;
 
-    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
+    private com.gnivol.game.system.rs.RSManager rsManager;
+    private ImageButton useBtn;
+    private ImageButton mergeBtn;
+    private TextureRegionDrawable mergeNormalBg;
+    private TextureRegionDrawable mergeGlitchBg;
+    private TextureRegionDrawable useNormalBg;
+    private TextureRegionDrawable useGlitchBg;
+
+    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.gnivol.game.system.rs.RSManager rsManager, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
         this.stage = stage;
         this.inventoryManager = inv;
         this.craftingManager = craft;
+        this.rsManager = rsManager; // LƯU LẠI
         this.font = font;
 
         loadItemData();
@@ -100,6 +109,9 @@ public class InventoryUI {
                 quickbarTable.setVisible(!isBackpackVisible);
                 if (!isBackpackVisible) {
                     resetHighlights();
+                } else {
+
+                    updateButtonStates();
                 }
             }
         });
@@ -190,8 +202,20 @@ public class InventoryUI {
         backpackTable.add(gridTable).row();
 
 
-        Texture mergeTex = new Texture(Gdx.files.internal("images/Merge_button.png"));
-        ImageButton mergeBtn = new ImageButton(new TextureRegionDrawable(new TextureRegion(mergeTex)));
+        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button.png"))));
+        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button_glitch.png"))));
+        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button.png"))));
+        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button_glitch.png"))));
+
+        useBtn = new ImageButton(useNormalBg);
+        useBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("InventoryUI", "Nút USE được bấm (Chưa có chức năng)");
+            }
+        });
+
+        mergeBtn = new ImageButton(mergeNormalBg);
         mergeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -204,10 +228,11 @@ public class InventoryUI {
         gridLayer.add(gridTable).center();
         overlayStack.add(gridLayer);
 
-        Table mergeLayer = new Table();
-        mergeLayer.bottom().padBottom(40f); // Tăng giảm số này để đẩy nút lên/xuống
-        mergeLayer.add(mergeBtn).size(450, 150);
-        overlayStack.add(mergeLayer);
+        Table actionLayer = new Table();
+        actionLayer.bottom().padBottom(30f);
+        actionLayer.add(useBtn).size(280, 140).padRight(-50f);
+        actionLayer.add(mergeBtn).size(280, 140);
+        overlayStack.add(actionLayer);
 
         backpackTable.add(overlayStack).expand().fill();
 
@@ -460,6 +485,32 @@ public class InventoryUI {
             }
         }
     }
+
+    public String getSelectedItem() {
+        if (backpackTable != null && !backpackTable.isVisible()) {
+            return selectedItem1;
+        }
+        return null;
+    }
+
+    public void clearSelection() {
+        resetHighlights();
+    }
+
+    public void updateButtonStates() {
+        if (rsManager == null) return;
+
+        boolean isGlitch = rsManager.isAboveThreshold();
+
+        if (isGlitch) {
+            useBtn.getStyle().imageUp = useGlitchBg;
+            mergeBtn.getStyle().imageUp = mergeGlitchBg;
+        } else {
+            useBtn.getStyle().imageUp = useNormalBg;
+            mergeBtn.getStyle().imageUp = mergeNormalBg;
+        }
+    }
+
 }
 
 

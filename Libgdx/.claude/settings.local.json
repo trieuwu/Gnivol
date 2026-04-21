@@ -3,7 +3,9 @@
     "allow": [
       "Bash(./gradlew desktop:run)",
       "Bash(./gradlew core:compileJava)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(./gradlew compileJava)",
+      "mcp__claude_ai_Linear__get_issue"
     ]
   }
 }

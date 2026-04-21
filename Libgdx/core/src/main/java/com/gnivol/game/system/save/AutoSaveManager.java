@@ -33,9 +33,6 @@ public class AutoSaveManager {
             return;
         }
 
-        if (saveUIController != null) {
-            saveUIController.showSavingIcon();
-        }
         String jsonData = gameSnapshot.captureAndToJson();
 
         fileWriter.writeAsync(jsonData, "save_slot_1.json", new AsyncFileWriter.SaveCallback() {
@@ -45,19 +42,13 @@ public class AutoSaveManager {
                 dirtyTracker.clearAll();
                 saveLock.unlock();
 
-                if (saveUIController != null) {
-                    saveUIController.hideSavingIcon();
-                }
             }
 
             @Override
             public void onError(Exception e) {
                 Gdx.app.error("AutoSave", "Error while saving: ", e);
                 saveLock.unlock();
-
-                if (saveUIController != null) {
-                    saveUIController.hideSavingIcon();
-                }
+                
             }
         });
     }
