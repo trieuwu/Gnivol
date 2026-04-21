@@ -70,6 +70,7 @@ public class GameScreen extends BaseScreen {
 
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
+    private com.gnivol.game.ui.LaserUI laserUI;
 
     // Debug overlay (F1 để bật/tắt)
     private boolean debugMode = false;
@@ -136,11 +137,33 @@ public class GameScreen extends BaseScreen {
 
         puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
 
+        laserUI = new com.gnivol.game.ui.LaserUI(defaultSkin, game.getStage());
+
+        laserUI.setListener(new com.gnivol.game.ui.LaserUI.LaserResultListener() {
+            @Override
+            public void onLaserSolved(String puzzleId) {
+                puzzleManager.markSolved(puzzleId);
+
+                game.getInventoryManager().addItem("chuoi_chia_khoa");
+                game.getInventoryManager().addItem("keo_502_final");
+                inventoryUI.refreshUI();
+
+                showNotification("Minigame Solved. Got Chuôi chìa khóa & Keo 502.", Color.GREEN);
+
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
+                }
+
+            }
+        });
+
         puzzleManager.setCallback(new com.gnivol.game.system.puzzle.PuzzleManager.PuzzleCallback() {
             @Override
             public void onShowPuzzleOverlay(String puzzleId) {
                 if ("puzzle_drawer".equals(puzzleId)) {
                     puzzleDrawerUI.show();
+                } else if ("puzzle_laser".equals(puzzleId)) {
+                    laserUI.show();
                 }
             }
         });
@@ -165,6 +188,7 @@ public class GameScreen extends BaseScreen {
                 }
             }
         });
+
 
 
         inventoryUI.refreshUI();
@@ -305,7 +329,7 @@ public class GameScreen extends BaseScreen {
 
                     }
                     // Chạy Inner Thought
-                    hideInspectText();
+                    // hideInspectText();
                     ThoughtManager thoughtManager = new ThoughtManager();
                     DialogueTree thoughtTree = thoughtManager.getThoughtTree(obj.getId(), game.getRsManager().getRS());
                     if (thoughtTree != null) {
@@ -738,7 +762,7 @@ public class GameScreen extends BaseScreen {
         if (rsFontGenerator != null) rsFontGenerator.dispose();
     }
 
-    private void showNotification(String text, Color color) {
+    public void showNotification(String text, Color color) {
         Label.LabelStyle notifStyle = new Label.LabelStyle(vietnameseFont, color);
         Label notifLabel = new Label(text, notifStyle);
 
@@ -772,8 +796,14 @@ public class GameScreen extends BaseScreen {
         if (screenFader.isFading()) return;
         screenFader.startFade(() -> {
             sceneManager.changeScene(targetSceneId);
-
             game.getGameState().setCurrentRoom(targetSceneId);
+
+            if ("room_bathroom".equals(targetSceneId)) {
+                if (!game.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
+                    game.setScreen(new LaserScreen(game, this));
+                    return;
+                }
+            }
 
             if (game.getAutoSaveManager() != null) {
                 game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
