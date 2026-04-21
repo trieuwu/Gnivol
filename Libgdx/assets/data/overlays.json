@@ -1,7 +1,9 @@
 [
   {
     "id": "fridge_interior",
-    "background": "images/bg_fridge_interior.png",
-    "items": []
+    "background": "textures/objects/fridge_open.png",
+    "items": [
+      {"itemId": "bone", "x": 500, "y": 350, "w": 64, "h": 64}
+    ]
   }
 ]

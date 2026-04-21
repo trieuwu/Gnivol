@@ -53,6 +53,42 @@
       "pickupSoundID": "sfx_pickup_key",
       "rsChangeValue": 8,
       "isCursed": false
+    },
+    {
+      "itemID": "hanger",
+      "itemName": "Móc treo",
+      "description": "Một chiếc móc treo quần áo bằng kim loại.",
+      "inspectText": "Móc treo cũ kỹ, hơi cong. Có thể uốn thành dụng cụ gì đó.",
+      "pickupSoundID": "sfx_pickup_metal",
+      "rsChangeValue": 0,
+      "isCursed": false
+    },
+    {
+      "itemID": "bone",
+      "itemName": "Khúc xương",
+      "description": "Một khúc xương nhỏ, không rõ của ai.",
+      "inspectText": "Lạnh ngắt. Có vết cắn ở đầu xương... Đây là xương người hay xương động vật?",
+      "pickupSoundID": "sfx_pickup_metal",
+      "rsChangeValue": 5,
+      "isCursed": false
+    },
+    {
+      "itemID": "glass_shard",
+      "itemName": "Mảnh kính",
+      "description": "Một mảnh kính vỡ sắc nhọn.",
+      "inspectText": "Cạnh rất sắc. Có thể dùng để cắt thứ gì đó... hoặc tự làm đau mình.",
+      "pickupSoundID": "sfx_pickup_metal",
+      "rsChangeValue": 3,
+      "isCursed": false
+    },
+    {
+      "itemID": "fabric_piece",
+      "itemName": "Mảnh vải",
+      "description": "Một mảnh vải rách từ ga giường.",
+      "inspectText": "Vải mỏng nhưng dai. Có thể dùng để tắc thứ gì đó...",
+      "pickupSoundID": "sfx_pickup_fabric",
+      "rsChangeValue": 0,
+      "isCursed": false
     }
   ]
 }

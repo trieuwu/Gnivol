@@ -66,11 +66,15 @@ public class GameScreen extends BaseScreen {
     private boolean overlayActive;
     private float overlayAlpha;       // fade-in animation
     private ShapeRenderer dimRenderer; // vẽ nền mờ đen
+    private String overlaySourceId;   // object id đang mở overlay
     private InventoryUI inventoryUI;
 
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
     private com.gnivol.game.ui.LaserUI laserUI;
+
+    // InventoryOverlay system (fridge, wardrobe — doc lap voi openOverlay cu)
+    private com.gnivol.game.ui.InventoryOverlay inventoryOverlaySystem;
 
     // Debug overlay (F1 để bật/tắt)
     private boolean debugMode = false;
@@ -186,6 +190,28 @@ public class GameScreen extends BaseScreen {
 
 
         inventoryUI.refreshUI();
+
+        // --- InventoryOverlay system (fridge, wardrobe — doc lap) ---
+        inventoryOverlaySystem = new com.gnivol.game.ui.InventoryOverlay();
+        inventoryOverlaySystem.loadOverlays("data/overlays.json");
+        inventoryOverlaySystem.setListener(new com.gnivol.game.ui.InventoryOverlay.OverlayListener() {
+            @Override
+            public void onItemCollected(String overlayId, String itemId) {
+                game.getInventoryManager().addItem(itemId);
+                inventoryUI.refreshUI();
+                showItemNotification(itemId);
+                // Chuyển texture container sang "taken" sau khi lấy item
+                if ("fridge_interior".equals(overlayId)) {
+                    ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("fridge", "taken");
+                }
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
+                }
+            }
+            @Override
+            public void onOverlayClosed(String overlayId) {}
+        });
+
         // THÊM MỚI: Khởi tạo Dialogue System
         dialogueEngine = new DialogueEngine(game.getRsManager());
         dialogueUI = new DialogueUI(game, game.getStage(), vietnameseFont, dialogueEngine, game.getRsManager());
@@ -329,21 +355,23 @@ public class GameScreen extends BaseScreen {
                         return;
 
                     }
-                    // Chạy Inner Thought
-                    // hideInspectText();
-                    ThoughtManager thoughtManager = new ThoughtManager();
-                    DialogueTree thoughtTree = thoughtManager.getThoughtTree(obj.getId(), game.getRsManager().getRS());
-                    if (thoughtTree != null) {
-                        // Nạp thẳng cái Tree ảo này vào Engine
-                        dialogueEngine.loadDialogue(thoughtTree);
-                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                    // Mở overlay nếu có altTextures (fridge, etc.)
+                    if (roomObj.properties.altTextures != null
+                            && !roomObj.properties.altTextures.isEmpty()) {
+                        String openPath = roomObj.properties.altTextures.get("open");
+                        if (openPath == null) {
+                            openPath = roomObj.properties.altTextures.values().iterator().next();
+                        }
+                        openOverlay(openPath, obj.getId());
                         return;
                     }
 
-                    if (roomObj.properties.altTextures != null
-                            && !roomObj.properties.altTextures.isEmpty()) {
-                        String firstPath = roomObj.properties.altTextures.values().iterator().next();
-                        openOverlay(firstPath);
+                    // Chạy Inner Thought (chỉ khi không có overlay)
+                    ThoughtManager thoughtManager = new ThoughtManager();
+                    DialogueTree thoughtTree = thoughtManager.getThoughtTree(obj.getId(), game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        dialogueEngine.loadDialogue(thoughtTree);
+                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
                         return;
                     }
 
@@ -417,7 +445,48 @@ public class GameScreen extends BaseScreen {
                 if (dialogueUI != null && dialogueUI.isVisible()) {
                     return false; // Stage sẽ tự bắt lấy event này để next câu thoại, không truyền xuống world
                 }
+                // InventoryOverlay: click item hoac click ngoai de dong
+                if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
+                    com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(overlayTouch, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                    if (!inventoryOverlaySystem.handleClick(overlayTouch.x, overlayTouch.y)) {
+                        inventoryOverlaySystem.close();
+                    }
+                    return true;
+                }
                 if (overlayActive) {
+                    // Unproject click sang world coords
+                    com.badlogic.gdx.math.Vector3 touch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+
+                    // Check click trúng item trong overlay (toạ độ relative to overlay image)
+                    if ("fridge".equals(overlaySourceId) && overlayTexture != null
+                            && !game.getInventoryManager().hasItem("bone")) {
+                        float maxW = 700f, maxH = 550f;
+                        float imgW = overlayTexture.getWidth(), imgH = overlayTexture.getHeight();
+                        float scale = Math.min(maxW / imgW, maxH / imgH);
+                        float drawW = imgW * scale, drawH = imgH * scale;
+                        float drawX = (1280 - drawW) / 2f;
+                        float drawY = (720 - drawH) / 2f;
+
+                        // Toạ độ click relative to overlay image (pixel gốc)
+                        float relX = (touch.x - drawX) / scale;
+                        float relY = (touch.y - drawY) / scale;
+
+                        // Bone hitbox (from overlays.json: x:500 y:350 w:64 h:64)
+                        if (relX >= 500 && relX <= 564 && relY >= 350 && relY <= 414) {
+                            game.getInventoryManager().addItem("bone");
+                            inventoryUI.refreshUI();
+                            showItemNotification("bone");
+                            ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene())
+                                    .setObjectState("fridge", "taken");
+                            closeOverlay();
+                            return true;
+                        }
+                    }
+
                     closeOverlay();
                     return true;
                 }
@@ -535,11 +604,16 @@ public class GameScreen extends BaseScreen {
     // --- Overlay ---
 
     private void openOverlay(String texturePath) {
+        openOverlay(texturePath, null);
+    }
+
+    private void openOverlay(String texturePath, String sourceId) {
         try {
             overlayTexture = new Texture(Gdx.files.internal(texturePath));
             overlayActive = true;
             overlayAlpha = 0f;
-            Gdx.app.log("Overlay", "Opened: " + texturePath);
+            overlaySourceId = sourceId;
+            Gdx.app.log("Overlay", "Opened: " + texturePath + " source: " + sourceId);
         } catch (Exception e) {
             Gdx.app.error("Overlay", "Cannot load: " + texturePath, e);
         }
@@ -547,6 +621,7 @@ public class GameScreen extends BaseScreen {
 
     private void closeOverlay() {
         overlayActive = false;
+        overlaySourceId = null;
         if (overlayTexture != null) {
             overlayTexture.dispose();
             overlayTexture = null;
@@ -631,6 +706,13 @@ public class GameScreen extends BaseScreen {
                 batch.setColor(Color.WHITE);
                 batch.end();
             }
+        }
+
+        // InventoryOverlay render (doc lap voi overlay cu)
+        if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
+            batch.begin();
+            inventoryOverlaySystem.render(batch);
+            batch.end();
         }
 
         // Debug overlay (hitbox + tọa độ + chuột)
@@ -761,6 +843,7 @@ public class GameScreen extends BaseScreen {
         if (overlayTexture != null) overlayTexture.dispose();
         if (rsFont != null) rsFont.dispose();
         if (rsFontGenerator != null) rsFontGenerator.dispose();
+        if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
     }
 
     public void showNotification(String text, Color color) {
@@ -791,6 +874,13 @@ public class GameScreen extends BaseScreen {
         }
 
         showNotification(itemName, Color.MAROON);
+    }
+
+    /** Mở InventoryOverlay theo overlayId (VD: "fridge_interior"). Dùng trong onObjectInteracted. */
+    public void openInventoryOverlay(String overlayId) {
+        if (inventoryOverlaySystem != null) {
+            inventoryOverlaySystem.open(overlayId);
+        }
     }
 
     public void changeSceneWithFade(String targetSceneId) {

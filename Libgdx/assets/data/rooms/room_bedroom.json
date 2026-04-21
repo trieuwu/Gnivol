@@ -40,7 +40,12 @@
         "inspectText": "Tủ lạnh mini. Tiếng vo ve nhỏ phát ra từ bên trong...",
         "collectible": false,
         "hasGlitch": false,
-        "rsChange": 0
+        "rsChange": 0,
+        "overlayId": "fridge_interior",
+        "altTextures": {
+          "open": "textures/objects/fridge_open.png",
+          "taken": "textures/objects/fridge_open_taken.png"
+        }
       }
     },
     {
@@ -111,36 +116,6 @@
         "collectible": false,
         "hasGlitch": true,
         "rsChange": -5
-      }
-    },
-    {
-      "id": "paper_fragment_1",
-      "type": "item",
-      "x": 74,
-      "y": 282,
-      "w": 40,
-      "h": 45,
-      "properties": {
-        "itemId": "paper_fragment_1",
-        "inspectText": "Nửa trên của một mảnh giấy rách. Viết: '3-1-...'",
-        "collectible": true,
-        "hasGlitch": false,
-        "rsChange": 0
-      }
-    },
-    {
-      "id": "paper_fragment_2",
-      "type": "item",
-      "x": 100,
-      "y": 370,
-      "w": 40,
-      "h": 45,
-      "properties": {
-        "itemId": "paper_fragment_2",
-        "inspectText": "Nửa dưới, viết: '...-4'. Ghép lại sẽ ra mật mã hoàn chỉnh.",
-        "collectible": true,
-        "hasGlitch": false,
-        "rsChange": 0
       }
     },
     {

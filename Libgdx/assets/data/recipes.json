@@ -1,10 +1,5 @@
 [
   {
-    "itemA": "paper_fragment_1",
-    "itemB": "paper_fragment_2",
-    "result": "password_note"
-  },
-  {
     "itemA": "chuoi_chia_khoa",
     "itemB": "keo_502_final",
     "result": "chia_khoa_fixed_final"

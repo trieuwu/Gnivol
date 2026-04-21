@@ -111,6 +111,7 @@ public class RoomData {
         // VD: {"open": "textures/objects/wardrobe_open.png", "taken": "textures/objects/wardrobe_open_taken.png"}
         public HashMap<String, String> altTextures;
         public String dialogueId;
+        public String overlayId;
 
         /** Constructor mặc định — BẮT BUỘC cho JSON parser */
         public Properties() {}
