@@ -105,15 +105,6 @@ public class GameScreen extends BaseScreen {
 
         setupPuzzleListeners();
 
-        puzzleManager.setCallback(new com.gnivol.game.system.puzzle.PuzzleManager.PuzzleCallback() {
-            @Override
-            public void onShowPuzzleOverlay(String puzzleId) {
-                if ("puzzle_drawer".equals(puzzleId)) {
-                    puzzleDrawerUI.show();
-                }
-            }
-        });
-
         puzzleDrawerUI.setListener(new com.gnivol.game.ui.PuzzleDrawerUI.PuzzleResultListener() {
             @Override
             public void onPuzzleSolved(String puzzleId) {
