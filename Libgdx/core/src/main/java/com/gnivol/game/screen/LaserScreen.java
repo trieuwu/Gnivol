@@ -56,10 +56,22 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void show() {
+        game.getScreenFader().startFadeIn();
+
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 if (isMoving) return false;
+
+                if (keycode == Input.Keys.ESCAPE) {
+                    if (game.getScreenFader().isFading()) return false;
+                    game.getScreenFader().startFade(() -> {
+                        game.setScreen(previousScreen);
+                        game.getScreenFader().startFadeIn();
+                        LaserScreen.this.dispose();
+                    });
+                    return true;
+                }
 
                 int dx = 0, dy = 0;
 
@@ -101,12 +113,18 @@ public class LaserScreen extends BaseScreen {
         game.getInventoryManager().addItem("ca_vat_final");
         game.setScreen(previousScreen);
 
-        if (previousScreen instanceof GameScreen) {
-            ((GameScreen) previousScreen).showNotification(
-                "Minigame Solved! Nhận được Cà vạt.",
-                Color.GREEN
-            );
-        }
+        game.getScreenFader().startFade(() -> {
+            game.setScreen(previousScreen);
+            game.getScreenFader().startFadeIn();
+            LaserScreen.this.dispose();
+
+            if (previousScreen instanceof GameScreen) {
+                ((GameScreen) previousScreen).showNotification(
+                    "Minigame Solved! Nhận được Cà vạt.",
+                    Color.GREEN
+                );
+            }
+        });
 
         if (game.getAutoSaveManager() != null) {
             game.getAutoSaveManager().onSaveTrigger("puzzle_laser");
@@ -236,6 +254,9 @@ public class LaserScreen extends BaseScreen {
         batch.draw(pTex, pDrawX, pDrawY, cellSize, cellSize);
 
         batch.end();
+        game.getScreenFader().update(delta);
+        game.getScreenFader().render();
+
     }
 
     private int getTurretDir(int baseType, int time) {
