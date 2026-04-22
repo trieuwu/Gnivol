@@ -99,7 +99,7 @@ public class InventoryUI {
         topTable.setFillParent(true);
         topTable.top().left().pad(20f);
 
-        Texture baloTex = new Texture(Gdx.files.internal("images/inventory_button.png"));
+        Texture baloTex = new Texture(Gdx.files.internal("images/UI/inventory_button.png"));
         ImageButton baloBtn = new ImageButton(new TextureRegionDrawable(new TextureRegion(baloTex)));
         baloBtn.addListener(new ClickListener() {
             @Override
@@ -142,7 +142,7 @@ public class InventoryUI {
         backpackTable.setFillParent(true);
         backpackTable.center();
 
-        Texture bgTex = new Texture(Gdx.files.internal("images/inventory_chart_ui.png"));
+        Texture bgTex = new Texture(Gdx.files.internal("images/UI/inventory_chart_ui.png"));
         backpackTable.setBackground(new TextureRegionDrawable(new TextureRegion(bgTex)));
 
 
@@ -203,10 +203,10 @@ public class InventoryUI {
         backpackTable.add(gridTable).row();
 
 
-        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button.png"))));
-        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button_glitch.png"))));
-        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button.png"))));
-        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button_glitch.png"))));
+        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/Merge_button.png"))));
+        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/Merge_button_glitch.png"))));
+        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/use_button.png"))));
+        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/use_button_glitch.png"))));
 
         useBtn = new ImageButton(useNormalBg);
         useBtn.addListener(new ClickListener() {
@@ -244,7 +244,7 @@ public class InventoryUI {
 
         stage.addActor(topTable);
 
-        highlightTexture = new Texture(Gdx.files.internal("images/item_frame.png"));
+        highlightTexture = new Texture(Gdx.files.internal("images/UI/item_frame.png"));
 
         highlight1 = new Image(highlightTexture);
         highlight1.setSize(95, 95);

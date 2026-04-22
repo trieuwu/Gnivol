@@ -266,23 +266,23 @@ public class LaserScreen extends BaseScreen {
     }
 
     private void createTextures() {
-        texBackground = new Texture(Gdx.files.internal("images/bathroom_bottle.png"));
-        texFloor = new Texture(Gdx.files.internal("images/item_frame.png"));
-        texWall = new Texture(Gdx.files.internal("images/Merge_button_glitch.png"));
-        texGoal = new Texture(Gdx.files.internal("images/NPC1.char.png"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
+        texFloor = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
+        texWall = new Texture(Gdx.files.internal("images/mini_games/mng1/walls.png"));
+        texGoal = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
 
-        texPlayerUp = createColorTexture(Color.OLIVE);
-        texPlayerDown = createColorTexture(Color.GREEN);
-        texPlayerLeft = createColorTexture(Color.FOREST);
-        texPlayerRight = createColorTexture(Color.LIME);
+        texPlayerUp = new Texture(Gdx.files.internal("images/mini_games/mng1/player_bw.png"));
+        texPlayerDown = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
+        texPlayerLeft = new Texture(Gdx.files.internal("images/mini_games/mng1/player_facing_left.png"));
+        texPlayerRight = new Texture(Gdx.files.internal("images/mini_games/mng1/player_facing_right.png"));
 
-        texTurretUp = createColorTexture(Color.ORANGE);
-        texTurretDown = createColorTexture(Color.YELLOW);
-        texTurretLeft = createColorTexture(Color.GOLD);
-        texTurretRight = createColorTexture(Color.FIREBRICK);
+        texLaserH = new Texture(Gdx.files.internal("images/mini_games/mng1/laser_horizontal.png"));
+        texLaserV = new Texture(Gdx.files.internal("images/mini_games/mng1/laser_vertical.png"));
 
-        texLaserH = createColorTexture(new Color(1f, 0f, 0f, 0.4f));
-        texLaserV = createColorTexture(new Color(1f, 0f, 0.5f, 0.4f));
+        texTurretUp = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretDown = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretLeft = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretRight = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
     }
 
     private Texture createColorTexture(Color color) {
