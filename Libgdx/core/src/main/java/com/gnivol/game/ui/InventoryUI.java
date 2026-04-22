@@ -41,6 +41,7 @@ public class InventoryUI {
 
     private com.badlogic.gdx.utils.ObjectMap<String, com.badlogic.gdx.utils.JsonValue> itemDatabase;
     private com.badlogic.gdx.graphics.g2d.BitmapFont font;
+    private java.util.HashMap<String, Texture> itemTextureCache = new java.util.HashMap<>();
 
     private com.gnivol.game.system.rs.RSManager rsManager;
     private ImageButton useBtn;
@@ -98,7 +99,7 @@ public class InventoryUI {
         topTable.setFillParent(true);
         topTable.top().left().pad(20f);
 
-        Texture baloTex = new Texture(Gdx.files.internal("images/inventory_button.png"));
+        Texture baloTex = new Texture(Gdx.files.internal("images/UI/inventory_button.png"));
         ImageButton baloBtn = new ImageButton(new TextureRegionDrawable(new TextureRegion(baloTex)));
         baloBtn.addListener(new ClickListener() {
             @Override
@@ -141,7 +142,7 @@ public class InventoryUI {
         backpackTable.setFillParent(true);
         backpackTable.center();
 
-        Texture bgTex = new Texture(Gdx.files.internal("images/inventory_chart_ui.png"));
+        Texture bgTex = new Texture(Gdx.files.internal("images/UI/inventory_chart_ui.png"));
         backpackTable.setBackground(new TextureRegionDrawable(new TextureRegion(bgTex)));
 
 
@@ -202,10 +203,10 @@ public class InventoryUI {
         backpackTable.add(gridTable).row();
 
 
-        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button.png"))));
-        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/Merge_button_glitch.png"))));
-        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button.png"))));
-        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/use_button_glitch.png"))));
+        mergeNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/Merge_button.png"))));
+        mergeGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/Merge_button_glitch.png"))));
+        useNormalBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/use_button.png"))));
+        useGlitchBg = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("images/UI/use_button_glitch.png"))));
 
         useBtn = new ImageButton(useNormalBg);
         useBtn.addListener(new ClickListener() {
@@ -243,7 +244,7 @@ public class InventoryUI {
 
         stage.addActor(topTable);
 
-        highlightTexture = new Texture(Gdx.files.internal("images/item_frame.png"));
+        highlightTexture = new Texture(Gdx.files.internal("images/UI/item_frame.png"));
 
         highlight1 = new Image(highlightTexture);
         highlight1.setSize(95, 95);
@@ -435,15 +436,14 @@ public class InventoryUI {
 
         if (itemID != null) {
             try {
-                Texture itemTex = new Texture(Gdx.files.internal("images/item/" + itemID + ".png"));
-                Image icon = new Image(itemTex);
-
-
+                if (!itemTextureCache.containsKey(itemID)) {
+                    Texture tex = new Texture(Gdx.files.internal("images/item/" + itemID + ".png"));
+                    itemTextureCache.put(itemID, tex);
+                }
+                Image icon = new Image(itemTextureCache.get(itemID));
                 icon.setScaling(com.badlogic.gdx.utils.Scaling.fit);
-
                 icon.setAlign(com.badlogic.gdx.utils.Align.center);
                 slot.add(icon).expand().fill();
-
             } catch (Exception e) {
                 Gdx.app.error("InventoryUI", "No image" + itemID + ".png");
             }
@@ -509,6 +509,13 @@ public class InventoryUI {
             useBtn.getStyle().imageUp = useNormalBg;
             mergeBtn.getStyle().imageUp = mergeNormalBg;
         }
+    }
+
+    public void dispose() {
+        for (Texture tex : itemTextureCache.values()) {
+            tex.dispose();
+        }
+        itemTextureCache.clear();
     }
 
 }
