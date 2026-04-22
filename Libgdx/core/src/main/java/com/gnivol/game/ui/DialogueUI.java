@@ -27,12 +27,10 @@ public class DialogueUI {
     private Label speakerLabel;
     private Label contentLabel;
     private Table choicesTable;
-
-    // --- THÊM 3 BIẾN NÀY CHO KHUNG SUY NGHĨ ---
-    private Table thoughtTable;
-    private Label thoughtLabel;
+    private Table choiceOverlayTable;
     private Label activeTypingLabel; // Con trỏ quyết định gõ chữ vào khung nào
 
+    private boolean isCurrentThought = false;
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
@@ -47,22 +45,37 @@ public class DialogueUI {
     // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
     private Runnable onFinished;
 
+    // --- THÊM 2 BIẾN NÀY ĐỂ ĐẾM 1 GIÂY ---
+    private float glitchTimer = 0f;
+    private boolean isGlitchedState = false;
     public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
         this.game = game;
         this.engine = engine;
         this.rsManager = rsManager;
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        Pixmap btnPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        btnPix.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
-        btnPix.fill();
-        TextureRegionDrawable btnBg = new TextureRegionDrawable(new TextureRegion(new Texture(btnPix)));
-        btnPix.dispose();
+        // Nền nút bình thường: Màu đen sẫm, độ mờ 85% (Trùng với độ mờ lõi khung chat)
+        Pixmap btnPixNormal = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        btnPixNormal.setColor(new Color(0.05f, 0.05f, 0.05f, 0.85f));
+        btnPixNormal.fill();
+        TextureRegionDrawable btnNormal = new TextureRegionDrawable(new TextureRegion(new Texture(btnPixNormal)));
+        btnPixNormal.dispose();
+
+        // Nền nút khi trỏ chuột / click vào: Sáng lên một chút thành xám
+        Pixmap btnPixDown = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        btnPixDown.setColor(new Color(0.2f, 0.2f, 0.2f, 0.9f));
+        btnPixDown.fill();
+        TextureRegionDrawable btnDown = new TextureRegionDrawable(new TextureRegion(new Texture(btnPixDown)));
+        btnPixDown.dispose();
 
         btnStyle = new TextButton.TextButtonStyle();
         btnStyle.font = font;
-        btnStyle.fontColor = Color.WHITE;
-        btnStyle.up = btnBg;
+        btnStyle.fontColor = Color.WHITE; // Chữ bình thường màu trắng
+        btnStyle.overFontColor = Color.valueOf("#F3C300"); // Trỏ chuột vào: Chữ vàng Gold (Tone sur tone với tên nhân vật)
+        btnStyle.downFontColor = Color.valueOf("#F3C300"); // Click vào: Chữ vàng Gold
+        btnStyle.up = btnNormal;
+        btnStyle.down = btnDown;
+        btnStyle.over = btnDown;
 
         // 2. Tạo nền đen mờ 80% cho khung hội thoại
         int texWidth = 512; // Chiều ngang để tính toán dải màu (càng to càng mượt)
@@ -105,6 +118,7 @@ public class DialogueUI {
         dialogBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (choiceOverlayTable != null && choiceOverlayTable.isVisible()) return;
                 if (isTyping) {
                     // Đang gõ thì click để hiện full text luôn
                     typeIndex = fullContentText.length();
@@ -147,7 +161,20 @@ public class DialogueUI {
         rootTable.add(dialogBox).width(900);
 
         rootTable.setVisible(false);
+        // Tạo ảnh nền kính mờ đen 70%
+        Pixmap dimPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        dimPix.setColor(new Color(0f, 0f, 0f, 0.7f));
+        dimPix.fill();
+        TextureRegionDrawable dimBg = new TextureRegionDrawable(new TextureRegion(new Texture(dimPix)));
+        dimPix.dispose();
+
+        choiceOverlayTable = new Table();
+        choiceOverlayTable.setFillParent(true);
+        choiceOverlayTable.setBackground(dimBg); // Gắn kính mờ
+        choiceOverlayTable.setTouchable(Touchable.enabled); // Chặn click xuyên qua nền
+        choiceOverlayTable.setVisible(false);
         stage.addActor(rootTable);
+        stage.addActor(choiceOverlayTable);
     }
 
     public void setOnFinished(Runnable onFinished) {
@@ -159,14 +186,15 @@ public class DialogueUI {
     private float originalThoughtX, originalThoughtY;
 
     // --- Hàm tạo hiệu ứng rung lắc (Shake Action) ---
-    private void applyShakeEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
-        target.clearActions(); // Xóa các rung lắc cũ
+    private void applyRSEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
+        target.clearActions(); // Xóa sạch hiệu ứng cũ
+        target.getColor().a = 1f;
 
-        if (rs < 35f || rs > 65f) {
-            // Tính cường độ rung dựa trên độ lệch (càng xa 50 rung càng mạnh)
-            float intensity = (Math.abs(rs - 50f) - 15f) / 35f;
-            float amount = 4f * intensity; // Tối đa rung 4 pixel
-            float duration = 0.03f; // Tốc độ giựt (càng nhỏ càng nhanh)
+        // CHỈ RUNG LẮC KHI RS > 65
+        if (rs > 65f) {
+            float intensity = (rs - 65f) / 35f;
+            float amount = 2f + (3f * intensity);
+            float duration = 0.04f;
 
             target.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.forever(
                 com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
@@ -178,11 +206,13 @@ public class DialogueUI {
                 )
             ));
         }
+        // NẾU RS <= 65 THÌ KHÔNG LÀM GÌ CẢ (ĐỨNG YÊN)
     }
 
     public void displayNode(DialogueNode node) {
         if (node == null) {
             rootTable.setVisible(false);
+            if (choiceOverlayTable != null) choiceOverlayTable.setVisible(false);
             if (onFinished != null) {
                 Runnable callback = onFinished;
                 onFinished = null;
@@ -193,41 +223,35 @@ public class DialogueUI {
 
         rootTable.setVisible(true);
 
-        boolean isThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
+        isCurrentThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
+        float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
 
-        // Xử lý Inner Thoughts (Suy nghĩ trong đầu)
-        if (isThought) {
-            speakerLabel.setText("");
+        // DÙNG CHUNG 1 BẢNG, CHỈ ĐỔI TÊN VÀ MÀU CHỮ
+        if (isCurrentThought) {
+            speakerLabel.setText("Suy Nghĩ");
             contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Màu xám nhạt
         } else {
             speakerLabel.setText(node.speaker);
-            contentLabel.setColor(Color.WHITE);
-            // Tone shift nếu RS > 65
-            if (rsManager != null && rsManager.getRS() > 65f) {
-                contentLabel.setColor(1f, 0.4f, 0.4f, 1f); // Đỏ rùng rợn
-            }
+            if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f); // Đỏ rùng rợn
+            else contentLabel.setColor(Color.WHITE);
         }
 
-        // Replace {player} placeholder
+        activeTypingLabel = contentLabel; // Luôn luôn gõ vào contentLabel
+        applyRSEffect(contentLabel, currentRS);
+
         String rawText = node.content;
         if (game != null && game.getGameState() != null) {
             String playerName = game.getGameState().getPlayerName();
             rawText = rawText.replace("{player}", playerName);
         }
 
-        // Glitch text nếu có RSManager và không phải suy nghĩ
-        if (rsManager != null && !isThought) {
-            fullContentText = GlitchTextRenderer.applyGlitch(rawText, rsManager.getRS());
-        } else {
-            fullContentText = rawText;
-        }
-
+        fullContentText = rawText;
         typeIndex = 0;
         isTyping = true;
         typeTimer = 0f;
 
-        updateContentLabel(); // Hiện khung thoại trống trơn trước
-        choicesTable.clearChildren(); // Giấu hết nút bấm đi, bao giờ gõ xong mới hiện
+        updateContentLabel();
+        choicesTable.clearChildren();
     }
 
     // Hàm này sẽ được GameScreen gọi liên tục 60 lần/giây
@@ -249,10 +273,54 @@ public class DialogueUI {
                 updateContentLabel();
             }
         }
+        // 2. LOGIC ĐỒNG HỒ 1 GIÂY (Chỉ áp dụng khi RS < 35 và không phải là Suy nghĩ)
+        if (activeTypingLabel != null) {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+
+            if (currentRS < 35f) {
+                glitchTimer += delta;
+                if (glitchTimer >= 1.0f) { // Cứ đủ 1.0 giây
+                    glitchTimer = 0f;
+                    isGlitchedState = !isGlitchedState; // Đảo qua đảo lại (Bình thường <-> Lỗi)
+                    updateContentLabel(); // Cập nhật lại giao diện chữ
+                }
+            } else {
+                // Nếu RS phục hồi về mức > 35 thì tắt trạng thái lỗi đi
+                if (isGlitchedState) {
+                    isGlitchedState = false;
+                    updateContentLabel();
+                }
+            }
+        }
     }
 
     private void updateContentLabel() {
-        contentLabel.setText(fullContentText.substring(0, typeIndex));
+        if (activeTypingLabel != null) {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+            String currentText = fullContentText.substring(0, typeIndex);
+
+            // --- 1. QUYẾT ĐỊNH HIỆN CHỮ GÌ ---
+            if (currentRS < 35f && !isCurrentThought && isGlitchedState) {
+                // Rơi vào 1 giây bị lỗi -> Băm nát chữ
+                activeTypingLabel.setText(GlitchTextRenderer.applyGlitch(currentText, currentRS));
+            } else {
+                // Bình thường (RS > 35, hoặc đang trong 1 giây không lỗi) -> Chữ rõ ràng
+                activeTypingLabel.setText(currentText);
+            }
+
+            // --- 2. QUYẾT ĐỊNH MÀU SẮC ---
+            if (isCurrentThought) {
+                activeTypingLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Suy nghĩ luôn màu xám
+            } else {
+                if (currentRS > 65f) {
+                    activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // RS > 65: Màu đỏ
+                } else if (currentRS < 35f && isGlitchedState) {
+                    activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f);
+                } else {
+                    activeTypingLabel.setColor(Color.WHITE); // RS 35-65 hoặc 1 giây bình thường: Màu Trắng
+                }
+            }
+        }
     }
 
     private void showChoices() {
@@ -260,8 +328,10 @@ public class DialogueUI {
         if (node == null) return;
 
         choicesTable.clearChildren();
+        choiceOverlayTable.clearChildren();
 
         if (node.hasChoice()) {
+            choiceOverlayTable.setVisible(true); // Bật kính mờ lên
             for (int i = 0; i < node.choices.size(); i++) {
                 final int index = i;
                 Choice choice = node.choices.get(i);
@@ -272,23 +342,19 @@ public class DialogueUI {
                 }
 
                 TextButton btn = new TextButton(choice.content, btnStyle);
-                if (choice.rsChange < 0) {
-                    btn.setColor(1f, 0.5f, 0.5f, 1f);
-                }
+                btn.getLabel().setWrap(true);
+                btn.getLabel().setAlignment(Align.center); // Chữ căn giữa
 
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
+                        choiceOverlayTable.setVisible(false);
                         engine.selectChoice(index);
                         displayNode(engine.getCurrentNode());
                     }
                 });
-                choicesTable.add(btn).width(600).pad(5).row();
+                choiceOverlayTable.add(btn).width(700).minHeight(80).pad(20).row();
             }
-        } else {
-            Label hintLabel = new Label("▼ Click để tiếp tục", labelStyle);
-            hintLabel.setColor(0.6f, 0.6f, 0.6f, 1f);
-            choicesTable.add(hintLabel).align(Align.right).padRight(20);
         }
     }
 
