@@ -266,8 +266,207 @@ public class GameScreen extends BaseScreen {
     }
 
     private void setupInteractionSystem() {
+<<<<<<< HEAD
+        interactionSystem.setCallback(new InteractionCallback() {
+            @Override public void onShowInspectText(String text) { showInspectText(text); }
+            @Override public void onEmptyClick() { hideInspectText(); }
+            @Override public void onInventoryFull() { showNotification("MAX INVENTORY!", Color.RED); }
+
+            @Override
+            public void onItemCollected(GameObject obj, String itemId) {
+                inventoryUI.refreshUI();
+                hideInspectText();
+                showItemNotification(itemId);
+                if ("keo_502_final".equals(itemId)) {
+                    if (sceneManager.getCurrentScene() instanceof RoomScene) {
+                        ((RoomScene) sceneManager.getCurrentScene()).changeBackground("images/bathroom_no_bottle.png");
+                    }
+                }
+                if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
+            }
+
+            @Override
+            public void onDoorInteracted(GameObject obj) {
+                if ("door_left_hallway".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("main_door_unlocked")) {
+                        changeSceneWithFade("room_hallway");
+                    }
+                    else if (puzzleManager.isPuzzleSolved("key_broke_on_door")) {
+                        if ("chia_khoa_fixed_final".equals(inventoryUI.getSelectedItem())) {
+                            game.getInventoryManager().removeItem("chia_khoa_fixed_final");
+                            inventoryUI.clearSelection();
+                            puzzleManager.markSolved("main_door_unlocked"); // Lưu cờ cửa đã mở
+                            showNotification("Cạch! Cửa đã được mở khóa.", Color.GREEN);
+                            inventoryUI.refreshUI();
+                            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("unlock_main_door");
+                        } else {
+                            onDialogueTriggered("door_need_fixed_key");
+                        }
+                    }
+                    else {
+                        if ("chia_khoa_final".equals(inventoryUI.getSelectedItem())) {
+                            game.getInventoryManager().removeItem("chia_khoa_final");
+                            inventoryUI.clearSelection();
+                            game.getInventoryManager().addItem("chuoi_chia_khoa");
+                            puzzleManager.markSolved("key_broke_on_door");
+                            inventoryUI.refreshUI();
+                            onDialogueTriggered("key_broke");
+                            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("key_broke");
+                        }
+                        else {
+                            onDialogueTriggered("door_locked_no_key");
+                        }
+                    }
+                    return;
+                }
+
+                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
+                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                    if (roomObj.id.equals(obj.getId()) && roomObj.properties != null && roomObj.properties.targetScene != null) {
+                        changeSceneWithFade(roomObj.properties.targetScene);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onObjectInteracted(GameObject obj) {
+                if ("door_neighbor".equals(obj.getId())) {
+                    if ("axe".equals(inventoryUI.getSelectedItem())) {
+                        changeSceneWithFade("room_opposite");
+                    } else {
+
+                        if (!game.getFlagManager().get("neighbor_door_checked")) {
+                            game.getFlagManager().set("neighbor_door_checked", true);
+
+                            game.getRsManager().setCurrentRS(game.getRsManager().getRS() + 5f);
+                        }
+
+
+                        onDialogueTriggered("neighbor_door_smell");
+                    }
+                    return;
+                }
+
+                if ("stairs".equals(obj.getId())) {
+                    if (game.getFlagManager().get("fingerprint_ok")) {
+                        changeSceneWithFade("room_downstairs_placeholder");
+                    } else {
+                        hideInspectText();
+                        onDialogueTriggered("stairs_need_fingerprint");
+                    }
+                    return;
+                }
+
+                if ("bed".equals(obj.getId())) {
+                    if (!game.getFlagManager().get("first_time_bed")) {
+                        game.getFlagManager().set("first_time_bed");
+                        hideInspectText();
+
+                        cutsceneManager.play("hand_under_bed");
+                        return;
+                    }
+                }
+
+                if ("drawer".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("puzzle_drawer")) showNotification("Ngăn kéo đã trống rỗng.", Color.LIGHT_GRAY);
+                    else puzzleManager.openPuzzle("puzzle_drawer");
+                    return;
+                }
+
+                if ("toilet".equals(obj.getId())) {
+                    if (game.getFlagManager().get("toilet_clogged")) {
+                        showNotification("Bồn cầu đã bị tắc cứng bởi chiếc cà vạt.", Color.LIGHT_GRAY);
+                        return;
+                    }
+
+                    if ("ca_vat_final".equals(inventoryUI.getSelectedItem())) {
+                        hideInspectText();
+
+                        com.badlogic.gdx.scenes.scene2d.ui.Dialog confirmDialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", defaultSkin) {
+                            @Override
+                            protected void result(Object object) {
+                                if (object.equals(true)) {
+                                    game.getFlagManager().set("toilet_clogged", true);
+                                    game.getInventoryManager().removeItem("ca_vat_final");
+                                    inventoryUI.clearSelection();
+                                    inventoryUI.refreshUI();
+                                    showNotification("Bạn ném vải vào và xả nước... Ục ục... Bồn cầu đã tắc!", Color.GREEN);
+                                    if (game.getAutoSaveManager() != null) {
+                                        game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
+                                    }
+                                }
+                            }
+                        };
+
+                        Label.LabelStyle lblStyle = new Label.LabelStyle(game.getFontManager().fontVietnamese, Color.WHITE);
+                        confirmDialog.text(new Label("Ném vải vào bồn cầu?", lblStyle));
+
+                        TextButton.TextButtonStyle btnStyle = defaultSkin.get(TextButton.TextButtonStyle.class);
+                        TextButton.TextButtonStyle viBtnStyle = new TextButton.TextButtonStyle(btnStyle);
+                        viBtnStyle.font = game.getFontManager().fontVietnamese;
+
+                        confirmDialog.button(new TextButton("Có", viBtnStyle), true);
+                        confirmDialog.button(new TextButton("Không", viBtnStyle), false);
+                        confirmDialog.show(game.getStage());
+
+                    } else {
+                        showInspectText("Hệ thống xả nước có vẻ vẫn hoạt động bình thường.");
+                    }
+                    return;
+                }
+
+                if ("sink".equals(obj.getId())) {
+                    if (puzzleManager.isPuzzleSolved("puzzle_laser")) {
+                        // Nếu đã giải xong
+                        showNotification("Mạch điện đã được nối xong. Nước đã chảy lại bình thường.", Color.LIGHT_GRAY);
+                    } else {
+                        // Nếu chưa giải, mở minigame laser lên
+                        puzzleManager.openPuzzle("puzzle_laser");
+                    }
+                    return; // Kết thúc sự kiện
+                }
+
+                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
+                for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                    if (!roomObj.id.equals(obj.getId()) || roomObj.properties == null) continue;
+                    if (roomObj.properties.dialogueId != null && !game.getGameState().isDialogueFinished(roomObj.properties.dialogueId)) {
+                        onDialogueTriggered(roomObj.properties.dialogueId);
+                        return;
+                    }
+                    // Mở overlay nếu có altTextures (fridge, etc.)
+                    if (roomObj.properties.altTextures != null
+                            && !roomObj.properties.altTextures.isEmpty()) {
+                        String openPath = roomObj.properties.altTextures.get("open");
+                        if (openPath == null) {
+                            openPath = roomObj.properties.altTextures.values().iterator().next();
+                        }
+                        openOverlay(openPath, obj.getId());
+                        return;
+                    }
+
+                    // Chạy Inner Thought (chỉ khi không có overlay)
+                    DialogueTree thoughtTree = new ThoughtManager().getThoughtTree(obj.getId(), game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        hideInspectText();
+                        dialogueEngine.loadDialogue(thoughtTree);
+                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onDialogueTriggered(String dialogueId) {
+                triggerDialogue(dialogueId);
+            }
+            @Override public void onOpenPuzzleOverlay(String puzzleId) {}
+            @Override public void onPuzzleFailed(String puzzleId) {}
+        });
+=======
         RoomInteractionHandler handler = new RoomInteractionHandler(this, dialogueDatabase);
         interactionSystem.setCallback(handler);
+>>>>>>> 717aeb2f7d252bbc39051fe329cc55ce796dd00f
     }
 
     private void setupInputProcessors() {
