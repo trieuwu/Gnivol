@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -26,6 +27,7 @@ import com.gnivol.game.system.dialogue.DialogueEngine;
 import com.gnivol.game.system.dialogue.ThoughtManager;
 import com.gnivol.game.system.interaction.InteractionCallback;
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
+import com.gnivol.game.system.interaction.RoomInteractionHandler;
 import com.gnivol.game.system.rs.RSListener;
 import com.gnivol.game.system.scene.RoomScene;
 import com.gnivol.game.system.scene.SceneManager;
@@ -53,29 +55,37 @@ public class GameScreen extends BaseScreen {
     private Label inspectLabel;
     private Table inspectTable;
 
-    private Texture overlayTexture;
-    private boolean overlayActive;
-    private float overlayAlpha;
     private ShapeRenderer dimRenderer;
-    private String overlaySourceId;
     private InventoryUI inventoryUI;
 
+    private com.gnivol.game.system.scene.OverlayManager overlayManager;
     private com.gnivol.game.system.puzzle.PuzzleManager puzzleManager;
     private com.gnivol.game.ui.PuzzleDrawerUI puzzleDrawerUI;
     private com.badlogic.gdx.scenes.scene2d.ui.Skin defaultSkin;
 
     private com.gnivol.game.ui.InventoryOverlay inventoryOverlaySystem;
-    private boolean debugMode = false;
-    private ShapeRenderer debugRenderer;
-
-    private RoomData.RoomObject dragTarget;
-    private boolean dragResizing;
-    private float dragOffsetX, dragOffsetY;
+    private com.gnivol.game.system.debug.DebugRenderer debugManager;
 
     private com.gnivol.game.system.scene.CutsceneManager cutsceneManager;
     private boolean isFlashing = false;
     private float flashAlpha = 0f;
     private Color flashColor = Color.WHITE;
+
+    public GnivolGame getGnivolGame() { return game; }
+    public SceneManager getSceneManager() { return sceneManager; }
+    public InventoryUI getInventoryUI() { return inventoryUI; }
+    public com.gnivol.game.system.puzzle.PuzzleManager getPuzzleManager() { return puzzleManager; }
+    public com.gnivol.game.system.scene.CutsceneManager getCutsceneManager() { return cutsceneManager; }
+    public DialogueEngine getDialogueEngine() { return dialogueEngine; }
+    public DialogueUI getDialogueUI() { return dialogueUI; }
+
+    public RoomData.RoomObject getRoomObjectData(String id) {
+        if (sceneManager.getCurrentScene() == null) return null;
+        for (RoomData.RoomObject obj : sceneManager.getCurrentScene().getRoomData().objects) {
+            if (obj.id.equals(id)) return obj;
+        }
+        return null;
+    }
 
     public GameScreen(GnivolGame game) {
         super(game);
@@ -85,13 +95,14 @@ public class GameScreen extends BaseScreen {
     public void show() {
         game.getStage().clear();
 
+        overlayManager = new com.gnivol.game.system.scene.OverlayManager();
         sceneManager = game.getSceneManager();
         screenFader = game.getScreenFader();
         inputHandler = game.getInputHandler();
         interactionSystem = game.getPlayerInteractionSystem();
         batch = new SpriteBatch();
         dimRenderer = new ShapeRenderer();
-        debugRenderer = new ShapeRenderer();
+        debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
 
         FontManager fm = game.getFontManager();
 
@@ -134,9 +145,6 @@ public class GameScreen extends BaseScreen {
                 game.getInventoryManager().addItem(itemId);
                 inventoryUI.refreshUI();
                 showItemNotification(itemId);
-                if ("fridge_interior".equals(overlayId)) {
-                    ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("fridge", "taken");
-                }
                 if (game.getAutoSaveManager() != null) {
                     game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
                 }
@@ -237,8 +245,10 @@ public class GameScreen extends BaseScreen {
             if ("puzzle_drawer".equals(puzzleId)) {
                 puzzleDrawerUI.show();
             } else if ("puzzle_laser".equals(puzzleId)) {
-                // CHUYỂN SANG MÀN HÌNH LASERSCREEN ĐỘC LẬP
-                game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
+                if (screenFader.isFading()) return;
+                screenFader.startFade(() -> {
+                    game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
+                });
             }
         });
     }
@@ -256,6 +266,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void setupInteractionSystem() {
+<<<<<<< HEAD
         interactionSystem.setCallback(new InteractionCallback() {
             @Override public void onShowInspectText(String text) { showInspectText(text); }
             @Override public void onEmptyClick() { hideInspectText(); }
@@ -452,6 +463,10 @@ public class GameScreen extends BaseScreen {
             @Override public void onOpenPuzzleOverlay(String puzzleId) {}
             @Override public void onPuzzleFailed(String puzzleId) {}
         });
+=======
+        RoomInteractionHandler handler = new RoomInteractionHandler(this, dialogueDatabase);
+        interactionSystem.setCallback(handler);
+>>>>>>> 717aeb2f7d252bbc39051fe329cc55ce796dd00f
     }
 
     private void setupInputProcessors() {
@@ -460,14 +475,77 @@ public class GameScreen extends BaseScreen {
         inputHandler.addProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (debugMode && button == Input.Buttons.LEFT) {
-                    handleDebugClick(screenX, screenY);
+                // Overlay active → xử lý trước mọi thứ
+                if (overlayManager.isActive() && overlayManager.getTexture() != null) {
+                    com.badlogic.gdx.math.Vector3 touch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+
+                    // Tìm overlay data từ overlays.json
+                    com.gnivol.game.ui.InventoryOverlay.OverlayData overlayData =
+                            (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
+                            ? inventoryOverlaySystem.findByObjectId(overlayManager.getSourceId()) : null;
+
+                    if (overlayData != null) {
+                        float maxW = 700f, maxH = 550f;
+                        float imgW = overlayManager.getTexture().getWidth(), imgH = overlayManager.getTexture().getHeight();
+                        float scale = Math.min(maxW / imgW, maxH / imgH);
+                        float drawX = (1280 - imgW * scale) / 2f;
+                        float drawY = (720 - imgH * scale) / 2f;
+
+                        float relX = (touch.x - drawX) / scale;
+                        float relY = (touch.y - drawY) / scale;
+
+                        for (com.gnivol.game.ui.InventoryOverlay.OverlayItem item : overlayData.items) {
+                            boolean hitItem = relX >= item.x && relX <= item.x + item.w
+                                    && relY >= item.y && relY <= item.y + item.h;
+                            if (!hitItem) continue;
+
+                            if (debugManager.isDebugMode()) {
+                                debugManager.handleOverlayItemClick(relX, relY, overlayData);
+                                return true;
+                            }
+
+                            if (!game.getInventoryManager().hasItem(item.itemId)) {
+                                game.getInventoryManager().addItem(item.itemId);
+                                inventoryUI.refreshUI();
+                                showItemNotification(item.itemId);
+                                if (game.getAutoSaveManager() != null) {
+                                    game.getAutoSaveManager().onSaveTrigger("pickup_" + item.itemId);
+                                }
+                                // Đổi overlay sang ảnh taken nếu có
+                                RoomData roomData = sceneManager.getCurrentScene().getRoomData();
+                                if (roomData != null) {
+                                    for (RoomData.RoomObject roomObj : roomData.getObjects()) {
+                                        if (roomObj.id.equals(overlayManager.getSourceId()) && roomObj.properties != null
+                                                && roomObj.properties.altTextures != null) {
+                                            String takenPath = roomObj.properties.altTextures.get("taken");
+                                            if (takenPath != null) {
+                                                overlayManager.swapTexture(takenPath);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                return true;
+                            }
+                        }
+                    }
+
+                    if (debugManager.isDebugMode()) return true;
+
+                    overlayManager.close();
+                    hideInspectText();
+                    return true;
+                }
+
+                if (debugManager.isDebugMode() && button == Input.Buttons.LEFT) {
+                    debugManager.handleDebugClick(screenX, screenY, camera, viewport, sceneManager.getCurrentScene());
                     return true;
                 }
 
                 if (dialogueUI != null && dialogueUI.isVisible()) return false;
 
-                // InventoryOverlay: click item hoac click ngoai de dong
                 if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
                     com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(overlayTouch, viewport.getScreenX(), viewport.getScreenY(),
@@ -477,63 +555,49 @@ public class GameScreen extends BaseScreen {
                     }
                     return true;
                 }
-
-                if (overlayActive) {
-                    // Unproject click sang world coords
-                    com.badlogic.gdx.math.Vector3 touch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
-                    camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
-
-                    // Check click trúng item trong overlay (toạ độ relative to overlay image)
-                    if ("fridge".equals(overlaySourceId) && overlayTexture != null
-                            && !game.getInventoryManager().hasItem("bone")) {
-                        float maxW = 700f, maxH = 550f;
-                        float imgW = overlayTexture.getWidth(), imgH = overlayTexture.getHeight();
-                        float scale = Math.min(maxW / imgW, maxH / imgH);
-                        float drawW = imgW * scale, drawH = imgH * scale;
-                        float drawX = (1280 - drawW) / 2f;
-                        float drawY = (720 - drawH) / 2f;
-
-                        float relX = (touch.x - drawX) / scale;
-                        float relY = (touch.y - drawY) / scale;
-
-                        // Bone hitbox (from overlays.json: x:500 y:350 w:64 h:64)
-                        if (relX >= 500 && relX <= 564 && relY >= 350 && relY <= 414) {
-                            game.getInventoryManager().addItem("bone");
-                            inventoryUI.refreshUI();
-                            showItemNotification("bone");
-                            ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene())
-                                    .setObjectState("fridge", "taken");
-                            closeOverlay();
-                            return true;
-                        }
-                    }
-
-                    closeOverlay();
-                    return true;
-                }
                 if (inventoryUI.isOpen()) return false;
                 return interactionSystem.handleClick(screenX, screenY, viewport);
             }
 
             @Override
             public boolean touchDragged(int screenX, int screenY, int pointer) {
-                if (debugMode && dragTarget != null) {
-                    handleDebugDrag(screenX, screenY);
+                if (debugManager.isDebugMode() && debugManager.isDraggingOverlayItem() && overlayManager.isActive() && overlayManager.getTexture() != null) {
+                    com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                    float maxW = 700f, maxH = 550f;
+                    float imgW = overlayManager.getTexture().getWidth(), imgH = overlayManager.getTexture().getHeight();
+                    float scale = Math.min(maxW / imgW, maxH / imgH);
+                    float drawX = (1280 - imgW * scale) / 2f;
+                    float drawY = (720 - imgH * scale) / 2f;
+                    debugManager.handleOverlayItemDrag((t.x - drawX) / scale, (t.y - drawY) / scale);
+                    return true;
+                }
+                if (debugManager.isDebugMode() && debugManager.hasDragTarget()) {
+                    debugManager.handleDebugDrag(screenX, screenY, camera, viewport, sceneManager.getCurrentScene());
                     return true;
                 }
                 return false;
             }
 
             @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) { dragTarget = null; return false; }
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                if (debugManager.isDraggingOverlayItem()) {
+                    debugManager.finishOverlayItemDrag();
+                }
+                debugManager.clearDrag();
+                return false;
+            }
 
             @Override
             public boolean keyDown(int keycode) {
-                if (keycode == Input.Keys.F1) { debugMode = !debugMode; return true; }
-                if (keycode == Input.Keys.F2 && debugMode) { exportDebugCoordinates(); return true; }
+                if (keycode == Input.Keys.F1) { debugManager.toggleDebugMode(); return true; }
+                if (keycode == Input.Keys.F2 && debugManager.isDebugMode()) { debugManager.exportDebugCoordinates(sceneManager.getCurrentScene()); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
-                    if (overlayActive) closeOverlay();
+                    if (overlayManager.isActive()) {
+                        overlayManager.close();
+                        hideInspectText();
+                    }
                     else game.setScreen(new PauseScreen(game, GameScreen.this));
                     return true;
                 }
@@ -541,36 +605,6 @@ public class GameScreen extends BaseScreen {
             }
         });
         inputHandler.activate();
-    }
-
-    private void handleDebugClick(int screenX, int screenY) {
-        com.badlogic.gdx.math.Vector3 world = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
-        camera.unproject(world, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
-        List<RoomData.RoomObject> objs = sceneManager.getCurrentScene().getRoomData().getObjects();
-        for (int i = objs.size() - 1; i >= 0; i--) {
-            RoomData.RoomObject obj = objs.get(i);
-            if (world.x >= obj.x && world.x <= obj.x + obj.w && world.y >= obj.y && world.y <= obj.y + obj.h) {
-                dragTarget = obj;
-                dragResizing = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
-                dragOffsetX = world.x - obj.x;
-                dragOffsetY = world.y - obj.y;
-                break;
-            }
-        }
-    }
-
-    private void handleDebugDrag(int screenX, int screenY) {
-        com.badlogic.gdx.math.Vector3 world = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
-        camera.unproject(world, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
-        if (dragResizing) {
-            dragTarget.w = Math.max(10, world.x - dragTarget.x);
-            dragTarget.h = Math.max(10, world.y - dragTarget.y);
-        } else {
-            dragTarget.x = world.x - dragOffsetX;
-            dragTarget.y = world.y - dragOffsetY;
-        }
-        GameObject go = sceneManager.getCurrentScene().findObjectById(dragTarget.id);
-        if (go != null) go.getComponent(BoundsComponent.class).hitbox.set(dragTarget.x, dragTarget.y, dragTarget.w, dragTarget.h);
     }
 
     private void handleFirstShow() {
@@ -596,39 +630,23 @@ public class GameScreen extends BaseScreen {
         game.isLoadedGame = false;
     }
 
-    private void openOverlay(String texturePath) {
-        openOverlay(texturePath, null);
+    public void openOverlay(String texturePath) {
+        overlayManager.open(texturePath, null);
     }
 
-    private void openOverlay(String texturePath, String sourceId) {
-        try {
-            overlayTexture = new Texture(Gdx.files.internal(texturePath));
-            overlayActive = true;
-            overlayAlpha = 0f;
-            overlaySourceId = sourceId;
-        } catch (Exception e) {
-            Gdx.app.error("Overlay", "Cannot load: " + texturePath, e);
-        }
+    public void openOverlay(String texturePath, String sourceId) {
+        overlayManager.open(texturePath, sourceId);
     }
 
-    private void closeOverlay() {
-        overlayActive = false;
-        overlaySourceId = null;
-        if (overlayTexture != null) {
-            overlayTexture.dispose();
-            overlayTexture = null;
-        }
-        hideInspectText();
-    }
 
-    private void showInspectText(String text) {
+    public void showInspectText(String text) {
         inspectLabel.setText(text);
         inspectTable.setVisible(true);
         inspectTable.getColor().a = 0f;
         inspectTable.addAction(Actions.fadeIn(0.3f));
     }
 
-    private void hideInspectText() {
+    public void hideInspectText() {
         if (inspectTable.isVisible()) {
             inspectTable.addAction(Actions.sequence(
                     Actions.fadeOut(0.3f),
@@ -651,13 +669,20 @@ public class GameScreen extends BaseScreen {
         sceneManager.render(batch);
         batch.end();
 
-        if (overlayActive) renderOverlay(delta);
+        overlayManager.render(delta, batch, camera);
+        // Debug overlay items từ overlays.json
+        if (debugManager.isDebugMode() && overlayManager.isActive() && overlayManager.getTexture() != null) {
+            com.gnivol.game.ui.InventoryOverlay.OverlayData debugOverlay =
+                    (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
+                    ? inventoryOverlaySystem.findByObjectId(overlayManager.getSourceId()) : null;
+            debugManager.renderOverlayItems(batch, camera, viewport, overlayManager.getTexture(), debugOverlay);
+        }
         if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
             batch.begin();
             inventoryOverlaySystem.render(batch);
             batch.end();
         }
-        if (debugMode) renderDebugOverlay();
+        if (debugManager.isDebugMode()) debugManager.render(batch, camera, viewport, sceneManager.getCurrentScene());
         game.getStage().draw();
 
 
@@ -678,72 +703,6 @@ public class GameScreen extends BaseScreen {
 
     }
 
-    private void renderOverlay(float delta) {
-        overlayAlpha = Math.min(overlayAlpha + delta * 4f, 1f);
-        Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
-        dimRenderer.setProjectionMatrix(camera.combined);
-        dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        dimRenderer.setColor(0, 0, 0, 0.65f * overlayAlpha);
-        dimRenderer.rect(0, 0, 1280, 720);
-        dimRenderer.end();
-        if (overlayTexture != null) {
-            batch.begin();
-            batch.setColor(1, 1, 1, overlayAlpha);
-            batch.draw(overlayTexture, (1280 - 700) / 2f, (720 - 550) / 2f, 700, 550);
-            batch.setColor(Color.WHITE);
-            batch.end();
-        }
-    }
-
-    private void renderDebugOverlay() {
-        FontManager fm = game.getFontManager();
-        com.gnivol.game.system.scene.Scene currentScene = sceneManager.getCurrentScene();
-        if (currentScene == null || currentScene.getRoomData() == null) return;
-
-        com.badlogic.gdx.math.Vector3 mouseWorld = new com.badlogic.gdx.math.Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(mouseWorld, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
-
-        Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA, com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
-        debugRenderer.setProjectionMatrix(camera.combined);
-        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-        Gdx.gl.glLineWidth(2f);
-
-        for (RoomData.RoomObject obj : currentScene.getRoomData().objects) {
-            boolean hovered = mouseWorld.x >= obj.x && mouseWorld.x <= obj.x + obj.w && mouseWorld.y >= obj.y && mouseWorld.y <= obj.y + obj.h;
-            debugRenderer.setColor(hovered ? Color.YELLOW : Color.RED);
-            debugRenderer.rect(obj.x, obj.y, obj.w, obj.h);
-        }
-
-        debugRenderer.setColor(Color.GREEN);
-        debugRenderer.line(mouseWorld.x - 10, mouseWorld.y, mouseWorld.x + 10, mouseWorld.y);
-        debugRenderer.line(mouseWorld.x, mouseWorld.y - 10, mouseWorld.x, mouseWorld.y + 10);
-        debugRenderer.end();
-        Gdx.gl.glDisable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
-
-        batch.begin();
-        for (RoomData.RoomObject obj : currentScene.getRoomData().objects) {
-            boolean hovered = mouseWorld.x >= obj.x && mouseWorld.x <= obj.x + obj.w && mouseWorld.y >= obj.y && mouseWorld.y <= obj.y + obj.h;
-            fm.fontDebug.setColor(hovered ? Color.YELLOW : Color.RED);
-            String info = obj.id + " [" + (int) obj.x + "," + (int) obj.y + " " + (int) obj.w + "x" + (int) obj.h + "]";
-            fm.fontDebug.draw(batch, info, obj.x, obj.y + obj.h + 16);
-        }
-
-        fm.fontDebug.setColor(Color.GREEN);
-        fm.fontDebug.draw(batch, "Mouse: " + (int) mouseWorld.x + ", " + (int) mouseWorld.y, 10, Constants.WORLD_HEIGHT - 10);
-        fm.fontDebug.draw(batch, "[F1] Toggle | [F2] Export | Drag=Move | Shift+Drag=Resize", 10, Constants.WORLD_HEIGHT - 28);
-        fm.fontDebug.draw(batch, "Room: " + currentScene.getSceneId(), 10, Constants.WORLD_HEIGHT - 46);
-
-        if (dragTarget != null) {
-            fm.fontDebug.setColor(Color.CYAN);
-            String dragInfo = (dragResizing ? "RESIZE " : "MOVE ") + dragTarget.id
-                + " → x:" + (int) dragTarget.x + " y:" + (int) dragTarget.y
-                + " w:" + (int) dragTarget.w + " h:" + (int) dragTarget.h;
-            fm.fontDebug.draw(batch, dragInfo, 10, Constants.WORLD_HEIGHT - 64);
-        }
-        batch.end();
-    }
-
     public void showNotification(String text, Color color) {
         Label.LabelStyle style = new Label.LabelStyle(game.getFontManager().fontVietnamese, color); // Dùng fontVietnamese
         Label label = new Label(text, style);
@@ -753,7 +712,7 @@ public class GameScreen extends BaseScreen {
         label.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(1f), Actions.moveBy(0, 50f, 1f)), Actions.delay(3f), Actions.parallel(Actions.fadeOut(1.5f), Actions.moveBy(0, -30f, 1.5f)), Actions.removeActor()));
     }
 
-    private void showItemNotification(String itemId) {
+    public void showItemNotification(String itemId) {
         String itemName = itemId;
 
         try {
@@ -787,41 +746,65 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    public void showToiletConfirmDialog() {
+        hideInspectText();
+        com.badlogic.gdx.scenes.scene2d.ui.Dialog confirmDialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", defaultSkin) {
+            @Override
+            protected void result(Object object) {
+                if (object.equals(true)) {
+                    game.getFlagManager().set("toilet_clogged", true);
+                    game.getInventoryManager().removeItem("ca_vat_final");
+                    inventoryUI.clearSelection();
+                    inventoryUI.refreshUI();
+                    showNotification("Ục ục... Bồn cầu đã tắc!", Color.GREEN);
+                    if (game.getAutoSaveManager() != null) {
+                        game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
+                    }
+                }
+            }
+        };
 
-    private void exportDebugCoordinates() {
-        com.gnivol.game.system.scene.Scene scene = sceneManager.getCurrentScene();
-        if (scene == null || scene.getRoomData() == null) return;
+        com.gnivol.game.system.FontManager fm = game.getFontManager();
+        Label.LabelStyle lblStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
+        confirmDialog.text(new Label("Ném vải vào bồn cầu?", lblStyle));
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n========== ").append(scene.getSceneId()).append(" ==========\n");
-        for (RoomData.RoomObject obj : scene.getRoomData().getObjects()) {
-            sb.append(String.format("  \"%s\": { \"x\": %d, \"y\": %d, \"w\": %d, \"h\": %d }%n",
-                obj.id, (int) obj.x, (int) obj.y, (int) obj.w, (int) obj.h));
-        }
-        sb.append("==========================================");
-        Gdx.app.log("Debug-Export", sb.toString());
+        TextButton.TextButtonStyle btnStyle = defaultSkin.get(TextButton.TextButtonStyle.class);
+        TextButton.TextButtonStyle viBtnStyle = new TextButton.TextButtonStyle(btnStyle);
+        viBtnStyle.font = fm.fontVietnamese;
+
+        confirmDialog.button(new TextButton("Có", viBtnStyle), true);
+        confirmDialog.button(new TextButton("Không", viBtnStyle), false);
+        confirmDialog.show(game.getStage());
     }
 
     @Override
     public void hide() {
         inputHandler.clear();
         if (inspectTable != null) inspectTable.remove();
-        closeOverlay();
+        if (overlayManager != null) overlayManager.close();
     }
 
     @Override
     public void dispose() {
         if (batch != null) batch.dispose();
         if (dimRenderer != null) dimRenderer.dispose();
-        if (debugRenderer != null) debugRenderer.dispose();
-        if (overlayTexture != null) overlayTexture.dispose();
+        if (debugManager != null) debugManager.dispose();
+        if (overlayManager != null) overlayManager.dispose();
         if (defaultSkin != null) defaultSkin.dispose();
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
+        if (inventoryUI != null) inventoryUI.dispose();
     }
 
     public void openInventoryOverlay(String overlayId) {
         if (inventoryOverlaySystem != null) {
             inventoryOverlaySystem.open(overlayId);
         }
+    }
+
+    public com.gnivol.game.ui.InventoryOverlay.OverlayData getInventoryOverlayData(String objectId) {
+        if (inventoryOverlaySystem != null) {
+            return inventoryOverlaySystem.findByObjectId(objectId);
+        }
+        return null;
     }
 }

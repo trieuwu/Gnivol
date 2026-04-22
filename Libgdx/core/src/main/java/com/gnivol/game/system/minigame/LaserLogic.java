@@ -49,7 +49,7 @@ public class LaserLogic {
             int steps = botPlayBFS();
             int manhattan = (N - 1) * 2;
 
-            if (steps != -1 && steps <= manhattan + 5) {
+            if (steps != -1 && steps >= manhattan + 18) {
                 mapIsValid = true;
             }
         }

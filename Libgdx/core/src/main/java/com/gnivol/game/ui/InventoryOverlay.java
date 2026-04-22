@@ -140,6 +140,17 @@ public class InventoryOverlay {
         this.listener = listener;
     }
 
+    public OverlayData getOverlayData(String overlayId) {
+        return overlays.get(overlayId);
+    }
+
+    public OverlayData findByObjectId(String objectId) {
+        for (OverlayData data : overlays.values()) {
+            if (data.id.startsWith(objectId + "_")) return data;
+        }
+        return null;
+    }
+
     public void dispose() {
         if (currentBackground != null) {
             currentBackground.dispose();
