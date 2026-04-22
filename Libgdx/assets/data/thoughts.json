@@ -1,12 +1,47 @@
 {
-  "fridge": {
-    "LOW": "Lạnh quá... Có thứ gì đó đang cào ở bên trong... Không được mở!",
-    "MID": "Một chiếc tủ lạnh trống rỗng. Mùi ẩm mốc bốc lên khe khẽ...",
-    "HIGH": "Thịt đang thối rữa bên trong. Rất tốt. Mọi thứ nên trở về với cát bụi."
-  },
   "bed": {
-    "LOW": "Có ai đó đang trốn dưới gầm giường... Tôi nghe thấy tiếng thở...",
-    "MID": "Giường của tôi. Nhưng tôi không hề thấy buồn ngủ.",
-    "HIGH": "Nơi hoàn hảo để chìm vào giấc ngủ vĩnh hằng."
+    "LOW": "Tôi không nên ở đây... Có thứ gì đó đang cựa quậy dưới lớp chăn...",
+    "MID": "Chiếc giường bừa bộn. Nhìn quen quen, hình như tôi vừa mới nằm đây.",
+    "HIGH": "Tôi hiểu rồi. Chiếc giường này là trung tâm của mọi thứ. Nơi bắt đầu và kết thúc."
+  },
+  "desk": {
+    "LOW": "Có gì đó sai sai với những tờ giấy này... Mực đang rỉ ra như máu! Tôi phải rời khỏi đây!",
+    "MID": "Bàn làm việc của tôi. Đống giấy tờ này nhìn quen quá, nhưng tôi không nhớ mình đã viết gì.",
+    "HIGH": "Mọi dòng chữ rác rưởi trên bàn đều có lý do của nó. Tôi đã giải mã được thông điệp ẩn giấu."
+  },
+  "window": {
+    "LOW": "Bên ngoài tối đen... Không thể nào... Khung cảnh đó không phải là thật! Mình đang ở đâu?!",
+    "MID": "Sương mù che kín cả rồi. Chẳng nhìn rõ bên ngoài có gì.",
+    "HIGH": "Làn sương đó là một lớp bảo vệ. Nó giữ cho chúng ta an toàn khỏi thế giới ngoài kia. Thật hoàn hảo."
+  },
+  "mirror": {
+    "LOW": "Kẻ trong gương không phải là tôi! Đôi mắt nó... nó đang mỉm cười trong khi tôi đang run rẩy!",
+    "MID": "Gương ố vàng, phản chiếu một khuôn mặt mệt mỏi. Trông tôi thật tồi tệ.",
+    "HIGH": "Tôi thích kẻ trong gương. Hắn tàn nhẫn hơn tôi, và hắn biết chúng tôi phải làm gì tiếp theo."
+  },
+  "sink": {
+    "LOW": "Nước... Không, đây là máu! Bồn rửa đang trào ra những lọn tóc đen đặc ngòm!",
+    "MID": "Bồn rửa mặt cáu bẩn. Mạch điện hở bên dưới trông khá nguy hiểm.",
+    "HIGH": "Tôi có nên thò tay vào mạch điện hở kia không? Một cú sốc nhỏ sẽ khiến tâm trí minh mẫn hơn."
+  },
+  "toilet": {
+    "LOW": "Có tiếng khóc ỉ ôi phát ra từ dưới ống cống... Xin đừng trồi lên...",
+    "MID": "Một chiếc bồn cầu bẩn thỉu. Nước đục ngầu, bốc mùi khó chịu.",
+    "HIGH": "Mọi thứ dơ bẩn đều phải trôi tuột xuống đáy vực. Giống như cái thế giới này vậy."
+  },
+  "creepy_painting": {
+    "LOW": "Tròng mắt nó vừa đảo! Nó đang nhìn chằm chằm vào tôi! Tranh mà lại biết thở sao?!",
+    "MID": "Một bức tranh kỳ quái. Nét vẽ lộn xộn nhưng lại toát ra sự ma mị khó tả.",
+    "HIGH": "Một kiệt tác. Tôi có thể hiểu được nỗi đau của họa sĩ. Ngài ấy đã nhìn thấu được sự thật."
+  },
+  "doorbell": {
+    "LOW": "Đừng bấm! Nếu bấm, những thứ không thuộc về thế giới này sẽ đến mở cửa!",
+    "MID": "Nút chuông bám đầy bụi. Có lẽ lâu rồi không có ai gõ cửa phòng này.",
+    "HIGH": "Ding dong. Tôi tự hỏi tiếng chuông này sẽ triệu hồi thứ gì từ địa ngục chui lên."
+  },
+  "plush_toy": {
+    "LOW": "Nó vừa chớp mắt! Con gấu này bị nguyền rủa, nó đang thì thầm vào tai tôi!",
+    "MID": "Một con gấu bông cũ nát. Tại sao nụ cười của nó lại được khâu bằng chỉ đỏ méo mó thế này?",
+    "HIGH": "Mày cũng cô đơn như tao đúng không? Không sao, tao sẽ kể cho mày nghe những bí mật nhuốm máu."
   }
 }

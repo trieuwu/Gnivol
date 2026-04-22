@@ -353,8 +353,8 @@ public class GameScreen extends BaseScreen {
                         hideInspectText();
 
                         cutsceneManager.play("hand_under_bed");
+                        return;
                     }
-                    return;
                 }
 
                 if ("drawer".equals(obj.getId())) {
