@@ -56,10 +56,22 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void show() {
+        game.getScreenFader().startFadeIn();
+
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 if (isMoving) return false;
+
+                if (keycode == Input.Keys.ESCAPE) {
+                    if (game.getScreenFader().isFading()) return false;
+                    game.getScreenFader().startFade(() -> {
+                        game.setScreen(previousScreen);
+                        game.getScreenFader().startFadeIn();
+                        LaserScreen.this.dispose();
+                    });
+                    return true;
+                }
 
                 int dx = 0, dy = 0;
 
@@ -101,12 +113,18 @@ public class LaserScreen extends BaseScreen {
         game.getInventoryManager().addItem("ca_vat_final");
         game.setScreen(previousScreen);
 
-        if (previousScreen instanceof GameScreen) {
-            ((GameScreen) previousScreen).showNotification(
-                "Minigame Solved! Nhận được Cà vạt.",
-                Color.GREEN
-            );
-        }
+        game.getScreenFader().startFade(() -> {
+            game.setScreen(previousScreen);
+            game.getScreenFader().startFadeIn();
+            LaserScreen.this.dispose();
+
+            if (previousScreen instanceof GameScreen) {
+                ((GameScreen) previousScreen).showNotification(
+                    "Minigame Solved! Nhận được Cà vạt.",
+                    Color.GREEN
+                );
+            }
+        });
 
         if (game.getAutoSaveManager() != null) {
             game.getAutoSaveManager().onSaveTrigger("puzzle_laser");
@@ -236,6 +254,9 @@ public class LaserScreen extends BaseScreen {
         batch.draw(pTex, pDrawX, pDrawY, cellSize, cellSize);
 
         batch.end();
+        game.getScreenFader().update(delta);
+        game.getScreenFader().render();
+
     }
 
     private int getTurretDir(int baseType, int time) {
@@ -245,23 +266,23 @@ public class LaserScreen extends BaseScreen {
     }
 
     private void createTextures() {
-        texBackground = new Texture(Gdx.files.internal("images/bathroom_bottle.png"));
-        texFloor = new Texture(Gdx.files.internal("images/item_frame.png"));
-        texWall = new Texture(Gdx.files.internal("images/Merge_button_glitch.png"));
-        texGoal = new Texture(Gdx.files.internal("images/NPC1.char.png"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
+        texFloor = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
+        texWall = new Texture(Gdx.files.internal("images/mini_games/mng1/walls.png"));
+        texGoal = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
 
-        texPlayerUp = createColorTexture(Color.OLIVE);
-        texPlayerDown = createColorTexture(Color.GREEN);
-        texPlayerLeft = createColorTexture(Color.FOREST);
-        texPlayerRight = createColorTexture(Color.LIME);
+        texPlayerUp = new Texture(Gdx.files.internal("images/mini_games/mng1/player_bw.png"));
+        texPlayerDown = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
+        texPlayerLeft = new Texture(Gdx.files.internal("images/mini_games/mng1/player_facing_left.png"));
+        texPlayerRight = new Texture(Gdx.files.internal("images/mini_games/mng1/player_facing_right.png"));
 
-        texTurretUp = createColorTexture(Color.ORANGE);
-        texTurretDown = createColorTexture(Color.YELLOW);
-        texTurretLeft = createColorTexture(Color.GOLD);
-        texTurretRight = createColorTexture(Color.FIREBRICK);
+        texLaserH = new Texture(Gdx.files.internal("images/mini_games/mng1/laser_horizontal.png"));
+        texLaserV = new Texture(Gdx.files.internal("images/mini_games/mng1/laser_vertical.png"));
 
-        texLaserH = createColorTexture(new Color(1f, 0f, 0f, 0.4f));
-        texLaserV = createColorTexture(new Color(1f, 0f, 0.5f, 0.4f));
+        texTurretUp = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretDown = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretLeft = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+        texTurretRight = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
     }
 
     private Texture createColorTexture(Color color) {
