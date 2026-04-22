@@ -29,6 +29,7 @@ public class CutsceneManager {
         public String id;
         public float intensity;
         public float value;
+        public float x = -1, y = -1, w = -1, h = -1;
     }
 
     public static class CutsceneData {
@@ -40,12 +41,13 @@ public class CutsceneManager {
 
     public interface CutsceneListener {
         void onFlash(String color, float duration);
-        void onShowSprite(String sprite, float duration);
+        void onShowSprite(String sprite, float duration, float x, float y, float w, float h);
         void onShake(float intensity, float duration);
         void onFadeOut(float duration);
         void onFadeIn(float duration);
-        void onSwapSprite(String target, String newSprite);
+        void onSwapSprite(String target, String newSprite, float x, float y, float w, float h);
         void onDialogue(String dialogueId);
+        void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
     }
 
@@ -85,6 +87,10 @@ public class CutsceneManager {
                         step.id = stepVal.getString("id", null);
                         step.intensity = stepVal.getFloat("intensity", 0f);
                         step.value = stepVal.getFloat("value", 0f);
+                        step.x = stepVal.getFloat("x", -1f);
+                        step.y = stepVal.getFloat("y", -1f);
+                        step.w = stepVal.getFloat("w", -1f);
+                        step.h = stepVal.getFloat("h", -1f);
                         data.steps.add(step);
                     }
                 }
@@ -178,7 +184,7 @@ public class CutsceneManager {
         } else if ("show_sprite".equals(type)) {
             stepDuration = step.duration;
             if (listener != null) {
-                listener.onShowSprite(step.sprite, step.duration);
+                listener.onShowSprite(step.sprite, step.duration, step.x, step.y, step.w, step.h);
             }
         } else if ("sfx".equals(type)) {
             stepDuration = 0f;
@@ -216,10 +222,17 @@ public class CutsceneManager {
             if (listener != null) {
                 listener.onDialogue(step.id);
             }
+        } else if ("change_scene".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onChangeScene(step.id);
+            }
+            advanceStep();
+            return;
         } else if ("swap_sprite".equals(type)) {
             stepDuration = 0f;
             if (listener != null) {
-                listener.onSwapSprite(step.id, step.sprite);
+                listener.onSwapSprite(step.id, step.sprite, step.x, step.y, step.w, step.h);
             }
             advanceStep();
             return;
