@@ -116,14 +116,14 @@ public class InventoryUI {
                 }
             }
         });
-        Texture baloFrameTex = new Texture(Gdx.files.internal("images/UI/item_frame.png"));
+        Texture baloFrameTex = new Texture(Gdx.files.internal("images/UI/framming.png"));
         itemTextureCache.put("balo_frame_cache", baloFrameTex);
 
         Table baloWrapper = new Table();
         baloWrapper.setBackground(new TextureRegionDrawable(new TextureRegion(baloFrameTex)));
 
-        baloWrapper.add(baloBtn).size(110, 110).center();
-        topTable.add(baloWrapper).size(80, 80);
+        baloWrapper.add(baloBtn).size(110, 110).center().padTop(-8f);
+        topTable.add(baloWrapper).size(130, 130);
 
         quickbarTable = new Table();
         quickbarTable.setFillParent(true);
