@@ -128,7 +128,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
-        if ("plush_toy".equals(id)) {
+        if ("mirror".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
                 screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
             } else {
@@ -136,7 +136,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             }
             return;
         }
-        
+
         if ("sink".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
                 screen.showNotification("Mạch điện đã nối xong. Nước chảy bình thường.", Color.LIGHT_GRAY);
