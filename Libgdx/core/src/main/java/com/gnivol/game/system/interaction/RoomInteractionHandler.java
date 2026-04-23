@@ -147,6 +147,15 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("plush_toy".equals(id)) {
+            if (!game.getFlagManager().get("plush_toy_scare")) {
+                game.getFlagManager().set("plush_toy_scare");
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("plush_toy_hand");
+            }
+            return;
+        }
+
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }

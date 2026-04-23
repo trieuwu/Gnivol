@@ -583,6 +583,13 @@ public class GameScreen extends BaseScreen {
                 cutsceneSprite.dispose();
                 cutsceneSprite = null;
             } else {
+                Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+                dimRenderer.setProjectionMatrix(camera.combined);
+                dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                dimRenderer.setColor(Color.BLACK);
+                dimRenderer.rect(0, 0, 1280, 720);
+                dimRenderer.end();
+
                 float drawX, drawY, drawW, drawH;
                 if (cutsceneSpriteRect[0] >= 0 && cutsceneSpriteRect[1] >= 0 && cutsceneSpriteRect[2] > 0 && cutsceneSpriteRect[3] > 0) {
                     drawX = cutsceneSpriteRect[0];
