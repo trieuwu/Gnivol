@@ -65,8 +65,6 @@ public class CutsceneManager {
     private AudioManager audioManager;
     private CutsceneListener listener;
 
-    // --- API ---
-
     public void loadCutscenes(String jsonPath) {
         try {
             JsonReader reader = new JsonReader();

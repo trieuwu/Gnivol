@@ -35,6 +35,7 @@ public class LaserLogic {
                 grid[rx][ry] = 1;
             }
 
+
             for(int i = 0; i < laserCount; i++) {
                 int rx = rand.nextInt(N);
                 int ry = rand.nextInt(N);
@@ -44,6 +45,10 @@ public class LaserLogic {
                     grid[rx][ry] = 2 + rand.nextInt(4);
 
                 }
+            }
+
+            if (isTileDangerous(0, 0, 0)) {
+                continue;
             }
 
             int steps = botPlayBFS();
