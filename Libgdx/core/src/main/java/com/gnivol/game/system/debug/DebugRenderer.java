@@ -35,6 +35,10 @@ public class DebugRenderer {
     private boolean draggingOverlayItem = false;
     private InventoryOverlay.OverlayItem draggingItem = null;
 
+    // Cutscene sprite drag
+    private boolean draggingCutsceneSprite = false;
+    private float[] cutsceneSpriteRect; // reference to {x, y, w, h} in GameScreen
+
     public DebugRenderer(GnivolGame game) {
         this.game = game;
         this.debugShapeRenderer = new ShapeRenderer();
@@ -45,7 +49,8 @@ public class DebugRenderer {
     public boolean hasDragTarget() { return dragTarget != null; }
     public boolean isDraggingOverlayItem() { return draggingOverlayItem; }
     public InventoryOverlay.OverlayItem getDraggingItem() { return draggingItem; }
-    public void clearDrag() { dragTarget = null; draggingOverlayItem = false; draggingItem = null; }
+    public boolean isDraggingCutsceneSprite() { return draggingCutsceneSprite; }
+    public void clearDrag() { dragTarget = null; draggingOverlayItem = false; draggingItem = null; draggingCutsceneSprite = false; cutsceneSpriteRect = null; }
 
     // --- Room object debug ---
 
@@ -124,6 +129,80 @@ public class DebugRenderer {
         }
         draggingOverlayItem = false;
         draggingItem = null;
+    }
+
+    // --- Cutscene sprite debug ---
+
+    public boolean handleCutsceneSpriteClick(float worldX, float worldY, float[] rect) {
+        if (rect == null) return false;
+        if (worldX >= rect[0] && worldX <= rect[0] + rect[2]
+                && worldY >= rect[1] && worldY <= rect[1] + rect[3]) {
+            draggingCutsceneSprite = true;
+            cutsceneSpriteRect = rect;
+            dragResizing = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+            dragOffsetX = worldX - rect[0];
+            dragOffsetY = worldY - rect[1];
+            return true;
+        }
+        return false;
+    }
+
+    public void handleCutsceneSpriteDrag(float worldX, float worldY) {
+        if (cutsceneSpriteRect == null) return;
+        if (dragResizing) {
+            cutsceneSpriteRect[2] = Math.max(10f, worldX - cutsceneSpriteRect[0]);
+            cutsceneSpriteRect[3] = Math.max(10f, worldY - cutsceneSpriteRect[1]);
+        } else {
+            cutsceneSpriteRect[0] = worldX - dragOffsetX;
+            cutsceneSpriteRect[1] = worldY - dragOffsetY;
+        }
+    }
+
+    public void finishCutsceneSpriteDrag() {
+        if (draggingCutsceneSprite && cutsceneSpriteRect != null) {
+            Gdx.app.log("CutsceneDebug",
+                    "Sprite → x:" + (int) cutsceneSpriteRect[0] + " y:" + (int) cutsceneSpriteRect[1]
+                    + " w:" + (int) cutsceneSpriteRect[2] + " h:" + (int) cutsceneSpriteRect[3]);
+        }
+        draggingCutsceneSprite = false;
+        cutsceneSpriteRect = null;
+    }
+
+    public void renderCutsceneSprite(SpriteBatch batch, OrthographicCamera camera, Viewport viewport, float[] rect) {
+        if (!debugMode || rect == null) return;
+
+        FontManager fm = game.getFontManager();
+        Vector3 mouseW = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mouseW, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
+
+        boolean hovered = mouseW.x >= rect[0] && mouseW.x <= rect[0] + rect[2]
+                && mouseW.y >= rect[1] && mouseW.y <= rect[1] + rect[3];
+
+        Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA, com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
+        debugShapeRenderer.setProjectionMatrix(camera.combined);
+        debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glLineWidth(2f);
+        debugShapeRenderer.setColor(hovered ? Color.YELLOW : Color.CYAN);
+        debugShapeRenderer.rect(rect[0], rect[1], rect[2], rect[3]);
+        debugShapeRenderer.end();
+        Gdx.gl.glDisable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        fm.fontDebug.setColor(hovered ? Color.YELLOW : Color.CYAN);
+        String info = "sprite [" + (int) rect[0] + "," + (int) rect[1]
+                + " " + (int) rect[2] + "x" + (int) rect[3] + "]";
+        fm.fontDebug.draw(batch, info, rect[0], rect[1] + rect[3] + 16);
+
+        if (draggingCutsceneSprite && cutsceneSpriteRect != null) {
+            fm.fontDebug.setColor(Color.CYAN);
+            String dragInfo = (dragResizing ? "RESIZE" : "MOVE")
+                    + " sprite \u2192 x:" + (int) cutsceneSpriteRect[0] + " y:" + (int) cutsceneSpriteRect[1]
+                    + " w:" + (int) cutsceneSpriteRect[2] + " h:" + (int) cutsceneSpriteRect[3];
+            fm.fontDebug.draw(batch, dragInfo, rect[0], rect[1] + rect[3] + 34);
+        }
+        batch.end();
     }
 
     // --- Render room objects ---

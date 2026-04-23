@@ -70,6 +70,11 @@ public class GameScreen extends BaseScreen {
     private boolean isFlashing = false;
     private float flashAlpha = 0f;
     private Color flashColor = Color.WHITE;
+    // Cutscene sprite
+    private Texture cutsceneSprite;
+    private float cutsceneSpriteTimer;
+    private float cutsceneSpriteDuration;
+    private final float[] cutsceneSpriteRect = {-1, -1, -1, -1}; // x, y, w, h
 
     public GnivolGame getGnivolGame() { return game; }
     public SceneManager getSceneManager() { return sceneManager; }
@@ -196,6 +201,11 @@ public class GameScreen extends BaseScreen {
             firstShow = false;
         }
 
+        // Phát nhạc game (crossfade từ menu)
+        if (game.getAudioManager() != null) {
+            game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
+        }
+
         cutsceneManager = new com.gnivol.game.system.scene.CutsceneManager();
         cutsceneManager.setRSManager(game.getRsManager());
         cutsceneManager.setAudioManager(game.getAudioManager());
@@ -215,12 +225,49 @@ public class GameScreen extends BaseScreen {
                 triggerDialogue(dialogueId);
             }
 
-            @Override public void onShowSprite(String sprite, float duration) {}
+            @Override public void onShowSprite(String sprite, float duration, float x, float y, float w, float h) {
+                if (cutsceneSprite != null) cutsceneSprite.dispose();
+                try {
+                    cutsceneSprite = new Texture(Gdx.files.internal(sprite));
+                    cutsceneSpriteTimer = 0f;
+                    cutsceneSpriteDuration = duration;
+                    cutsceneSpriteRect[0] = x;
+                    cutsceneSpriteRect[1] = y;
+                    cutsceneSpriteRect[2] = w;
+                    cutsceneSpriteRect[3] = h;
+                } catch (Exception e) {
+                    Gdx.app.error("Cutscene", "Cannot load sprite: " + sprite, e);
+                    cutsceneSprite = null;
+                }
+            }
+            @Override public void onSwapSprite(String target, String newSprite, float x, float y, float w, float h) {
+                if (cutsceneSprite != null) cutsceneSprite.dispose();
+                try {
+                    cutsceneSprite = new Texture(Gdx.files.internal(newSprite));
+                    cutsceneSpriteTimer = 0f;
+                    if (x >= 0) cutsceneSpriteRect[0] = x;
+                    if (y >= 0) cutsceneSpriteRect[1] = y;
+                    if (w >= 0) cutsceneSpriteRect[2] = w;
+                    if (h >= 0) cutsceneSpriteRect[3] = h;
+                } catch (Exception e) {
+                    Gdx.app.error("Cutscene", "Cannot swap sprite: " + newSprite, e);
+                    cutsceneSprite = null;
+                }
+            }
             @Override public void onShake(float intensity, float duration) {}
             @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
             @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
-            @Override public void onSwapSprite(String target, String newSprite) {}
-            @Override public void onCutsceneFinished(String cutsceneId) { Gdx.app.log("Cutscene", "Finished: " + cutsceneId); }
+            @Override public void onChangeScene(String sceneId) {
+                sceneManager.changeScene(sceneId);
+                game.getGameState().setCurrentRoom(sceneId);
+            }
+            @Override public void onCutsceneFinished(String cutsceneId) {
+                if (cutsceneSprite != null) {
+                    cutsceneSprite.dispose();
+                    cutsceneSprite = null;
+                }
+                Gdx.app.log("Cutscene", "Finished: " + cutsceneId);
+            }
         });
 
     }
@@ -347,6 +394,17 @@ public class GameScreen extends BaseScreen {
                     return true;
                 }
 
+                // Debug: drag cutscene sprite
+                if (debugManager.isDebugMode() && button == Input.Buttons.LEFT && cutsceneSprite != null
+                        && cutsceneSpriteRect[0] >= 0) {
+                    com.badlogic.gdx.math.Vector3 csTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(csTouch, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                    if (debugManager.handleCutsceneSpriteClick(csTouch.x, csTouch.y, cutsceneSpriteRect)) {
+                        return true;
+                    }
+                }
+
                 if (debugManager.isDebugMode() && button == Input.Buttons.LEFT) {
                     debugManager.handleDebugClick(screenX, screenY, camera, viewport, sceneManager.getCurrentScene());
                     return true;
@@ -369,6 +427,13 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchDragged(int screenX, int screenY, int pointer) {
+                if (debugManager.isDebugMode() && debugManager.isDraggingCutsceneSprite()) {
+                    com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+                    camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
+                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                    debugManager.handleCutsceneSpriteDrag(t.x, t.y);
+                    return true;
+                }
                 if (debugManager.isDebugMode() && debugManager.isDraggingOverlayItem() && overlayManager.isActive() && overlayManager.getTexture() != null) {
                     com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
@@ -390,6 +455,9 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                if (debugManager.isDraggingCutsceneSprite()) {
+                    debugManager.finishCutsceneSpriteDrag();
+                }
                 if (debugManager.isDraggingOverlayItem()) {
                     debugManager.finishOverlayItemDrag();
                 }
@@ -495,8 +563,9 @@ public class GameScreen extends BaseScreen {
 
 
         if (cutsceneManager != null) cutsceneManager.update(delta);
+        if (game.getAudioManager() != null) game.getAudioManager().update(delta);
         if (isFlashing) {
-            flashAlpha -= delta * 4f; // Tốc độ biến mất của ánh sáng
+            flashAlpha -= delta * 4f;
             if (flashAlpha <= 0) isFlashing = false;
 
             Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
@@ -505,6 +574,41 @@ public class GameScreen extends BaseScreen {
             dimRenderer.setColor(flashColor.r, flashColor.g, flashColor.b, flashAlpha);
             dimRenderer.rect(0, 0, 1280, 720);
             dimRenderer.end();
+        }
+
+        // Cutscene sprite rendering
+        if (cutsceneSprite != null) {
+            cutsceneSpriteTimer += delta;
+            if (cutsceneSpriteDuration > 0 && cutsceneSpriteTimer >= cutsceneSpriteDuration) {
+                cutsceneSprite.dispose();
+                cutsceneSprite = null;
+            } else {
+                float drawX, drawY, drawW, drawH;
+                if (cutsceneSpriteRect[0] >= 0 && cutsceneSpriteRect[1] >= 0 && cutsceneSpriteRect[2] > 0 && cutsceneSpriteRect[3] > 0) {
+                    drawX = cutsceneSpriteRect[0];
+                    drawY = cutsceneSpriteRect[1];
+                    drawW = cutsceneSpriteRect[2];
+                    drawH = cutsceneSpriteRect[3];
+                } else {
+                    float imgW = cutsceneSprite.getWidth();
+                    float imgH = cutsceneSprite.getHeight();
+                    float scale = Math.min(1280f / imgW, 720f / imgH);
+                    drawW = imgW * scale;
+                    drawH = imgH * scale;
+                    drawX = (1280 - drawW) / 2f;
+                    drawY = (720 - drawH) / 2f;
+                }
+
+                batch.setProjectionMatrix(camera.combined);
+                batch.begin();
+                batch.draw(cutsceneSprite, drawX, drawY, drawW, drawH);
+                batch.end();
+
+                // Debug hitbox for cutscene sprite
+                if (cutsceneSpriteRect[0] >= 0) {
+                    debugManager.renderCutsceneSprite(batch, camera, viewport, cutsceneSpriteRect);
+                }
+            }
         }
 
         screenFader.render();
@@ -600,6 +704,7 @@ public class GameScreen extends BaseScreen {
         if (overlayManager != null) overlayManager.dispose();
         if (defaultSkin != null) defaultSkin.dispose();
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
+        if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
     }
 
