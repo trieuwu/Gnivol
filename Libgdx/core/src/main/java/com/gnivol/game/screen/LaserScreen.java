@@ -36,6 +36,11 @@ public class LaserScreen extends BaseScreen {
     private int startX = 0, startY = 0;
     private int targetX = 0, targetY = 0;
 
+    private int stepCount = 0;
+    private boolean isJumpscareActive = false;
+    private float jumpscareTimer = 0f;
+    private Texture texJumpscare;
+
     private Texture texBackground, texFloor, texWall, texGoal;
     private Texture texPlayerUp, texPlayerDown, texPlayerLeft, texPlayerRight;
     private Texture texTurretUp, texTurretDown, texTurretLeft, texTurretRight;
@@ -61,7 +66,7 @@ public class LaserScreen extends BaseScreen {
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
-                if (isMoving) return false;
+                if (isMoving || isJumpscareActive) return false;
 
                 if (keycode == Input.Keys.ESCAPE) {
                     if (game.getScreenFader().isFading()) return false;
@@ -165,6 +170,13 @@ public class LaserScreen extends BaseScreen {
                 isMoving = false;
                 playerX = targetX;
                 playerY = targetY;
+                stepCount++;
+
+                if (stepCount > 0 && stepCount % 18 == 0) {
+                    isJumpscareActive = true;
+                    jumpscareTimer = 0f;
+                    game.getRsManager().addRS(0f); // Tăng/giảm RS
+                }
 
                 if (logic.isTileDangerous(playerX, playerY, currentTime)) {
                     resetLevel();
@@ -205,22 +217,34 @@ public class LaserScreen extends BaseScreen {
                     int dist = 0;
                     int cx = x + dx;
                     int cy = y + dy;
+                    boolean hitWall = false;
                     while (cx >= 0 && cx < logic.N && cy >= 0 && cy < logic.N) {
                         dist++;
-                        if (logic.grid[cx][cy] != 0) break; // Đụng vật cản
+                        if (logic.grid[cx][cy] != 0) {
+                            hitWall = true;
+                            break;
+                        }
                         cx += dx; cy += dy;
                     }
 
-                    if (dist > 0) {
+                    float targetLength = dist * cellSize;
+                    if (!hitWall) {
+                        targetLength += cellSize / 2f;
+                    }
+
+                    if (targetLength > 0) {
                         float startWorldX = offsetX + x * cellSize + cellSize / 2f;
                         float startWorldY = offsetY + y * cellSize + cellSize / 2f;
 
-                        float length = dist * cellSize * progress;
+                        float length = targetLength * progress;
 
-                        if (dir == 2) batch.draw(texLaserV, startWorldX - cellSize / 2f, startWorldY, cellSize, length);
-                        else if (dir == 4) batch.draw(texLaserV, startWorldX - cellSize / 2f, startWorldY - length, cellSize, length);
-                        else if (dir == 3) batch.draw(texLaserH, startWorldX, startWorldY - cellSize / 2f, length, cellSize);
-                        else if (dir == 5) batch.draw(texLaserH, startWorldX - length, startWorldY - cellSize / 2f, length, cellSize);
+                        float thickness = cellSize * 0.4f;
+                        float halfThick = thickness / 2f;
+
+                        if (dir == 2) batch.draw(texLaserV, startWorldX - halfThick, startWorldY, thickness, length);
+                        else if (dir == 4) batch.draw(texLaserV, startWorldX - halfThick, startWorldY - length, thickness, length);
+                        else if (dir == 3) batch.draw(texLaserH, startWorldX, startWorldY - halfThick, length, thickness);
+                        else if (dir == 5) batch.draw(texLaserH, startWorldX - length, startWorldY - halfThick, length, thickness);
                     }
                 }
             }
@@ -253,6 +277,20 @@ public class LaserScreen extends BaseScreen {
         float pDrawY = offsetY + visualPlayerY * cellSize;
         batch.draw(pTex, pDrawX, pDrawY, cellSize, cellSize);
 
+        com.badlogic.gdx.graphics.g2d.BitmapFont font = game.getFontManager().fontTitle;
+        font.setColor(Color.RED);
+        font.draw(batch, "Count steps: " + stepCount, 40, Constants.WORLD_HEIGHT - 20);
+
+        if (isJumpscareActive && texJumpscare != null) {
+            jumpscareTimer += delta;
+            if (jumpscareTimer > 2f) {
+                isJumpscareActive = false;
+            } else {
+                batch.setColor(1, 1, 1, 1);
+                batch.draw(texJumpscare, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+            }
+        }
+
         batch.end();
         game.getScreenFader().update(delta);
         game.getScreenFader().render();
@@ -269,7 +307,7 @@ public class LaserScreen extends BaseScreen {
         texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
         texFloor = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
         texWall = new Texture(Gdx.files.internal("images/mini_games/mng1/walls.png"));
-        texGoal = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
+        texGoal = new Texture(Gdx.files.internal("images/mini_games/mng1/door.png"));
 
         texPlayerUp = new Texture(Gdx.files.internal("images/mini_games/mng1/player_bw.png"));
         texPlayerDown = new Texture(Gdx.files.internal("images/mini_games/mng1/player_fw.png"));
@@ -283,6 +321,12 @@ public class LaserScreen extends BaseScreen {
         texTurretDown = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
         texTurretLeft = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
         texTurretRight = new Texture(Gdx.files.internal("images/mini_games/mng1/turet.png"));
+
+        try {
+            texJumpscare = new Texture(Gdx.files.internal("images/horror/jumpscare.png"));
+        } catch (Exception e) {
+            Gdx.app.error("LaserScreen", "Not found jumpscare", e);
+        }
     }
 
     private Texture createColorTexture(Color color) {

@@ -250,6 +250,13 @@ public class GameScreen extends BaseScreen {
                     game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
                 });
             }
+            else if ("puzzle_sliding_marble".equals(puzzleId)) {
+                if (screenFader.isFading()) return;
+                screenFader.startFade(() -> {
+                    game.setScreen(new com.gnivol.game.screen.SlidingScreen(game, GameScreen.this));
+                });
+            }
+
         });
     }
 
