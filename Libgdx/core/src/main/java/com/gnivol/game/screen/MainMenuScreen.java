@@ -32,6 +32,11 @@ public class MainMenuScreen extends BaseScreen {
         Gdx.input.setInputProcessor(stage);
         backgroundTexture = new Texture(Gdx.files.internal("images/final_login_bg.png"));
 
+        // Phát nhạc menu
+        if (game.getAudioManager() != null) {
+            game.getAudioManager().playBGM("menu_bgm");
+        }
+
         com.gnivol.game.system.FontManager fm = game.getFontManager();
 
         TextButton.TextButtonStyle titleStyle = new TextButton.TextButtonStyle();

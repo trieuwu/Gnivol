@@ -7,5 +7,22 @@
       {"type": "dialogue", "id": "bed_jumpscare"},
       {"type": "rs_change", "value": 8}
     ]
+  },
+  {
+    "id": "plush_toy_hand",
+    "steps": [
+      {"type": "wait", "duration": 0.3},
+      {"type": "sfx", "id": "sfx_scare"},
+      {"type": "flash", "color": "red", "duration": 0.15},
+      {"type": "show_sprite", "sprite": "images/hand.png", "x": 400, "y": 50, "w": 250, "h": 350, "duration": 1.5},
+      {"type": "wait", "duration": 0.8},
+      {"type": "flash", "color": "red", "duration": 0.1},
+      {"type": "swap_sprite", "sprite": "images/creepy_hand.png", "x": 380, "y": 30, "w": 280, "h": 400},
+      {"type": "shake", "intensity": 5.0, "duration": 0.5},
+      {"type": "wait", "duration": 1.0},
+      {"type": "flash", "color": "white", "duration": 0.3},
+      {"type": "dialogue", "id": "bed_jumpscare"},
+      {"type": "rs_change", "value": 10}
+    ]
   }
 ]
