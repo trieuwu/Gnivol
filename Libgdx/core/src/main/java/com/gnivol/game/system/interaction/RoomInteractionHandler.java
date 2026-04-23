@@ -128,15 +128,6 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
-        if ("mirror".equals(id)) {
-            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
-                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
-            } else {
-                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
-            }
-            return;
-        }
-
         if ("sink".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
                 screen.showNotification("Mạch điện đã nối xong. Nước chảy bình thường.", Color.LIGHT_GRAY);
@@ -146,6 +137,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        // 7. Gấu bông gầm giường (Cutscene cánh tay)
         if ("plush_toy".equals(id)) {
             if (!game.getFlagManager().get("plush_toy_scare")) {
                 game.getFlagManager().set("plush_toy_scare");
@@ -154,7 +146,16 @@ public class RoomInteractionHandler implements InteractionCallback {
             }
             return;
         }
-        
+
+//        if ("mirror".equals(id)) {
+//            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
+//                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
+//            } else {
+//                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
+//            }
+//            return;
+//        }
+
         // 8. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
