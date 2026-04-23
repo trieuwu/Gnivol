@@ -23,7 +23,7 @@ public class RSUI {
         table.align(Align.topRight);
 
         // 2. Tạo khung lót nền bằng item_frame.png
-        frameTex = new Texture(Gdx.files.internal("images/UI/framming.png"));
+        frameTex = new Texture(Gdx.files.internal("images/UI/item_frame.png"));
         Table frameTable = new Table();
         frameTable.setBackground(new TextureRegionDrawable(new TextureRegion(frameTex)));
 
@@ -35,7 +35,7 @@ public class RSUI {
         frameTable.add(rsLabel).expand().center().padTop(-10f);
 
         // 5. Thêm khung vào table gốc: Thu nhỏ size còn 55x55 và đẩy cách lề 20px
-        table.add(frameTable).size(60, 60).padTop(20f).padRight(20f);
+        table.add(frameTable).size(50, 50).padTop(20f).padRight(20f);
 
         stage.addActor(table);
     }
