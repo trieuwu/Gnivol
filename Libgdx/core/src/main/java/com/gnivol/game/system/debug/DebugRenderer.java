@@ -44,6 +44,7 @@ public class DebugRenderer {
         this.debugShapeRenderer = new ShapeRenderer();
     }
 
+    public ShapeRenderer getShapeRenderer() { return debugShapeRenderer; }
     public boolean isDebugMode() { return debugMode; }
     public void toggleDebugMode() { debugMode = !debugMode; }
     public boolean hasDragTarget() { return dragTarget != null; }
