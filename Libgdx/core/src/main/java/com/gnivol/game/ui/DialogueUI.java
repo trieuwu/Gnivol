@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -28,7 +30,37 @@ public class DialogueUI {
     private Label contentLabel;
     private Table choicesTable;
     private Table choiceOverlayTable;
-    private Label activeTypingLabel; // Con trỏ quyết định gõ chữ vào khung nào
+    private Label activeTypingLabel;
+
+    // Character portrait — vẽ bằng SpriteBatch với toạ độ tuyệt đối
+    private Texture portraitTex1;   // main portrait
+    private Texture portraitTex2;   // sub portrait
+    private float[] portraitRect1 = new float[4]; // {x, y, w, h} main
+    private float[] portraitRect2 = new float[4]; // {x, y, w, h} sub
+    private boolean hasPortrait1 = false;
+    private boolean hasPortrait2 = false;
+    private boolean isMainPortrait1 = true; // true = portrait1 sáng, portrait2 tối
+
+    // Màu tối cho portrait phụ (sub) — làm mờ nhân vật không đang nói
+    private static final Color DIM_COLOR = new Color(0.35f, 0.35f, 0.35f, 1f);
+    private static final Color BRIGHT_COLOR = new Color(1f, 1f, 1f, 1f);
+
+    // Vị trí mặc định portrait (khi JSON không chỉ định toạ độ)
+    private static final float DEFAULT_LEFT_X = 50f;
+    private static final float DEFAULT_RIGHT_X = 870f;
+    private static final float DEFAULT_CENTER_X = 460f;
+    private static final float DEFAULT_Y = 100f;
+    private static final float DEFAULT_W = 360f;
+    private static final float DEFAULT_H = 480f;
+
+    // Debug portrait
+    private boolean debugPortrait = false;
+    private ShapeRenderer debugShapeRenderer;
+    private BitmapFont debugFont;
+    private int draggingPortrait = 0; // 0=none, 1=portrait1, 2=portrait2
+    private boolean draggingResize = false; // shift=resize
+    private float dragOffsetX, dragOffsetY;
+    private DialogueNode currentNodeRef; // giữ ref để export toạ độ
 
     private boolean isCurrentThought = false;
     private DialogueEngine engine;
@@ -157,6 +189,9 @@ public class DialogueUI {
         dialogBox.add(separatorLine).width(600).height(2).center().padBottom(15).row();
         dialogBox.add(contentLabel).width(800).minHeight(50).center().row();
 
+        // Portrait giờ được vẽ bằng SpriteBatch, không nằm trong Table nữa
+        debugShapeRenderer = new ShapeRenderer();
+
         rootTable.add(choicesTable).padBottom(10).row();
         rootTable.add(dialogBox).width(900);
 
@@ -226,13 +261,16 @@ public class DialogueUI {
         isCurrentThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
         float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
 
+        // Update character portrait
+        updatePortrait(node);
+
         // DÙNG CHUNG 1 BẢNG, CHỈ ĐỔI TÊN VÀ MÀU CHỮ
         if (isCurrentThought) {
             speakerLabel.setText("Suy Nghĩ");
-            contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Màu xám nhạt
+            contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f);
         } else {
             speakerLabel.setText(node.speaker);
-            if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f); // Đỏ rùng rợn
+            if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
             else contentLabel.setColor(Color.WHITE);
         }
 
@@ -254,7 +292,192 @@ public class DialogueUI {
         choicesTable.clearChildren();
     }
 
-    // Hàm này sẽ được GameScreen gọi liên tục 60 lần/giây
+    private void updatePortrait(DialogueNode node) {
+        // Giữ ref cho debug export
+        currentNodeRef = node;
+
+        // Reset
+        hasPortrait1 = false;
+        hasPortrait2 = false;
+        if (portraitTex1 != null) { portraitTex1.dispose(); portraitTex1 = null; }
+        if (portraitTex2 != null) { portraitTex2.dispose(); portraitTex2 = null; }
+
+        if (isCurrentThought || node.portrait == null) return;
+
+        String side = node.portraitSide != null ? node.portraitSide : "center";
+
+        // --- Portrait 1 (main) ---
+        try {
+            portraitTex1 = new Texture(Gdx.files.internal(node.portrait));
+            hasPortrait1 = true;
+
+            // Toạ độ: ưu tiên JSON, fallback mặc định theo side
+            float defX = "right".equals(side) ? DEFAULT_RIGHT_X : ("left".equals(side) ? DEFAULT_LEFT_X : DEFAULT_CENTER_X);
+            portraitRect1[0] = node.portraitX >= 0 ? node.portraitX : defX;
+            portraitRect1[1] = node.portraitY >= 0 ? node.portraitY : DEFAULT_Y;
+            portraitRect1[2] = node.portraitW > 0 ? node.portraitW : DEFAULT_W;
+            portraitRect1[3] = node.portraitH > 0 ? node.portraitH : DEFAULT_H;
+        } catch (Exception e) {
+            Gdx.app.error("DialogueUI", "Cannot load portrait: " + node.portrait, e);
+            hasPortrait1 = false;
+        }
+
+        // --- Portrait 2 (sub) ---
+        if (node.portrait2 != null) {
+            try {
+                portraitTex2 = new Texture(Gdx.files.internal(node.portrait2));
+                hasPortrait2 = true;
+
+                String side2 = node.portraitSide2 != null ? node.portraitSide2 : "right";
+                float defX2 = "right".equals(side2) ? DEFAULT_RIGHT_X : DEFAULT_LEFT_X;
+                portraitRect2[0] = node.portrait2X >= 0 ? node.portrait2X : defX2;
+                portraitRect2[1] = node.portrait2Y >= 0 ? node.portrait2Y : DEFAULT_Y;
+                portraitRect2[2] = node.portrait2W > 0 ? node.portrait2W : DEFAULT_W;
+                portraitRect2[3] = node.portrait2H > 0 ? node.portrait2H : DEFAULT_H;
+            } catch (Exception e) {
+                Gdx.app.error("DialogueUI", "Cannot load portrait2: " + node.portrait2, e);
+                hasPortrait2 = false;
+            }
+        }
+
+        isMainPortrait1 = true; // portrait1 luôn là main (người đang nói)
+    }
+
+    /** Vẽ portrait — gọi từ GameScreen TRƯỚC khi stage.draw() */
+    public void renderPortraits(SpriteBatch batch) {
+        if (!rootTable.isVisible()) return;
+
+        // Vẽ sub trước (phía sau), main sau (phía trước)
+        if (hasPortrait2 && portraitTex2 != null) {
+            batch.setColor(DIM_COLOR);
+            batch.draw(portraitTex2, portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]);
+        }
+        if (hasPortrait1 && portraitTex1 != null) {
+            batch.setColor(BRIGHT_COLOR);
+            batch.draw(portraitTex1, portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]);
+        }
+        batch.setColor(Color.WHITE); // reset
+    }
+
+    /** Vẽ debug overlay cho portrait — gọi sau renderPortraits */
+    public void renderPortraitDebug(ShapeRenderer shapeRenderer, BitmapFont font, SpriteBatch batch) {
+        if (!debugPortrait || !rootTable.isVisible()) return;
+
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip Y
+
+        // Vẽ khung debug
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        if (hasPortrait1) {
+            shapeRenderer.setColor(Color.GREEN);
+            shapeRenderer.rect(portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]);
+        }
+        if (hasPortrait2) {
+            shapeRenderer.setColor(Color.YELLOW);
+            shapeRenderer.rect(portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]);
+        }
+        // Crosshair chuột
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.line(mouseX - 10, mouseY, mouseX + 10, mouseY);
+        shapeRenderer.line(mouseX, mouseY - 10, mouseX, mouseY + 10);
+        shapeRenderer.end();
+
+        // Vẽ text thông tin toạ độ
+        batch.begin();
+        if (hasPortrait1) {
+            font.setColor(Color.GREEN);
+            font.draw(batch, String.format("P1: x=%.0f y=%.0f w=%.0f h=%.0f",
+                portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]),
+                portraitRect1[0], portraitRect1[1] + portraitRect1[3] + 15);
+        }
+        if (hasPortrait2) {
+            font.setColor(Color.YELLOW);
+            font.draw(batch, String.format("P2: x=%.0f y=%.0f w=%.0f h=%.0f",
+                portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]),
+                portraitRect2[0], portraitRect2[1] + portraitRect2[3] + 15);
+        }
+        font.setColor(Color.WHITE);
+        font.draw(batch, "F3: Toggle portrait debug | Drag: move | Shift+Drag: resize | F4: Export", 10, Gdx.graphics.getHeight() - 10);
+        batch.end();
+    }
+
+    /** Xử lý click debug portrait — return true nếu bắt đầu drag */
+    public boolean handlePortraitDebugClick(float screenX, float screenY) {
+        if (!debugPortrait || !rootTable.isVisible()) return false;
+
+        float worldX = screenX;
+        float worldY = Gdx.graphics.getHeight() - screenY;
+        draggingResize = Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.SHIFT_LEFT)
+                      || Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.SHIFT_RIGHT);
+
+        // Kiểm tra portrait1 trước (main, ở trên)
+        if (hasPortrait1 && worldX >= portraitRect1[0] && worldX <= portraitRect1[0] + portraitRect1[2]
+            && worldY >= portraitRect1[1] && worldY <= portraitRect1[1] + portraitRect1[3]) {
+            draggingPortrait = 1;
+            dragOffsetX = worldX - portraitRect1[0];
+            dragOffsetY = worldY - portraitRect1[1];
+            return true;
+        }
+        // Kiểm tra portrait2
+        if (hasPortrait2 && worldX >= portraitRect2[0] && worldX <= portraitRect2[0] + portraitRect2[2]
+            && worldY >= portraitRect2[1] && worldY <= portraitRect2[1] + portraitRect2[3]) {
+            draggingPortrait = 2;
+            dragOffsetX = worldX - portraitRect2[0];
+            dragOffsetY = worldY - portraitRect2[1];
+            return true;
+        }
+        return false;
+    }
+
+    /** Xử lý kéo portrait debug */
+    public void handlePortraitDebugDrag(float screenX, float screenY) {
+        if (draggingPortrait == 0) return;
+
+        float worldX = screenX;
+        float worldY = Gdx.graphics.getHeight() - screenY;
+        float[] rect = (draggingPortrait == 1) ? portraitRect1 : portraitRect2;
+
+        if (draggingResize) {
+            rect[2] = Math.max(50, worldX - rect[0]);
+            rect[3] = Math.max(50, worldY - rect[1]);
+        } else {
+            rect[0] = worldX - dragOffsetX;
+            rect[1] = worldY - dragOffsetY;
+        }
+    }
+
+    /** Kết thúc drag */
+    public void finishPortraitDebugDrag() {
+        if (draggingPortrait != 0) {
+            float[] rect = (draggingPortrait == 1) ? portraitRect1 : portraitRect2;
+            Gdx.app.log("DialogueUI", String.format("Portrait%d => x=%.0f, y=%.0f, w=%.0f, h=%.0f",
+                draggingPortrait, rect[0], rect[1], rect[2], rect[3]));
+            draggingPortrait = 0;
+        }
+    }
+
+    /** Export toạ độ portrait dưới dạng JSON — bấm F4 */
+    public void exportPortraitCoordinates() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== PORTRAIT COORDINATES (copy vào dialogues.json) ===\n");
+        if (hasPortrait1) {
+            sb.append(String.format("\"portraitX\": %.0f, \"portraitY\": %.0f, \"portraitW\": %.0f, \"portraitH\": %.0f",
+                portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]));
+            sb.append("\n");
+        }
+        if (hasPortrait2) {
+            sb.append(String.format("\"portrait2X\": %.0f, \"portrait2Y\": %.0f, \"portrait2W\": %.0f, \"portrait2H\": %.0f",
+                portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]));
+            sb.append("\n");
+        }
+        sb.append("=====================================================");
+        Gdx.app.log("DialogueUI", sb.toString());
+    }
+
+    public boolean isDebugPortrait() { return debugPortrait; }
+    public void toggleDebugPortrait() { debugPortrait = !debugPortrait; }
+    public boolean isDraggingPortrait() { return draggingPortrait != 0; }
+
     public void update(float delta) {
         if (!rootTable.isVisible()) return;
 

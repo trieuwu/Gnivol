@@ -405,6 +405,12 @@ public class GameScreen extends BaseScreen {
                     }
                 }
 
+                // Portrait debug drag — xử lý trước debug mode thường
+                if (dialogueUI != null && dialogueUI.isDebugPortrait() && dialogueUI.isVisible()
+                    && button == Input.Buttons.LEFT) {
+                    if (dialogueUI.handlePortraitDebugClick(screenX, screenY)) return true;
+                }
+
                 if (debugManager.isDebugMode() && button == Input.Buttons.LEFT) {
                     debugManager.handleDebugClick(screenX, screenY, camera, viewport, sceneManager.getCurrentScene());
                     return true;
@@ -427,6 +433,10 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchDragged(int screenX, int screenY, int pointer) {
+                if (dialogueUI != null && dialogueUI.isDraggingPortrait()) {
+                    dialogueUI.handlePortraitDebugDrag(screenX, screenY);
+                    return true;
+                }
                 if (debugManager.isDebugMode() && debugManager.isDraggingCutsceneSprite()) {
                     com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
@@ -455,6 +465,9 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                if (dialogueUI != null && dialogueUI.isDraggingPortrait()) {
+                    dialogueUI.finishPortraitDebugDrag();
+                }
                 if (debugManager.isDraggingCutsceneSprite()) {
                     debugManager.finishCutsceneSpriteDrag();
                 }
@@ -469,6 +482,8 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.F1) { debugManager.toggleDebugMode(); return true; }
                 if (keycode == Input.Keys.F2 && debugManager.isDebugMode()) { debugManager.exportDebugCoordinates(sceneManager.getCurrentScene()); return true; }
+                if (keycode == Input.Keys.F3) { dialogueUI.toggleDebugPortrait(); return true; }
+                if (keycode == Input.Keys.F4 && dialogueUI.isDebugPortrait()) { dialogueUI.exportPortraitCoordinates(); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
                     if (overlayManager.isActive()) {
                         overlayManager.close();
@@ -559,7 +574,21 @@ public class GameScreen extends BaseScreen {
             batch.end();
         }
         if (debugManager.isDebugMode()) debugManager.render(batch, camera, viewport, sceneManager.getCurrentScene());
+
+        // Vẽ portrait trước stage.draw() để dialogue box (Stage) che được portrait
+        if (dialogueUI != null) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            dialogueUI.renderPortraits(batch);
+            batch.end();
+        }
+
         game.getStage().draw();
+
+        // Vẽ debug portrait overlay sau stage (luôn hiện trên cùng)
+        if (dialogueUI != null && dialogueUI.isDebugPortrait()) {
+            dialogueUI.renderPortraitDebug(debugManager.getShapeRenderer(), game.getFontManager().fontDebug, batch);
+        }
 
 
         if (cutsceneManager != null) cutsceneManager.update(delta);

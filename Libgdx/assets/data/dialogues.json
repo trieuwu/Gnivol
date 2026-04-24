@@ -31,6 +31,10 @@
         "content": "Alo... Khụ khụ! Hnil đấy à...? Cậu nghe rõ tớ không...?",
         "textEffects": false,
         "nextNodeId": "call_02",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
