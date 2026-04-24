@@ -44,10 +44,6 @@ public class RoomInteractionHandler implements InteractionCallback {
         screen.hideInspectText();
         screen.showItemNotification(itemId);
 
-        if ("dien_thoai_final".equals(itemId)) {
-            if (game.getAudioManager() != null) game.getAudioManager().playSFX("phone");
-        }
-
         if ("keo_502_final".equals(itemId)) {
             if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
                 ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/bathroom_no_bottle.png");
@@ -132,6 +128,15 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("mirror".equals(id)) {
+            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
+                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
+            } else {
+                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
+            }
+            return;
+        }
+
         // 6. Bồn rửa mặt (Minigame Laser)
         if ("sink".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
@@ -142,17 +147,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
-        // 7. Gấu bông gầm giường (Cutscene cánh tay)
-        if ("plush_toy".equals(id)) {
-            if (!game.getFlagManager().get("plush_toy_scare")) {
-                game.getFlagManager().set("plush_toy_scare");
-                screen.hideInspectText();
-                screen.getCutsceneManager().play("plush_toy_hand");
-            }
-            return;
-        }
-
-        // 8. Xử lý chung cho Dialogue, Overlay và Thought
+        // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
 

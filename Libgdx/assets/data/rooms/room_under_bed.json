@@ -21,13 +21,32 @@
     {
       "id": "plush_toy",
       "type": "interactable",
-      "x": 520,
-      "y": 210,
-      "w": 220,
-      "h": 180,
+      "x": 506,
+      "y": 216,
+      "w": 200,
+      "h": 130,
       "properties": {
         "inspectText": "Một con gấu bông bị bỏ quên... Trông nụ cười của nó thật kỳ quái.",
         "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "key_under_bed",
+      "type": "interactable",
+      "texture": "images/item/chia_khoa_final.png",
+      "x": 337,
+      "y": 238,
+      "w": 50,
+      "h": 50,
+      "scale": 0.03,
+      "offsetX": -280,
+      "offsetY": -100,
+      "properties": {
+        "itemId": "chia_khoa_final",
+        "inspectText": "Một chiếc chìa khóa bằng đồng rơi dưới gầm giường.",
+        "collectible": true,
         "hasGlitch": false,
         "rsChange": 0
       }

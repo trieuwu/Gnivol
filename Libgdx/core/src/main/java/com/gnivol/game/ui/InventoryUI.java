@@ -116,7 +116,14 @@ public class InventoryUI {
                 }
             }
         });
-        topTable.add(baloBtn).size(150, 150);
+        Texture baloFrameTex = new Texture(Gdx.files.internal("images/UI/item_frame.png"));
+        itemTextureCache.put("balo_frame_cache", baloFrameTex);
+
+        Table baloWrapper = new Table();
+        baloWrapper.setBackground(new TextureRegionDrawable(new TextureRegion(baloFrameTex)));
+
+        baloWrapper.add(baloBtn).size(110, 110).center();
+        topTable.add(baloWrapper).size(80, 80);
 
         quickbarTable = new Table();
         quickbarTable.setFillParent(true);
