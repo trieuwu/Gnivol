@@ -187,6 +187,27 @@ public class GameScreen extends BaseScreen {
             public void onRSChanged(float oldValue, float newValue) {
                 rsUI.updateRS(newValue);
                 game.getGameState().setCurrentRS(newValue);
+                // Nếu RS tụt xuống 0 (hoặc thấp hơn)
+                if (newValue <= 0 && oldValue > 0) {
+                    // chờ Hội thoại cũ dọn dẹp xong thì mới kích hoạt Ending
+                    Gdx.app.postRunnable(() -> {
+                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                        if (dialogueUI.isVisible()) {
+                            dialogueUI.displayNode(null);
+                        }
+                        cutsceneManager.play("cutscene_rs_0");
+                    });
+                }
+                // Nếu RS chạm mốc 100 (hoặc vượt quá)
+                else if (newValue >= 100 && oldValue < 100) {
+                    Gdx.app.postRunnable(() -> {
+                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                        if (dialogueUI.isVisible()) {
+                            dialogueUI.displayNode(null);
+                        }
+                        cutsceneManager.play("cutscene_rs_100");
+                    });
+                }
             }
             @Override
             public void onThresholdCrossed(boolean isAbove) {}
@@ -258,6 +279,10 @@ public class GameScreen extends BaseScreen {
             @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
             @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
             @Override public void onChangeScene(String sceneId) {
+                if ("return_to_menu".equals(sceneId)) {
+                    game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
+                    return;
+                }
                 sceneManager.changeScene(sceneId);
                 game.getGameState().setCurrentRoom(sceneId);
             }
@@ -416,7 +441,23 @@ public class GameScreen extends BaseScreen {
                     return true;
                 }
 
-                if (dialogueUI != null && dialogueUI.isVisible()) return false;
+                if (dialogueUI != null && dialogueUI.isVisible()) {
+                    // Kích hoạt khi có thoại và đó KHÔNG phải là màn hình chọn A B C
+                    if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
+                        dialogueEngine.advance();
+                        if (!dialogueEngine.isFinished()) {
+                            // Vẫn còn thoại -> Cập nhật lên UI
+                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                        } else {
+                            if (cutsceneManager != null && cutsceneManager.isPlaying()) {
+                                cutsceneManager.onDialogueFinished();
+                            }
+                            // HẾT THOẠI: Phải ẩn UI đi và báo cho hệ thống
+                            dialogueUI.displayNode(null);
+                        }
+                    }
+                    return true;
+                }
 
                 if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
                     com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);

@@ -253,6 +253,13 @@ public class DialogueUI {
                 onFinished = null;
                 callback.run();
             }
+            // Bất chấp click ở đâu, hễ khung thoại tắt là nó ép Cutscene chạy tiếp!
+            if (game != null && game.getScreen() instanceof com.gnivol.game.screen.GameScreen) {
+                com.gnivol.game.screen.GameScreen gs = (com.gnivol.game.screen.GameScreen) game.getScreen();
+                if (gs.getCutsceneManager() != null && gs.getCutsceneManager().isPlaying()) {
+                    gs.getCutsceneManager().onDialogueFinished();
+                }
+            }
             return;
         }
 
@@ -267,12 +274,11 @@ public class DialogueUI {
         // DÙNG CHUNG 1 BẢNG, CHỈ ĐỔI TÊN VÀ MÀU CHỮ
         if (isCurrentThought) {
             speakerLabel.setText("Suy Nghĩ");
-            contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f);
         } else {
             speakerLabel.setText(node.speaker);
-            if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
-            else contentLabel.setColor(Color.WHITE);
         }
+        if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
+        else contentLabel.setColor(Color.WHITE);
 
         activeTypingLabel = contentLabel; // Luôn luôn gõ vào contentLabel
         applyRSEffect(contentLabel, currentRS);
@@ -523,7 +529,7 @@ public class DialogueUI {
             String currentText = fullContentText.substring(0, typeIndex);
 
             // --- 1. QUYẾT ĐỊNH HIỆN CHỮ GÌ ---
-            if (currentRS < 35f && !isCurrentThought && isGlitchedState) {
+            if (currentRS < 35f && isGlitchedState) {
                 // Rơi vào 1 giây bị lỗi -> Băm nát chữ
                 activeTypingLabel.setText(GlitchTextRenderer.applyGlitch(currentText, currentRS));
             } else {
@@ -532,16 +538,12 @@ public class DialogueUI {
             }
 
             // --- 2. QUYẾT ĐỊNH MÀU SẮC ---
-            if (isCurrentThought) {
-                activeTypingLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Suy nghĩ luôn màu xám
+            if (currentRS > 65f) {
+                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // RS > 65: Màu đỏ
+            } else if (currentRS < 35f && isGlitchedState) {
+                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f);
             } else {
-                if (currentRS > 65f) {
-                    activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // RS > 65: Màu đỏ
-                } else if (currentRS < 35f && isGlitchedState) {
-                    activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f);
-                } else {
-                    activeTypingLabel.setColor(Color.WHITE); // RS 35-65 hoặc 1 giây bình thường: Màu Trắng
-                }
+                activeTypingLabel.setColor(Color.WHITE); // RS 35-65 hoặc 1 giây bình thường: Màu Trắng
             }
         }
     }
