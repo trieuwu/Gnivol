@@ -2,10 +2,27 @@
   {
     "id": "hand_under_bed",
     "steps": [
-      {"type": "flash", "color": "white", "duration": 0.1},
-      {"type": "wait", "duration": 0.2},
-      {"type": "dialogue", "id": "bed_jumpscare"},
-      {"type": "rs_change", "value": 8}
+      { "type": "wait", "duration": 0.2 },
+      { "type": "sfx", "id": "sfx_heartbeat_fast" },
+      { "type": "flash", "color": "white", "duration": 0.1 },
+
+      { "type": "show_sprite", "sprite": "images/horror/removed_backgr.png", "duration": 3 },
+      { "type": "wait", "duration": 0.8 },
+
+      { "type": "flash", "color": "red", "duration": 0.1 },
+      { "type": "sfx", "id": "sfx_low_rumble" },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr2.png" },
+      { "type": "wait", "duration": 0.7 },
+
+      { "type": "flash", "color": "red", "duration": 0.1 },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr3.png" },
+      { "type": "sfx", "id": "sfx_scare" },
+      { "type": "shake", "intensity": 20, "duration": 0.6 },
+      { "type": "wait", "duration": 0.8 },
+
+      { "type": "flash", "color": "white", "duration": 0.2 },
+      { "type": "dialogue", "id": "bed_jumpscare" },
+      { "type": "rs_change", "value": 8 }
     ]
   },
   {
@@ -23,6 +40,52 @@
       {"type": "flash", "color": "white", "duration": 0.3},
       {"type": "dialogue", "id": "bed_jumpscare"},
       {"type": "rs_change", "value": 10}
+    ]
+  },
+  {
+    "id": "door_neighbor",
+    "steps": [
+      { "type": "sfx", "id": "sfx_power_out" },
+      { "type": "flash", "color": "white", "duration": 0.15 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/2.png" },
+      { "type": "sfx", "id": "sfx_low_rumble" },
+      { "type": "wait", "duration": 1.8 },
+
+      { "type": "flash", "color": "white", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/3.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "flash", "color": "white", "duration": 0.05 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/4.png" },
+      { "type": "sfx", "id": "sfx_deafening_scream" },
+      { "type": "shake", "intensity": 25, "duration": 0.8 },
+      { "type": "wait", "duration": 2.5 },
+
+      { "type": "flash", "color": "white", "duration": 0.3 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/1.png" },
+      { "type": "sfx", "id": "sfx_heavy_breathing_panic" },
+      { "type": "rs_change", "value": 20 },
+      { "type": "dialogue", "id": "neighbor_door_smell" }
+    ]
+  },
+  {
+    "id": "cutscene_rs_0",
+    "steps": [
+      { "type": "dialogue", "id": "ending_text_rs0" },
+      { "type": "sfx", "id": "sfx_peaceful_wind" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_rs_100",
+    "steps": [
+      { "type": "dialogue", "id": "ending_text_rs100" },
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
     ]
   }
 ]

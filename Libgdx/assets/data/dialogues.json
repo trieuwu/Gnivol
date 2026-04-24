@@ -31,6 +31,10 @@
         "content": "Alo... Khụ khụ! Hnil đấy à...? Cậu nghe rõ tớ không...?",
         "textEffects": false,
         "nextNodeId": "call_02",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
@@ -237,6 +241,230 @@
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "ending_text_rs0",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Tỉnh táo hoàn toàn... Trò chơi bắt đầu sụp đổ...",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "ending_text_rs100",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Chìm vào hư vô... Bạn đang dần lún sâu vào trò chơi...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "mot_sach",
+    "startNodeId": "node_01",
+    "nodes": [
+      {
+        "id": "node_01",
+        "speaker": "Hnil",
+        "content": "WTF? Cái quái…! Ôi ma!",
+        "textEffects": false,
+        "nextNodeId": "node_02",
+        "choices": []
+      },
+      {
+        "id": "node_02",
+        "speaker": "Mọt sách",
+        "content": "Ma là một thứ không có thật. Theo Wikipedia, ma là một quan niệm dân gian để chỉ hồn của người chết…",
+        "textEffects": false,
+        "nextNodeId": "node_03",
+        "choices": []
+      },
+      {
+        "id": "node_03",
+        "speaker": "Hnil",
+        "content": "Ra là người.",
+        "textEffects": false,
+        "nextNodeId": "node_04",
+        "choices": []
+      },
+      {
+        "id": "node_04",
+        "speaker": "Mọt sách",
+        "content": "Sai. Ma không phải là người, cũng không liên quan gì đến người.",
+        "textEffects": false,
+        "nextNodeId": "node_05",
+        "choices": []
+      },
+      {
+        "id": "node_05",
+        "speaker": "Hnil",
+        "content": "…?",
+        "textEffects": false,
+        "nextNodeId": "node_06",
+        "choices": []
+      },
+      {
+        "id": "node_06",
+        "speaker": "Mọt sách",
+        "content": "Trong cuộc sống của anh, ma chỉ là quan niệm. Còn trong này, 'ma' là một thứ được tạo ra bằng LibGDX, một asset.",
+        "textEffects": false,
+        "nextNodeId": "node_07",
+        "choices": []
+      },
+      {
+        "id": "node_07",
+        "speaker": "Hnil",
+        "content": "há..?",
+        "textEffects": false,
+        "nextNodeId": "node_08",
+        "choices": []
+      },
+      {
+        "id": "node_08",
+        "speaker": "Mọt sách",
+        "content": "Texture. Animation, được load bằng LibGDX. hahahahahaah",
+        "textEffects": false,
+        "nextNodeId": "node_09",
+        "choices": []
+      },
+      {
+        "id": "node_09",
+        "speaker": "Hnil",
+        "content": "Ông là ai vậy, nói cái gì thế?",
+        "textEffects": false,
+        "nextNodeId": "node_10",
+        "choices": []
+      },
+      {
+        "id": "node_10",
+        "speaker": "Mọt sách",
+        "content": "Quan tâm làm gì hả 'tên người chơi'. Chọn đi: 'tên người chơi' muốn chết hay muốn sống?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "choice_A",
+            "content": "Tôi muốn chết…",
+            "nextNodeId": "node_11_A",
+            "textEffects": false,
+            "rsChange": 15
+          },
+          {
+            "id": "choice_B",
+            "content": "Tôi muốn sống",
+            "nextNodeId": "node_11_B",
+            "textEffects": false,
+            "rsChange": -5
+          }
+        ]
+      },
+      {
+        "id": "node_11_A",
+        "speaker": "Hnil",
+        "content": "Chết chứ, tất nhiên là chết rồi, ai mà chẳng muốn chết hahahha",
+        "textEffects": false,
+        "nextNodeId": "node_12_A",
+        "choices": []
+      },
+      {
+        "id": "node_12_A",
+        "speaker": "Mọt sách",
+        "content": "Hahahahaha, đã nhận ra vấn đề rồi cơ à? Tỉnh táo đấy, không cần giả vờ.",
+        "textEffects": false,
+        "nextNodeId": "node_13",
+        "choices": []
+      },
+      {
+        "id": "node_11_B",
+        "speaker": "Hnil",
+        "content": "Học ít thôi cu em, đầu óc có vấn đề à, ai chả muốn sống?",
+        "textEffects": false,
+        "nextNodeId": "node_12_B",
+        "choices": []
+      },
+      {
+        "id": "node_12_B",
+        "speaker": "Mọt sách",
+        "content": "Trả lời sai rồi..., còn phải học hỏi nhiều lắm!",
+        "textEffects": false,
+        "nextNodeId": "node_13",
+        "choices": []
+      },
+      {
+        "id": "node_13",
+        "speaker": "Hnil",
+        "content": "Học ít thôi ông cháu.",
+        "textEffects": false,
+        "nextNodeId": "node_14",
+        "choices": []
+      },
+      {
+        "id": "node_14",
+        "speaker": "Bọng bé bểu",
+        "content": "Anh Bệu Xin chào tất cả các tình yêu!!!!",
+        "textEffects": true,
+        "nextNodeId": "node_15",
+        "choices": []
+      },
+      {
+        "id": "node_15",
+        "speaker": "Hnil",
+        "content": "Lại cái gì nữa vậy?",
+        "textEffects": false,
+        "nextNodeId": "node_16",
+        "choices": []
+      },
+      {
+        "id": "node_16",
+        "speaker": "Bọng bé bểu",
+        "content": "Rebrand tí thôi con vợ ơi. Nhân vật phải có tí personality chứ.",
+        "textEffects": false,
+        "nextNodeId": "node_17",
+        "choices": []
+      },
+      {
+        "id": "node_17",
+        "speaker": "Hnil",
+        "content": "Liên tha liên thiên. Giờ ông tránh đường được chưa? Để tôi đi chơi.",
+        "textEffects": false,
+        "nextNodeId": "node_18",
+        "choices": []
+      },
+      {
+        "id": "node_18",
+        "speaker": "Bọng bé bểu",
+        "content": "Đi đâu mà vội mà vàng, mà vấp phải đá, mà quàng phải dâyyyy. Con vợ, có muốn có người trợ giúp con vợ phá đảo game không?",
+        "textEffects": false,
+        "nextNodeId": "node_19",
+        "choices": []
+      },
+      {
+        "id": "node_19",
+        "speaker": "Hnil",
+        "content": "...? WTF",
+        "textEffects": false,
+        "nextNodeId": "node_20",
+        "choices": []
+      },
+      {
+        "id": "node_20",
+        "speaker": "Bọng bé bểu",
+        "content": "Chơi game nhá con vợ.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
   }
-
 ]

@@ -351,77 +351,77 @@ public class InventoryUI {
         }
     }
 
-        private void handleSlotClick(int slotIndex, ImageButton clickedBtn, boolean isQuickbar) {
-            java.util.ArrayList<String> currentItems = inventoryManager.getItems();
+    private void handleSlotClick(int slotIndex, ImageButton clickedBtn, boolean isQuickbar) {
+        java.util.ArrayList<String> currentItems = inventoryManager.getItems();
 
-            if (slotIndex >= currentItems.size()) {
+        if (slotIndex >= currentItems.size()) {
+            resetHighlights();
+            return;
+        }
+
+        String itemId = currentItems.get(slotIndex);
+        Vector2 btnPos = new Vector2(0, 0);
+        clickedBtn.localToStageCoordinates(btnPos);
+
+        float slotWidth = clickedBtn.getWidth();
+        float slotHeight = clickedBtn.getHeight();
+
+        float expandSize = 14f; // Tăng thêm 14 pixel (Bạn có thể sửa số này cho vừa mắt)
+        float newWidth = slotWidth + expandSize;
+        float newHeight = slotHeight + expandSize;
+        // Dịch tọa độ X, Y lùi lại một nửa độ nở để khung luôn căn giữa
+        float newX = btnPos.x - (7f);
+        float newY = btnPos.y - (7f);
+
+        if (isQuickbar) {
+            if (selectedItem1 != null && selectedItem1.equals(itemId) && highlight1.isVisible()) {
                 resetHighlights();
-                return;
             }
-
-            String itemId = currentItems.get(slotIndex);
-            Vector2 btnPos = new Vector2(0, 0);
-            clickedBtn.localToStageCoordinates(btnPos);
-
-            float slotWidth = clickedBtn.getWidth();
-            float slotHeight = clickedBtn.getHeight();
-
-            float expandSize = 14f; // Tăng thêm 14 pixel (Bạn có thể sửa số này cho vừa mắt)
-            float newWidth = slotWidth + expandSize;
-            float newHeight = slotHeight + expandSize;
-            // Dịch tọa độ X, Y lùi lại một nửa độ nở để khung luôn căn giữa
-            float newX = btnPos.x - (7f);
-            float newY = btnPos.y - (7f);
-
-            if (isQuickbar) {
-                if (selectedItem1 != null && selectedItem1.equals(itemId) && highlight1.isVisible()) {
-                    resetHighlights();
-                }
-                else {
-                    resetHighlights();
-                    selectedItem1 = itemId;
-
-                    highlight1.setSize(newWidth, newHeight);
-                    highlight1.setPosition(newX, newY);
-                    highlight1.setVisible(true);
-                    highlight1.clearActions();
-                    highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
-                }
-                return;
-            }
-
-            if (selectedItem1 == null) {
+            else {
+                resetHighlights();
                 selectedItem1 = itemId;
 
-                highlight1.setSize(newWidth+2, newHeight+7);
-                highlight1.setPosition(newX, newY+2);
+                highlight1.setSize(newWidth, newHeight);
+                highlight1.setPosition(newX, newY);
                 highlight1.setVisible(true);
                 highlight1.clearActions();
                 highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
-            } else if (selectedItem1.equals(itemId) && selectedItem2 == null) {
-                resetHighlights();
-            } else if (selectedItem2 == null) {
-                selectedItem2 = itemId;
-
-                highlight2.setSize(newWidth+2, newHeight+7);
-                highlight2.setPosition(newX, newY+2);
-                highlight2.setVisible(true);
-                highlight2.clearActions();
-                highlight2.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
-            } else {
-                resetHighlights();
             }
+            return;
         }
-        private void resetHighlights() {
-            selectedItem1 = null;
-            selectedItem2 = null;
-            highlight1.setVisible(false);
+
+        if (selectedItem1 == null) {
+            selectedItem1 = itemId;
+
+            highlight1.setSize(newWidth+2, newHeight+7);
+            highlight1.setPosition(newX, newY+2);
+            highlight1.setVisible(true);
             highlight1.clearActions();
-            highlight1.getColor().a = 1f;
-            highlight2.setVisible(false);
+            highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
+        } else if (selectedItem1.equals(itemId) && selectedItem2 == null) {
+            resetHighlights();
+        } else if (selectedItem2 == null) {
+            selectedItem2 = itemId;
+
+            highlight2.setSize(newWidth+2, newHeight+7);
+            highlight2.setPosition(newX, newY+2);
+            highlight2.setVisible(true);
             highlight2.clearActions();
-            highlight2.getColor().a = 1f;
+            highlight2.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
+        } else {
+            resetHighlights();
         }
+    }
+    private void resetHighlights() {
+        selectedItem1 = null;
+        selectedItem2 = null;
+        highlight1.setVisible(false);
+        highlight1.clearActions();
+        highlight1.getColor().a = 1f;
+        highlight2.setVisible(false);
+        highlight2.clearActions();
+        highlight2.getColor().a = 1f;
+    }
 
     public void refreshUI() {
         java.util.ArrayList<String> items = inventoryManager.getItems();
@@ -524,7 +524,5 @@ public class InventoryUI {
         }
         itemTextureCache.clear();
     }
-
 }
-
 

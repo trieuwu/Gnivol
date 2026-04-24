@@ -187,6 +187,27 @@ public class GameScreen extends BaseScreen {
             public void onRSChanged(float oldValue, float newValue) {
                 rsUI.updateRS(newValue);
                 game.getGameState().setCurrentRS(newValue);
+                // Nếu RS tụt xuống 0 (hoặc thấp hơn)
+                if (newValue <= 0 && oldValue > 0) {
+                    // chờ Hội thoại cũ dọn dẹp xong thì mới kích hoạt Ending
+                    Gdx.app.postRunnable(() -> {
+                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                        if (dialogueUI.isVisible()) {
+                            dialogueUI.displayNode(null);
+                        }
+                        cutsceneManager.play("cutscene_rs_0");
+                    });
+                }
+                // Nếu RS chạm mốc 100 (hoặc vượt quá)
+                else if (newValue >= 100 && oldValue < 100) {
+                    Gdx.app.postRunnable(() -> {
+                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                        if (dialogueUI.isVisible()) {
+                            dialogueUI.displayNode(null);
+                        }
+                        cutsceneManager.play("cutscene_rs_100");
+                    });
+                }
             }
             @Override
             public void onThresholdCrossed(boolean isAbove) {}
@@ -258,6 +279,10 @@ public class GameScreen extends BaseScreen {
             @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
             @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
             @Override public void onChangeScene(String sceneId) {
+                if ("return_to_menu".equals(sceneId)) {
+                    game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
+                    return;
+                }
                 sceneManager.changeScene(sceneId);
                 game.getGameState().setCurrentRoom(sceneId);
             }
@@ -405,12 +430,34 @@ public class GameScreen extends BaseScreen {
                     }
                 }
 
+                // Portrait debug drag — xử lý trước debug mode thường
+                if (dialogueUI != null && dialogueUI.isDebugPortrait() && dialogueUI.isVisible()
+                    && button == Input.Buttons.LEFT) {
+                    if (dialogueUI.handlePortraitDebugClick(screenX, screenY)) return true;
+                }
+
                 if (debugManager.isDebugMode() && button == Input.Buttons.LEFT) {
                     debugManager.handleDebugClick(screenX, screenY, camera, viewport, sceneManager.getCurrentScene());
                     return true;
                 }
 
-                if (dialogueUI != null && dialogueUI.isVisible()) return false;
+                if (dialogueUI != null && dialogueUI.isVisible()) {
+                    // Kích hoạt khi có thoại và đó KHÔNG phải là màn hình chọn A B C
+                    if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
+                        dialogueEngine.advance();
+                        if (!dialogueEngine.isFinished()) {
+                            // Vẫn còn thoại -> Cập nhật lên UI
+                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                        } else {
+                            if (cutsceneManager != null && cutsceneManager.isPlaying()) {
+                                cutsceneManager.onDialogueFinished();
+                            }
+                            // HẾT THOẠI: Phải ẩn UI đi và báo cho hệ thống
+                            dialogueUI.displayNode(null);
+                        }
+                    }
+                    return true;
+                }
 
                 if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
                     com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
@@ -427,6 +474,10 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchDragged(int screenX, int screenY, int pointer) {
+                if (dialogueUI != null && dialogueUI.isDraggingPortrait()) {
+                    dialogueUI.handlePortraitDebugDrag(screenX, screenY);
+                    return true;
+                }
                 if (debugManager.isDebugMode() && debugManager.isDraggingCutsceneSprite()) {
                     com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
@@ -455,6 +506,9 @@ public class GameScreen extends BaseScreen {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                if (dialogueUI != null && dialogueUI.isDraggingPortrait()) {
+                    dialogueUI.finishPortraitDebugDrag();
+                }
                 if (debugManager.isDraggingCutsceneSprite()) {
                     debugManager.finishCutsceneSpriteDrag();
                 }
@@ -469,6 +523,8 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.F1) { debugManager.toggleDebugMode(); return true; }
                 if (keycode == Input.Keys.F2 && debugManager.isDebugMode()) { debugManager.exportDebugCoordinates(sceneManager.getCurrentScene()); return true; }
+                if (keycode == Input.Keys.F3) { dialogueUI.toggleDebugPortrait(); return true; }
+                if (keycode == Input.Keys.F4 && dialogueUI.isDebugPortrait()) { dialogueUI.exportPortraitCoordinates(); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
                     if (overlayManager.isActive()) {
                         overlayManager.close();
@@ -559,7 +615,21 @@ public class GameScreen extends BaseScreen {
             batch.end();
         }
         if (debugManager.isDebugMode()) debugManager.render(batch, camera, viewport, sceneManager.getCurrentScene());
+
+        // Vẽ portrait trước stage.draw() để dialogue box (Stage) che được portrait
+        if (dialogueUI != null) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            dialogueUI.renderPortraits(batch);
+            batch.end();
+        }
+
         game.getStage().draw();
+
+        // Vẽ debug portrait overlay sau stage (luôn hiện trên cùng)
+        if (dialogueUI != null && dialogueUI.isDebugPortrait()) {
+            dialogueUI.renderPortraitDebug(debugManager.getShapeRenderer(), game.getFontManager().fontDebug, batch);
+        }
 
 
         if (cutsceneManager != null) cutsceneManager.update(delta);
@@ -583,6 +653,13 @@ public class GameScreen extends BaseScreen {
                 cutsceneSprite.dispose();
                 cutsceneSprite = null;
             } else {
+                Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+                dimRenderer.setProjectionMatrix(camera.combined);
+                dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                dimRenderer.setColor(Color.BLACK);
+                dimRenderer.rect(0, 0, 1280, 720);
+                dimRenderer.end();
+
                 float drawX, drawY, drawW, drawH;
                 if (cutsceneSpriteRect[0] >= 0 && cutsceneSpriteRect[1] >= 0 && cutsceneSpriteRect[2] > 0 && cutsceneSpriteRect[3] > 0) {
                     drawX = cutsceneSpriteRect[0];

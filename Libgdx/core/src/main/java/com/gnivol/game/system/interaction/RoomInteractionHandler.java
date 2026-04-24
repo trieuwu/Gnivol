@@ -85,8 +85,11 @@ public class RoomInteractionHandler implements InteractionCallback {
                 if (!game.getFlagManager().get("neighbor_door_checked")) {
                     game.getFlagManager().set("neighbor_door_checked", true);
                     game.getRsManager().addRS(5f);
+                    screen.getCutsceneManager().play("door_neighbor");
                 }
-                onDialogueTriggered("neighbor_door_smell");
+                else{
+                    onDialogueTriggered("neighbor_door_smell");
+                }
             }
             return;
         }
@@ -147,6 +150,24 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("plush_toy".equals(id)) {
+            if (!game.getFlagManager().get("plush_toy_scare")) {
+                game.getFlagManager().set("plush_toy_scare");
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("plush_toy_hand");
+            }
+            return;
+        }
+        // bức tranh ma quái
+        if ("creepy_painting".equals(id)) {
+            if (!game.getFlagManager().get("da_noi_chuyen_motsach")) {
+                game.getFlagManager().set("da_noi_chuyen_motsach", true);
+                screen.hideInspectText();
+
+                onDialogueTriggered("mot_sach");
+            }
+            return;
+        }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
