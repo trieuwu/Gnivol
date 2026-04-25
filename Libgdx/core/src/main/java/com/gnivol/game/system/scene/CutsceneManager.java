@@ -27,6 +27,7 @@ public class CutsceneManager {
         public float duration;
         public String sprite;
         public String id;
+        public String src;
         public float intensity;
         public float value;
         public float x = -1, y = -1, w = -1, h = -1;
@@ -47,6 +48,7 @@ public class CutsceneManager {
         void onFadeIn(float duration);
         void onSwapSprite(String target, String newSprite, float x, float y, float w, float h);
         void onDialogue(String dialogueId);
+        void onPlayVideo(String src, float x, float y, float w, float h);
         void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
     }
@@ -60,6 +62,7 @@ public class CutsceneManager {
     private float stepDuration;
     private boolean playing;
     private boolean waitingForDialogue;
+    private boolean waitingForVideo;
 
     private RSManager rsManager;
     private AudioManager audioManager;
@@ -83,6 +86,7 @@ public class CutsceneManager {
                         step.duration = stepVal.getFloat("duration", 0f);
                         step.sprite = stepVal.getString("sprite", null);
                         step.id = stepVal.getString("id", null);
+                        step.src = stepVal.getString("src", null);
                         step.intensity = stepVal.getFloat("intensity", 0f);
                         step.value = stepVal.getFloat("value", 0f);
                         step.x = stepVal.getFloat("x", -1f);
@@ -113,12 +117,13 @@ public class CutsceneManager {
         stepDuration = 0f;
         playing = true;
         waitingForDialogue = false;
+        waitingForVideo = false;
         executeCurrentStep();
     }
 
     public void update(float delta) {
         if (!playing || currentCutscene == null) return;
-        if (waitingForDialogue) return;
+        if (waitingForDialogue || waitingForVideo) return;
 
         stepTimer += delta;
         if (stepTimer >= stepDuration) {
@@ -148,6 +153,16 @@ public class CutsceneManager {
     public void onDialogueFinished() {
         if (waitingForDialogue) {
             waitingForDialogue = false;
+            advanceStep();
+        }
+    }
+
+    /**
+     * Call this when a video triggered by cutscene finishes playing.
+     */
+    public void onVideoFinished() {
+        if (waitingForVideo) {
+            waitingForVideo = false;
             advanceStep();
         }
     }
@@ -234,6 +249,11 @@ public class CutsceneManager {
             }
             advanceStep();
             return;
+        } else if ("video".equals(type)) {
+            waitingForVideo = true;
+            if (listener != null) {
+                listener.onPlayVideo(step.src, step.x, step.y, step.w, step.h);
+            }
         } else {
             Gdx.app.error("CutsceneManager", "Unknown step type: " + type);
             stepDuration = 0f;

@@ -28,6 +28,7 @@
   {
     "id": "plush_toy_hand",
     "steps": [
+      {"type": "video", "src": "video/plush_toy_cutscene.webm", "x": 0, "y": 0, "w": 1280, "h": 720},
       {"type": "wait", "duration": 0.3},
       {"type": "sfx", "id": "sfx_scare"},
       {"type": "flash", "color": "red", "duration": 0.15},
