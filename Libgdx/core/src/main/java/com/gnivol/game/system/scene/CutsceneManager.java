@@ -49,6 +49,7 @@ public class CutsceneManager {
         void onDialogue(String dialogueId);
         void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
+        void onOpenMinigame(String minigameId);
     }
 
     // --- Fields ---
@@ -234,7 +235,16 @@ public class CutsceneManager {
             }
             advanceStep();
             return;
-        } else {
+        }
+        else if ("open_minigame".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onOpenMinigame(step.id);
+            }
+            advanceStep();
+            return;
+        }
+        else {
             Gdx.app.error("CutsceneManager", "Unknown step type: " + type);
             stepDuration = 0f;
             advanceStep();
