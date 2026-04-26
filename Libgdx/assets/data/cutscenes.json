@@ -7,18 +7,15 @@
       { "type": "flash", "color": "white", "duration": 0.1 },
 
       { "type": "show_sprite", "sprite": "images/horror/removed_backgr.png", "duration": 3 },
-      { "type": "wait", "duration": 0.8 },
 
       { "type": "flash", "color": "red", "duration": 0.1 },
       { "type": "sfx", "id": "sfx_low_rumble" },
       { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr2.png" },
-      { "type": "wait", "duration": 0.7 },
 
       { "type": "flash", "color": "red", "duration": 0.1 },
       { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr3.png" },
       { "type": "sfx", "id": "sfx_scare" },
       { "type": "shake", "intensity": 20, "duration": 0.6 },
-      { "type": "wait", "duration": 0.8 },
 
       { "type": "flash", "color": "white", "duration": 0.2 },
       { "type": "rs_change", "value": 8 }

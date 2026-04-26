@@ -28,7 +28,7 @@
       {
         "id": "call_01",
         "speaker": "Linh",
-        "content": "Alo... Khụ khụ! Hnil đấy à...? Cậu nghe rõ tớ không...?",
+        "content": "Alo... Khụ khụ! {player} đấy à...? Cậu nghe rõ tớ không...?",
         "textEffects": false,
         "nextNodeId": "call_02",
         "portrait": "images/characters/Linh.char.png",
@@ -39,10 +39,14 @@
       },
       {
         "id": "call_02",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Tớ đây. Mới sáng sớm có chuyện gì thế? Cậu ốm à?",
         "textEffects": false,
         "nextNodeId": "call_03",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": []
       },
       {
@@ -51,14 +55,22 @@
         "content": "Không... Khụ khụ! Tớ... tớ có tin mừng này! Khụ khụ!",
         "textEffects": false,
         "nextNodeId": "call_04",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
         "id": "call_04",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Tin mừng gì mà cậu ho như cuốc kêu thế? Uống ngụm nước rồi nói từ từ tớ xem nào.",
         "textEffects": false,
         "nextNodeId": "call_05",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": []
       },
       {
@@ -67,6 +79,10 @@
         "content": "Phản ứng chán thế... Khụ khụ! Tớ ho thế này là điềm tốt đấy. Khụ... Tớ sắp chết rồi!",
         "textEffects": false,
         "nextNodeId": "call_06",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
@@ -75,14 +91,22 @@
         "content": "Bác sĩ bảo ung thư giai đoạn cuối rồi. Khụ! Hai tháng nữa thôi... Cậu mau chúc mừng tớ đi! Nhanh lên!!!",
         "textEffects": false,
         "nextNodeId": "call_07",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
         "id": "call_07",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "(Giọng cô ấy bỗng vỡ òa trong niềm vui sướng kì dị... Cảm giác buồn nôn trào lên cổ họng mình.)",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": [
           {
             "id": "choice_A",
@@ -106,6 +130,10 @@
         "content": "Khụ khụ... Cậu lúc nào cũng vậy. Chẳng bao giờ hiểu cho tớ... Tít... tít... tít...",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
@@ -114,6 +142,10 @@
         "content": "Khụ... HAH... HAHAHA! Tớ biết mà! Tớ đợi cậu ở d... Tít... tít... tít...",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       }
     ]
@@ -124,7 +156,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Cạch... RẮC! Thôi xong! Chìa khóa cũ giòn quá, gãy làm đôi rồi!",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -132,7 +164,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Một nửa đang kẹt cứng trong ổ, mình chỉ còn cầm cái chuôi... Phải tìm cách gắn nó lại thật chắc mới vặn được.",
         "textEffects": false,
         "nextNodeId": null,
@@ -146,7 +178,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Nửa cái chìa vẫn đang kẹt trong ổ. Mình cần bôi thứ gì đó thật dính vào cái chuôi này để nối chúng lại.",
         "textEffects": false,
         "nextNodeId": null,
@@ -160,7 +192,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Cửa chính đã bị khóa trái. Mình không thể ra ngoài nếu không tìm thấy chìa khóa.",
         "textEffects": false,
         "nextNodeId": null,
@@ -174,7 +206,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Cửa khóa chặt rồi... Ục... Có mùi hôi thối nồng nặc bốc ra từ khe cửa.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -182,7 +214,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Mùi hương này... giống hệt như mùi thịt thối rữa. Mình cần một thứ gì đó đủ mạnh để phá nát cánh cửa này, một cái rìu chẳng hạn.",
         "textEffects": false,
         "nextNodeId": null,
@@ -196,7 +228,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Một chiếc máy quét vân tay ẩn dưới tay vịn cầu thang? Hệ thống an ninh ở đây thật đáng kinh ngạc.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -204,7 +236,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Thiết bị báo 'Truy cập bị từ chối'. Mình cần vân tay của một cư dân ở đây mới có thể xuống tầng dưới được.",
         "textEffects": false,
         "nextNodeId": null,
@@ -218,7 +250,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Cái giường này... cảm giác lạnh lẽo đến rợn người.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -226,7 +258,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Á!!! Có... có một bàn tay vừa quờ ra từ dưới gầm giường?!",
         "textEffects": true,
         "nextNodeId": "node_3",
@@ -234,7 +266,7 @@
       },
       {
         "id": "node_3",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Biến mất rồi... Chết tiệt, tim mình như sắp nhảy ra ngoài vậy. Chuyện quái gì đang diễn ra thế này?",
         "textEffects": false,
         "nextNodeId": null,
@@ -276,7 +308,7 @@
     "nodes": [
       {
         "id": "node_01",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "WTF? Cái quái…! Ôi ma!",
         "textEffects": false,
         "nextNodeId": "node_02",
@@ -288,14 +320,18 @@
         "content": "Ma là một thứ không có thật. Theo Wikipedia, ma là một quan niệm dân gian để chỉ hồn của người chết…",
         "textEffects": false,
         "nextNodeId": "node_03",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_03",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Ra là người.",
         "textEffects": false,
         "nextNodeId": "node_04",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -304,14 +340,18 @@
         "content": "Sai. Ma không phải là người, cũng không liên quan gì đến người.",
         "textEffects": false,
         "nextNodeId": "node_05",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_05",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "…?",
         "textEffects": false,
         "nextNodeId": "node_06",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -320,14 +360,18 @@
         "content": "Trong cuộc sống của anh, ma chỉ là quan niệm. Còn trong này, 'ma' là một thứ được tạo ra bằng LibGDX, một asset.",
         "textEffects": false,
         "nextNodeId": "node_07",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_07",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "há..?",
         "textEffects": false,
         "nextNodeId": "node_08",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -336,14 +380,18 @@
         "content": "Texture. Animation, được load bằng LibGDX. hahahahahaah",
         "textEffects": false,
         "nextNodeId": "node_09",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_09",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Ông là ai vậy, nói cái gì thế?",
         "textEffects": false,
         "nextNodeId": "node_10",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -352,6 +400,8 @@
         "content": "Quan tâm làm gì hả 'tên người chơi'. Chọn đi: 'tên người chơi' muốn chết hay muốn sống?",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": [
           {
             "id": "choice_A",
@@ -371,10 +421,12 @@
       },
       {
         "id": "node_11_A",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Chết chứ, tất nhiên là chết rồi, ai mà chẳng muốn chết hahahha",
         "textEffects": false,
         "nextNodeId": "node_12_A",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -383,14 +435,18 @@
         "content": "Hahahahaha, đã nhận ra vấn đề rồi cơ à? Tỉnh táo đấy, không cần giả vờ.",
         "textEffects": false,
         "nextNodeId": "node_13",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_11_B",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Học ít thôi cu em, đầu óc có vấn đề à, ai chả muốn sống?",
         "textEffects": false,
         "nextNodeId": "node_12_B",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -399,14 +455,18 @@
         "content": "Trả lời sai rồi..., còn phải học hỏi nhiều lắm!",
         "textEffects": false,
         "nextNodeId": "node_13",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_13",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Học ít thôi ông cháu.",
         "textEffects": false,
         "nextNodeId": "node_14",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -415,14 +475,18 @@
         "content": "Anh Bệu Xin chào tất cả các tình yêu!!!!",
         "textEffects": true,
         "nextNodeId": "node_15",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_15",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Lại cái gì nữa vậy?",
         "textEffects": false,
         "nextNodeId": "node_16",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -431,14 +495,18 @@
         "content": "Rebrand tí thôi con vợ ơi. Nhân vật phải có tí personality chứ.",
         "textEffects": false,
         "nextNodeId": "node_17",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_17",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Liên tha liên thiên. Giờ ông tránh đường được chưa? Để tôi đi chơi.",
         "textEffects": false,
         "nextNodeId": "node_18",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -447,14 +515,18 @@
         "content": "Đi đâu mà vội mà vàng, mà vấp phải đá, mà quàng phải dâyyyy. Con vợ, có muốn có người trợ giúp con vợ phá đảo game không?",
         "textEffects": false,
         "nextNodeId": "node_19",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
         "id": "node_19",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "...? WTF",
         "textEffects": false,
         "nextNodeId": "node_20",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
         "choices": []
       },
       {
@@ -463,6 +535,8 @@
         "content": "Chơi game nhá con vợ.",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
         "choices": []
       }
     ]
