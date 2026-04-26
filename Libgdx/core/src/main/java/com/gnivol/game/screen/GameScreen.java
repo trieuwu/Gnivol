@@ -329,6 +329,23 @@ public class GameScreen extends BaseScreen {
                 }
                 Gdx.app.log("Cutscene", "Finished: " + cutsceneId);
             }
+            @Override
+            public void onOpenMinigame(String minigameId) {
+                if (screenFader.isFading()) return;
+                if ("puzzle_drawer".equals(minigameId)) {
+                    puzzleDrawerUI.show();
+                } else if ("puzzle_laser".equals(minigameId)) {
+                    screenFader.startFade(() -> {
+                        game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
+                    });
+                } else if ("puzzle_sliding_marble".equals(minigameId)) {
+                    screenFader.startFade(() -> {
+                        game.setScreen(new com.gnivol.game.screen.SlidingScreen(game, GameScreen.this));
+                    });
+                } else {
+                    puzzleManager.openPuzzle(minigameId);
+                }
+            }
         });
 
     }

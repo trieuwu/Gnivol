@@ -51,6 +51,7 @@ public class CutsceneManager {
         void onPlayVideo(String src, float x, float y, float w, float h);
         void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
+        void onOpenMinigame(String minigameId);
     }
 
     // --- Fields ---
@@ -254,6 +255,13 @@ public class CutsceneManager {
             if (listener != null) {
                 listener.onPlayVideo(step.src, step.x, step.y, step.w, step.h);
             }
+        } else if ("open_minigame".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onOpenMinigame(step.id);
+            }
+            advanceStep();
+            return;
         } else {
             Gdx.app.error("CutsceneManager", "Unknown step type: " + type);
             stepDuration = 0f;
