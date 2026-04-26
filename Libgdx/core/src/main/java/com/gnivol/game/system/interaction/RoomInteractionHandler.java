@@ -105,13 +105,8 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
-        // 3. Giường (Kích hoạt Cutscene gầm giường)
+        // 3. Giường (chỉ hiện inspect text)
         if ("bed".equals(id)) {
-            if (!game.getFlagManager().get("first_time_bed")) {
-                game.getFlagManager().set("first_time_bed");
-                screen.hideInspectText();
-                screen.getCutsceneManager().play("hand_under_bed");
-            }
             return;
         }
 
@@ -154,7 +149,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             if (!game.getFlagManager().get("plush_toy_scare")) {
                 game.getFlagManager().set("plush_toy_scare");
                 screen.hideInspectText();
-                screen.getCutsceneManager().play("plush_toy_hand");
+                screen.getCutsceneManager().play("hand_under_bed");
             }
             return;
         }
