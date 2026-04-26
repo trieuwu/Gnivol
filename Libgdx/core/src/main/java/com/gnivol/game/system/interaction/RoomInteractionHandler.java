@@ -158,15 +158,12 @@ public class RoomInteractionHandler implements InteractionCallback {
             }
             return;
         }
-        // bức tranh ma quái
         if ("creepy_painting".equals(id)) {
-            if (!game.getFlagManager().get("da_noi_chuyen_motsach")) {
-                game.getFlagManager().set("da_noi_chuyen_motsach", true);
-                screen.hideInspectText();
-
-                onDialogueTriggered("mot_sach");
+            if (!game.getFlagManager().get("creepy_painting_dialogue")) {
+                game.getFlagManager().set("creepy_painting_dialogue", true);
+                screen.getCutsceneManager().play("creepy_painting");
+                return;
             }
-            return;
         }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
