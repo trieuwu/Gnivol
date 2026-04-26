@@ -36,6 +36,9 @@ import com.gnivol.game.ui.DialogueUI;
 import com.gnivol.game.ui.InventoryUI;
 import com.gnivol.game.ui.RSUI;
 
+import com.badlogic.gdx.video.VideoPlayer;
+import com.badlogic.gdx.video.VideoPlayerCreator;
+
 import java.util.*;
 
 public class GameScreen extends BaseScreen {
@@ -70,6 +73,10 @@ public class GameScreen extends BaseScreen {
     private boolean isFlashing = false;
     private float flashAlpha = 0f;
     private Color flashColor = Color.WHITE;
+    // Video playback
+    private VideoPlayer videoPlayer;
+    private boolean videoPlaying = false;
+    private final float[] videoRect = {-1, -1, -1, -1}; // x, y, w, h
     // Cutscene sprite
     private Texture cutsceneSprite;
     private float cutsceneSpriteTimer;
@@ -275,6 +282,30 @@ public class GameScreen extends BaseScreen {
                     cutsceneSprite = null;
                 }
             }
+            @Override public void onPlayVideo(String src, float x, float y, float w, float h) {
+                try {
+                    if (videoPlayer != null) {
+                        videoPlayer.dispose();
+                    }
+                    videoPlayer = VideoPlayerCreator.createVideoPlayer();
+                    videoPlayer.setOnCompletionListener(player -> {
+                        videoPlaying = false;
+                        if (cutsceneManager.isPlaying()) {
+                            cutsceneManager.onVideoFinished();
+                        }
+                    });
+                    videoRect[0] = x;
+                    videoRect[1] = y;
+                    videoRect[2] = w;
+                    videoRect[3] = h;
+                    videoPlayer.play(Gdx.files.internal(src));
+                    videoPlaying = true;
+                } catch (Exception e) {
+                    Gdx.app.error("Cutscene", "Cannot play video: " + src, e);
+                    videoPlaying = false;
+                    cutsceneManager.onVideoFinished();
+                }
+            }
             @Override public void onShake(float intensity, float duration) {}
             @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
             @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
@@ -290,6 +321,11 @@ public class GameScreen extends BaseScreen {
                 if (cutsceneSprite != null) {
                     cutsceneSprite.dispose();
                     cutsceneSprite = null;
+                }
+                if (videoPlayer != null) {
+                    videoPlayer.dispose();
+                    videoPlayer = null;
+                    videoPlaying = false;
                 }
                 Gdx.app.log("Cutscene", "Finished: " + cutsceneId);
             }
@@ -705,6 +741,30 @@ public class GameScreen extends BaseScreen {
             }
         }
 
+        // Video rendering
+        if (videoPlaying && videoPlayer != null) {
+            videoPlayer.update();
+            Texture videoFrame = videoPlayer.getTexture();
+            if (videoFrame != null) {
+                float drawX, drawY, drawW, drawH;
+                if (videoRect[0] >= 0 && videoRect[1] >= 0 && videoRect[2] > 0 && videoRect[3] > 0) {
+                    drawX = videoRect[0];
+                    drawY = videoRect[1];
+                    drawW = videoRect[2];
+                    drawH = videoRect[3];
+                } else {
+                    drawW = 1280f;
+                    drawH = 720f;
+                    drawX = 0f;
+                    drawY = 0f;
+                }
+                batch.setProjectionMatrix(camera.combined);
+                batch.begin();
+                batch.draw(videoFrame, drawX, drawY, drawW, drawH);
+                batch.end();
+            }
+        }
+
         screenFader.render();
 
     }
@@ -799,6 +859,7 @@ public class GameScreen extends BaseScreen {
         if (defaultSkin != null) defaultSkin.dispose();
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
         if (cutsceneSprite != null) cutsceneSprite.dispose();
+        if (videoPlayer != null) videoPlayer.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
     }
 
