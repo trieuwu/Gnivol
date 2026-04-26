@@ -21,7 +21,6 @@
       { "type": "wait", "duration": 0.8 },
 
       { "type": "flash", "color": "white", "duration": 0.2 },
-      { "type": "dialogue", "id": "bed_jumpscare" },
       { "type": "rs_change", "value": 8 }
     ]
   },
@@ -86,6 +85,14 @@
       { "type": "sfx", "id": "sfx_flatline_heart" },
       { "type": "fade_out", "duration": 0.5 },
       { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "creepy_painting",
+    "steps": [
+      { "type": "dialogue", "id": "mot_sach"},
+      { "type": "flash", "color": "white", "duration": 0.3 },
+      { "type": "open_minigame", "id": "puzzle_sliding_marble" }
     ]
   }
 ]
