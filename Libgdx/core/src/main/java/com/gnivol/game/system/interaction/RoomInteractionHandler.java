@@ -159,6 +159,7 @@ public class RoomInteractionHandler implements InteractionCallback {
             if (!game.getFlagManager().get("plush_toy_scare")) {
                 game.getFlagManager().set("plush_toy_scare");
                 screen.hideInspectText();
+                game.getAudioManager().playSFX("scream2");
                 screen.getCutsceneManager().play("hand_under_bed");
             }
             return;
