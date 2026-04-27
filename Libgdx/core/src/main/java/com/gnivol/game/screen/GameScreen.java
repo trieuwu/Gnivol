@@ -144,6 +144,8 @@ public class GameScreen extends BaseScreen {
                 chromaShader = null;
             }
 
+            vignetteTexture = createVignetteTexture(512, 512);
+
             FontManager fm = game.getFontManager();
 
             inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
