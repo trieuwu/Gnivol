@@ -40,6 +40,10 @@ public class RoomInteractionHandler implements InteractionCallback {
 
     @Override
     public void onItemCollected(GameObject obj, String itemId) {
+        com.gnivol.game.model.ItemData itemData = com.gnivol.game.data.ItemDatabase.getInstance().getItemData(itemId);
+        if (itemData != null && itemData.pickupSoundID != null) {
+            game.getAudioManager().playSFX(itemData.pickupSoundID);
+        }
         screen.getInventoryUI().refreshUI();
         screen.hideInspectText();
         screen.showItemNotification(itemId);
