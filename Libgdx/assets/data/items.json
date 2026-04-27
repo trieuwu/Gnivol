@@ -5,7 +5,7 @@
       "itemName": "Cà vạt",
       "description": "Một chiếc cà vạt kẻ sọc.",
       "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau.",
-      "pickupSoundID": "sfx_pickup_fabric",
+      "pickupSoundID": "click",
       "rsChangeValue": -15,
       "isCursed": false
     },
@@ -14,7 +14,7 @@
       "itemName": "Chìa khóa gãy",
       "description": "Một nửa chiếc chìa khóa bị gãy.",
       "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
-      "pickupSoundID": "sfx_pickup_metal",
+      "pickupSoundID": "click",
       "rsChangeValue": 5,
       "isCursed": false
     },
@@ -23,7 +23,7 @@
       "itemName": "Keo 502",
       "description": "Keo dính siêu chắc.",
       "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
-      "pickupSoundID": "sfx_pickup_plastic",
+      "pickupSoundID": "click",
       "rsChangeValue": 6,
       "isCursed": false
     },
@@ -32,7 +32,7 @@
       "itemName": "Chìa khóa (Đã sửa)",
       "description": "Chiếc chìa khóa đã được dán lại bằng keo 502.",
       "inspectText": "Vết dán rất chắc chắn. Nhìn có vẻ đủ cứng để vặn ổ khóa.",
-      "pickupSoundID": "sfx_pickup_key",
+      "pickupSoundID": "click",
       "rsChangeValue": 7,
       "isCursed": false
     },
@@ -41,7 +41,7 @@
       "itemName": "Điện thoại",
       "description": "Điện thoại thông minh cũ.",
       "inspectText": "Màn hình nứt nẻ đen thui, nhưng tôi có cảm giác nó vừa rung nhẹ...",
-      "pickupSoundID": "sfx_pickup_phone",
+      "pickupSoundID": "click",
       "rsChangeValue": 5,
       "isCursed": false
     },
@@ -50,7 +50,7 @@
       "itemName": "Chìa khóa đồng",
       "description": "Một chiếc chìa khóa bằng đồng khác.",
       "inspectText": "Nó trông không giống chìa khóa ngăn kéo, có lẽ dành cho một cánh cửa nào đó?",
-      "pickupSoundID": "sfx_pickup_key",
+      "pickupSoundID": "click",
       "rsChangeValue": 8,
       "isCursed": false
     },
@@ -59,7 +59,7 @@
       "itemName": "Móc treo",
       "description": "Một chiếc móc treo quần áo bằng kim loại.",
       "inspectText": "Móc treo cũ kỹ, hơi cong. Có thể uốn thành dụng cụ gì đó.",
-      "pickupSoundID": "sfx_pickup_metal",
+      "pickupSoundID": "click",
       "rsChangeValue": 0,
       "isCursed": false
     },
@@ -68,7 +68,7 @@
       "itemName": "Khúc xương",
       "description": "Một khúc xương nhỏ, không rõ của ai.",
       "inspectText": "Lạnh ngắt. Có vết cắn ở đầu xương... Đây là xương người hay xương động vật?",
-      "pickupSoundID": "sfx_pickup_metal",
+      "pickupSoundID": "click",
       "rsChangeValue": 5,
       "isCursed": false
     },
@@ -77,7 +77,7 @@
       "itemName": "Mảnh kính",
       "description": "Một mảnh kính vỡ sắc nhọn.",
       "inspectText": "Cạnh rất sắc. Có thể dùng để cắt thứ gì đó... hoặc tự làm đau mình.",
-      "pickupSoundID": "sfx_pickup_metal",
+      "pickupSoundID": "click",
       "rsChangeValue": 3,
       "isCursed": false
     },
@@ -86,7 +86,7 @@
       "itemName": "Mảnh vải",
       "description": "Một mảnh vải rách từ ga giường.",
       "inspectText": "Vải mỏng nhưng dai. Có thể dùng để tắc thứ gì đó...",
-      "pickupSoundID": "sfx_pickup_fabric",
+      "pickupSoundID": "click",
       "rsChangeValue": 0,
       "isCursed": false
     }
