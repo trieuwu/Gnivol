@@ -341,6 +341,9 @@ public class InventoryUI {
             String result = craftingManager.getMergeResult(selectedItem1, selectedItem2);
             if (result != null) {
                 Gdx.app.log("Crafting", "Success: " + result);
+                if (audioManager != null) {
+                    audioManager.playSFX("crafting");
+                }
                 inventoryManager.removeItem(selectedItem1);
                 inventoryManager.removeItem(selectedItem2);
                 inventoryManager.addItem(result);
