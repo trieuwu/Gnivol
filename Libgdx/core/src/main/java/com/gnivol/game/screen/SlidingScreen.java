@@ -21,7 +21,7 @@ public class SlidingScreen extends BaseScreen {
     private OrthographicCamera camera;
     private FitViewport viewport;
 
-    private Texture texBackground, texWall, texMarble, texHole;
+    private Texture texBackground, texWall, texMarble, texHole, texDoneBox;
     private Texture texBtnTop, texBtnBottom, texBtnLeft, texBtnRight;
 
     private float cellSize;
@@ -57,16 +57,18 @@ public class SlidingScreen extends BaseScreen {
 
 
     private void loadAssets() {
-        texBackground = new Texture(Gdx.files.internal("images/bed_ko_chan_final.png"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/anhnenminigame.jpg"));
         texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/walls.png"));
-        texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/player_fw.png"));
-        texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/turet.png"));
+        texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/box.png"));
+        texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/x.png"));
+
+        texDoneBox = new Texture(Gdx.files.internal("images/mini_games/mng2/done_box.png"));
 
         // --- LOAD ẢNH 4 NÚT ---
-        texBtnBottom = new Texture(Gdx.files.internal("images/mini_games/mng2/button1.png"));
-        texBtnLeft = new Texture(Gdx.files.internal("images/mini_games/mng2/button2.png"));
-        texBtnTop = new Texture(Gdx.files.internal("images/mini_games/mng2/button3.png"));
-        texBtnRight = new Texture(Gdx.files.internal("images/mini_games/mng2/button4.png"));
+        texBtnBottom = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_down.png"));
+        texBtnLeft = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_left.png"));
+        texBtnTop = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_up.png"));
+        texBtnRight = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_right.png"));
 
         try {
             texJumpscare = new Texture(Gdx.files.internal("images/horror/jumpscare.png"));
@@ -169,6 +171,16 @@ public class SlidingScreen extends BaseScreen {
         return tx >= bx && tx <= bx + cellSize && ty >= by && ty <= by + cellSize;
     }
 
+    private boolean isHoleOccupied(int x, int y) {
+        for (int i = 0; i < logic.marbles.size(); i++) {
+            com.gnivol.game.system.minigame.SlidingLogic.Marble m = logic.marbles.get(i);
+            if (m.locked && m.x == x && m.y == y && visX[i] == x && visY[i] == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void checkWin() {
         if (logic.isWin()) {
             Gdx.app.log("SlidingGame", "Victory!");
@@ -210,7 +222,9 @@ public class SlidingScreen extends BaseScreen {
                 float dy = boardOffsetY + y * cellSize;
 
                 if (logic.grid[x][y] == 2) {
-                    batch.draw(texHole, dx, dy, cellSize, cellSize);
+                    if (!isHoleOccupied(x, y)) {
+                        batch.draw(texHole, dx, dy, cellSize, cellSize);
+                    }
                 }
                 if (logic.grid[x][y] == 1) {
                     batch.draw(texWall, dx, dy, cellSize, cellSize);
@@ -239,10 +253,11 @@ public class SlidingScreen extends BaseScreen {
 
             if (m.locked && visX[i] == m.x && visY[i] == m.y) {
                 batch.setColor(1, 1, 1, 0.6f);
+                batch.draw(texDoneBox, dx, dy, cellSize, cellSize);
             } else {
                 batch.setColor(Color.WHITE);
+                batch.draw(texMarble, dx, dy, cellSize, cellSize);
             }
-            batch.draw(texMarble, dx, dy, cellSize, cellSize);
             batch.setColor(Color.WHITE);
         }
 
@@ -305,6 +320,7 @@ public class SlidingScreen extends BaseScreen {
         texBtnLeft.dispose();
         texBtnRight.dispose();
 
+        if (texDoneBox != null) texDoneBox.dispose();
         if (texJumpscare != null) texJumpscare.dispose();
     }
 }

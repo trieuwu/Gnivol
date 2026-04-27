@@ -46,7 +46,7 @@ public class PuzzleManager implements ISaveable {
 
     public boolean submitAnswer(String puzzleId, String answer) {
         if ("puzzle_drawer".equals(puzzleId)) {
-            if ("912".equals(answer)) {
+            if ("910".equals(answer)) {
                 markSolved(puzzleId);
                 return true;
             }

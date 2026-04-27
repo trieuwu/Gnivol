@@ -41,7 +41,7 @@ public class PuzzleDrawerUI {
         window.setVisible(false);
 
         digitButtons = new TextButton[3];
-        window.add(new Label("Sinh nhật CLB ProPTIT", skin)).colspan(3).padBottom(20).row();
+        window.add(new Label("PROPTIT'S BIRTHDAY", skin)).colspan(3).padBottom(20).row();
 
         for (int i = 0; i < 3; i++) {
             final int index = i;

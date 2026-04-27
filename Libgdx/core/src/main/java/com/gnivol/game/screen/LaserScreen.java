@@ -318,7 +318,7 @@ public class LaserScreen extends BaseScreen {
     }
 
     private void createTextures() {
-        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/anhnenminigame.jpg"));
         texFloor = new Texture(Gdx.files.internal("images/mini_games/mng1/background.png"));
         texWall = new Texture(Gdx.files.internal("images/mini_games/mng1/walls.png"));
         texGoal = new Texture(Gdx.files.internal("images/mini_games/mng1/door.png"));
