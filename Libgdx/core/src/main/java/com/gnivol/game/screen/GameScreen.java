@@ -156,7 +156,7 @@ public class GameScreen extends BaseScreen {
             puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
 
             setupPuzzleListeners();
-            
+
 
             inventoryUI.refreshUI();
 
@@ -403,6 +403,9 @@ public class GameScreen extends BaseScreen {
             isInitialized = true;
         }
         setupInputProcessors();
+        if (inventoryUI != null) {
+            inventoryUI.refreshUI(); 
+        }
     }
 
     private void setupPuzzleListeners() {
