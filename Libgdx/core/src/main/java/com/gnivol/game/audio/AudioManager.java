@@ -241,15 +241,25 @@ public class AudioManager {
 
     private Sound loadSFX(String id) {
         Sound sound = sfxCache.get(id);
-        if (sound == null) {
+        if (sound != null) return sound;
+
+        String[] candidates = {
+            "audio/sfx/" + id + ".wav",
+            "audio/sfx/" + id + ".mp3",
+            "sfx/" + id + ".mp3",
+            "sfx/" + id + ".wav"
+        };
+        for (String path : candidates) {
             try {
-                sound = Gdx.audio.newSound(Gdx.files.internal("audio/sfx/" + id + ".wav"));
-                sfxCache.put(id, sound);
-            } catch (Exception e) {
-                Gdx.app.error("AudioManager", "Failed to load SFX: " + id, e);
-            }
+                if (Gdx.files.internal(path).exists()) {
+                    sound = Gdx.audio.newSound(Gdx.files.internal(path));
+                    sfxCache.put(id, sound);
+                    return sound;
+                }
+            } catch (Exception ignored) {}
         }
-        return sound;
+        Gdx.app.error("AudioManager", "Failed to load SFX: " + id);
+        return null;
     }
 
     private Music loadAmbient(String id) {
