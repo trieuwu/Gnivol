@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -77,6 +78,13 @@ public class GameScreen extends BaseScreen {
     private VideoPlayer videoPlayer;
     private boolean videoPlaying = false;
     private final float[] videoRect = {-1, -1, -1, -1}; // x, y, w, h
+
+    // Chroma key shader cho video (xóa nền xanh)
+    private ShaderProgram chromaShader;
+    // Màu key (xanh lá), threshold, smoothing — chỉnh ở đây nếu nền không khớp
+    private static final float[] CHROMA_KEY_RGB = {0.0f, 1.0f, 0.0f};
+    private static final float CHROMA_THRESHOLD = 0.4f;
+    private static final float CHROMA_SMOOTHING = 0.1f;
     // Cutscene sprite
     private Texture cutsceneSprite;
     private float cutsceneSpriteTimer;
@@ -117,6 +125,21 @@ public class GameScreen extends BaseScreen {
         batch = new SpriteBatch();
         dimRenderer = new ShapeRenderer();
         debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
+
+        // Load chroma key shader cho video (xóa nền xanh)
+        try {
+            String vert = Gdx.files.internal("shaders/chromakey.vert").readString();
+            String frag = Gdx.files.internal("shaders/chromakey.frag").readString();
+            chromaShader = new ShaderProgram(vert, frag);
+            if (!chromaShader.isCompiled()) {
+                Gdx.app.error("GameScreen", "ChromaKey shader compile error: " + chromaShader.getLog());
+                chromaShader.dispose();
+                chromaShader = null;
+            }
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "Failed to load chromakey shader", e);
+            chromaShader = null;
+        }
 
         vignetteTexture = createVignetteTexture(512, 512);
 
@@ -790,9 +813,20 @@ public class GameScreen extends BaseScreen {
                     drawY = 0f;
                 }
                 batch.setProjectionMatrix(camera.combined);
+                if (chromaShader != null) {
+                    batch.setShader(chromaShader);
+                }
                 batch.begin();
+                if (chromaShader != null) {
+                    chromaShader.setUniformf("u_keyColor", CHROMA_KEY_RGB[0], CHROMA_KEY_RGB[1], CHROMA_KEY_RGB[2]);
+                    chromaShader.setUniformf("u_threshold", CHROMA_THRESHOLD);
+                    chromaShader.setUniformf("u_smoothing", CHROMA_SMOOTHING);
+                }
                 batch.draw(videoFrame, drawX, drawY, drawW, drawH);
                 batch.end();
+                if (chromaShader != null) {
+                    batch.setShader(null); // restore default shader
+                }
             }
         }
 
@@ -931,6 +965,7 @@ public class GameScreen extends BaseScreen {
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
         if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
+        if (chromaShader != null) chromaShader.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
         if (vignetteTexture != null) vignetteTexture.dispose();
         if (sceneManager != null) sceneManager.dispose();

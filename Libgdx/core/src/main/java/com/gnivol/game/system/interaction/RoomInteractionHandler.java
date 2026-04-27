@@ -131,6 +131,12 @@ public class RoomInteractionHandler implements InteractionCallback {
         }
 
         if ("mirror".equals(id)) {
+            if (!game.getFlagManager().get("mirror_video_seen")) {
+                game.getFlagManager().set("mirror_video_seen");
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("mirror_video_jumpscare");
+                return;
+            }
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
                 screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
             } else {
