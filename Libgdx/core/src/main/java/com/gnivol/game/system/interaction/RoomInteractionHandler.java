@@ -202,6 +202,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                 game.getInventoryManager().addItem("chuoi_chia_khoa");
                 screen.getPuzzleManager().markSolved("key_broke_on_door");
                 screen.getInventoryUI().refreshUI();
+                game.getAudioManager().playSFX("key_break2");
                 onDialogueTriggered("key_broke");
                 if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("key_broke");
             } else {
