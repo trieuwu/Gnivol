@@ -235,6 +235,10 @@ public class SlidingScreen extends BaseScreen {
         if (logic.isWin()) {
             Gdx.app.log("SlidingGame", "Victory!");
             game.getPuzzleManager().markSolved("puzzle_sliding_marble");
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().onSaveTrigger("puzzle_laser_solved");
+            }
+
             exitMinigame();
         }
     }

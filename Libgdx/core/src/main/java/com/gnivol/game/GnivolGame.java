@@ -66,6 +66,7 @@ public class GnivolGame extends Game {
         gameSnapshot.register(puzzleManager);
         gameSnapshot.register(flagManager);
 
+
         setScreen(new LoginScreen(this));
     }
 
