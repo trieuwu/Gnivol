@@ -274,12 +274,24 @@ public class DialogueUI {
         // Update character portrait
         updatePortrait(node);
 
-        // DÙNG CHUNG 1 BẢNG, CHỈ ĐỔI TÊN VÀ MÀU CHỮ
+        String playerName = "Player";
+        if (game != null && game.getGameState() != null) {
+            String savedName = game.getGameState().getPlayerName();
+            if (savedName != null && !savedName.trim().isEmpty()) {
+                playerName = savedName;
+            }
+        }
+
         if (isCurrentThought) {
             speakerLabel.setText("Suy Nghĩ");
         } else {
-            speakerLabel.setText(node.speaker);
+            String finalSpeaker = node.speaker;
+            if (finalSpeaker != null) {
+                finalSpeaker = finalSpeaker.replace("{player}", playerName);
+            }
+            speakerLabel.setText(finalSpeaker);
         }
+
         if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
         else contentLabel.setColor(Color.WHITE);
 
@@ -287,8 +299,7 @@ public class DialogueUI {
         applyRSEffect(contentLabel, currentRS);
 
         String rawText = node.content;
-        if (game != null && game.getGameState() != null) {
-            String playerName = game.getGameState().getPlayerName();
+        if (rawText != null) {
             rawText = rawText.replace("{player}", playerName);
         }
 
@@ -578,12 +589,20 @@ public class DialogueUI {
                 final int index = i;
                 Choice choice = node.choices.get(i);
 
+                String playerName = "Player";
+                if (game != null && game.getGameState() != null) {
+                    String savedName = game.getGameState().getPlayerName();
+                    if (savedName != null && !savedName.trim().isEmpty()) {
+                        playerName = savedName;
+                    }
+                }
+
                 String choiceText = choice.content;
                 if (game != null && game.getGameState() != null) {
                     choiceText = choiceText.replace("{player}", game.getGameState().getPlayerName());
                 }
 
-                TextButton btn = new TextButton(choice.content, btnStyle);
+                TextButton btn = new TextButton(choiceText, btnStyle);
                 btn.getLabel().setWrap(true);
                 btn.getLabel().setAlignment(Align.center); // Chữ căn giữa
 

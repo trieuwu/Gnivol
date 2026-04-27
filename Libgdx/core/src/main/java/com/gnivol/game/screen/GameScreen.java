@@ -84,6 +84,7 @@ public class GameScreen extends BaseScreen {
     private final float[] cutsceneSpriteRect = {-1, -1, -1, -1}; // x, y, w, h
     private boolean isGameOver = false;
     private Texture vignetteTexture;
+    private boolean isInitialized = false;
 
     public GnivolGame getGnivolGame() { return game; }
     public SceneManager getSceneManager() { return sceneManager; }
@@ -107,266 +108,295 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void show() {
-        game.getStage().clear();
+        if (!isInitialized) {
+            game.getStage().clear();
 
-        overlayManager = new com.gnivol.game.system.scene.OverlayManager();
-        sceneManager = game.getSceneManager();
-        screenFader = game.getScreenFader();
-        inputHandler = game.getInputHandler();
-        interactionSystem = game.getPlayerInteractionSystem();
-        batch = new SpriteBatch();
-        dimRenderer = new ShapeRenderer();
-        debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
+            overlayManager = new com.gnivol.game.system.scene.OverlayManager();
+            sceneManager = game.getSceneManager();
+            screenFader = game.getScreenFader();
+            inputHandler = game.getInputHandler();
+            interactionSystem = game.getPlayerInteractionSystem();
+            batch = new SpriteBatch();
+            dimRenderer = new ShapeRenderer();
+            debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
 
-        vignetteTexture = createVignetteTexture(512, 512);
+            vignetteTexture = createVignetteTexture(512, 512);
 
-        FontManager fm = game.getFontManager();
+            FontManager fm = game.getFontManager();
 
-        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
-        inventoryUI.refreshUI();
+            inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
+            inventoryUI.refreshUI();
 
-        this.puzzleManager = game.getPuzzleManager();
-        defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
+            this.puzzleManager = game.getPuzzleManager();
+            defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
 
-        puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
+            puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
 
-        setupPuzzleListeners();
+            setupPuzzleListeners();
 
-        puzzleDrawerUI.setListener(new com.gnivol.game.ui.PuzzleDrawerUI.PuzzleResultListener() {
-            @Override
-            public void onPuzzleSolved(String puzzleId) {
-                if ("puzzle_drawer".equals(puzzleId)) {
-                    game.getInventoryManager().addItem("chia_khoa_final");
+            puzzleDrawerUI.setListener(new com.gnivol.game.ui.PuzzleDrawerUI.PuzzleResultListener() {
+                @Override
+                public void onPuzzleSolved(String puzzleId) {
+                    if ("puzzle_drawer".equals(puzzleId)) {
+                        game.getInventoryManager().addItem("chia_khoa_final");
+                        inventoryUI.refreshUI();
+                        showNotification("Cạch! Ngăn kéo đã mở. Nhận được chìa khóa!", Color.GREEN);
+                        if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
+                            ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
+                        }
+                        game.getStage().setKeyboardFocus(null);
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
+                        }
+                    }
+                }
+            });
+
+            inventoryUI.refreshUI();
+
+            // --- InventoryOverlay system (fridge, wardrobe — doc lap) ---
+            inventoryOverlaySystem = new com.gnivol.game.ui.InventoryOverlay();
+            inventoryOverlaySystem.loadOverlays("data/overlays.json");
+            inventoryOverlaySystem.setListener(new com.gnivol.game.ui.InventoryOverlay.OverlayListener() {
+                @Override
+                public void onItemCollected(String overlayId, String itemId) {
+                    game.getInventoryManager().addItem(itemId);
                     inventoryUI.refreshUI();
-                    showNotification("Cạch! Ngăn kéo đã mở. Nhận được chìa khóa!", Color.GREEN);
-                    if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
-                        ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
-                    }
-                    game.getStage().setKeyboardFocus(null);
+                    showItemNotification(itemId);
                     if (game.getAutoSaveManager() != null) {
-                        game.getAutoSaveManager().onSaveTrigger("puzzle_" + puzzleId);
+                        game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
                     }
                 }
-            }
-        });
 
-        inventoryUI.refreshUI();
-
-        // --- InventoryOverlay system (fridge, wardrobe — doc lap) ---
-        inventoryOverlaySystem = new com.gnivol.game.ui.InventoryOverlay();
-        inventoryOverlaySystem.loadOverlays("data/overlays.json");
-        inventoryOverlaySystem.setListener(new com.gnivol.game.ui.InventoryOverlay.OverlayListener() {
-            @Override
-            public void onItemCollected(String overlayId, String itemId) {
-                game.getInventoryManager().addItem(itemId);
-                inventoryUI.refreshUI();
-                showItemNotification(itemId);
+                @Override
+                public void onOverlayClosed(String overlayId) {
+                }
+            });
+            dialogueEngine = new DialogueEngine(game.getRsManager());
+            dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
+            loadDialogueDatabase();
+            dialogueUI.setOnFinished(() -> {
+                if (cutsceneManager.isPlaying()) {
+                    cutsceneManager.onDialogueFinished();
+                }
                 if (game.getAutoSaveManager() != null) {
-                    game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
+                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
                 }
+            });
+
+            Label.LabelStyle labelStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
+            inspectLabel = new Label("", labelStyle);
+            inspectLabel.setWrap(true);
+            inspectLabel.setAlignment(Align.center);
+
+            inspectTable = new Table();
+            inspectTable.setFillParent(true);
+            inspectTable.bottom().padBottom(30f);
+            inspectTable.add(inspectLabel).width(900f).pad(15f);
+            inspectTable.setVisible(false);
+            game.getStage().addActor(inspectTable);
+
+            Label.LabelStyle rsStyle = new Label.LabelStyle(fm.fontButton, Color.WHITE);
+            rsUI = new RSUI(game.getStage(), rsStyle);
+            game.getRsManager().addListener(new RSListener() {
+                @Override
+                public void onRSChanged(float oldValue, float newValue) {
+                    rsUI.updateRS(newValue);
+                    game.getGameState().setCurrentRS(newValue);
+                    // Nếu RS tụt xuống 0 (hoặc thấp hơn)
+                    if (newValue <= 0 && oldValue > 0) {
+                        // chờ Hội thoại cũ dọn dẹp xong thì mới kích hoạt Ending
+                        Gdx.app.postRunnable(() -> {
+                            // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                            if (dialogueUI.isVisible()) {
+                                dialogueUI.displayNode(null);
+                            }
+                            cutsceneManager.play("cutscene_rs_0");
+                        });
+                    }
+                    // Nếu RS chạm mốc 100 (hoặc vượt quá)
+                    else if (newValue >= 100 && oldValue < 100) {
+                        Gdx.app.postRunnable(() -> {
+                            // buộc hội thoại hiện tại phải kết thúc ngay lập tức
+                            if (dialogueUI.isVisible()) {
+                                dialogueUI.displayNode(null);
+                            }
+                            cutsceneManager.play("cutscene_rs_100");
+                        });
+                    }
+                }
+
+                @Override
+                public void onThresholdCrossed(boolean isAbove) {
+                }
+            });
+            rsUI.updateRS(game.getRsManager().getRS());
+
+            setupInteractionSystem();
+
+            if (firstShow) {
+                handleFirstShow();
+                firstShow = false;
             }
-            @Override
-            public void onOverlayClosed(String overlayId) {}
-        });
-        dialogueEngine = new DialogueEngine(game.getRsManager());
-        dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
-        loadDialogueDatabase();
-        dialogueUI.setOnFinished(() -> {
-            // NẾU ĐANG TRONG CUTSCENE THÌ BÁO KẾT THÚC THOẠI
-            if (cutsceneManager.isPlaying()) {
-                cutsceneManager.onDialogueFinished();
+
+            // Phát nhạc game (crossfade từ menu)
+            if (game.getAudioManager() != null) {
+                game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
             }
-            // ... logic intro cũ giữ nguyên ...
-        });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
-        inspectLabel = new Label("", labelStyle);
-        inspectLabel.setWrap(true);
-        inspectLabel.setAlignment(Align.center);
+            cutsceneManager = new com.gnivol.game.system.scene.CutsceneManager();
+            cutsceneManager.setRSManager(game.getRsManager());
+            cutsceneManager.setAudioManager(game.getAudioManager());
+            cutsceneManager.loadCutscenes("data/cutscenes.json");
 
-        inspectTable = new Table();
-        inspectTable.setFillParent(true);
-        inspectTable.bottom().padBottom(30f);
-        inspectTable.add(inspectLabel).width(900f).pad(15f);
-        inspectTable.setVisible(false);
-        game.getStage().addActor(inspectTable);
+            cutsceneManager.setListener(new com.gnivol.game.system.scene.CutsceneManager.CutsceneListener() {
+                @Override
+                public void onFlash(String color, float duration) {
+                    isFlashing = true;
+                    flashAlpha = 1f;
+                    if ("white".equalsIgnoreCase(color)) flashColor = Color.WHITE;
+                    else if ("red".equalsIgnoreCase(color)) flashColor = Color.RED;
+                }
 
-        Label.LabelStyle rsStyle = new Label.LabelStyle(fm.fontButton, Color.WHITE);
-        rsUI = new RSUI(game.getStage(), rsStyle);
-        game.getRsManager().addListener(new RSListener() {
-            @Override
-            public void onRSChanged(float oldValue, float newValue) {
-                rsUI.updateRS(newValue);
-                game.getGameState().setCurrentRS(newValue);
-                // Nếu RS tụt xuống 0 (hoặc thấp hơn)
-                if (newValue <= 0 && oldValue > 0) {
-                    // chờ Hội thoại cũ dọn dẹp xong thì mới kích hoạt Ending
-                    Gdx.app.postRunnable(() -> {
-                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
-                        if (dialogueUI.isVisible()) {
-                            dialogueUI.displayNode(null);
+                @Override
+                public void onDialogue(String dialogueId) {
+                    triggerDialogue(dialogueId);
+                }
+
+                @Override
+                public void onShowSprite(String sprite, float duration, float x, float y, float w, float h) {
+                    if (cutsceneSprite != null) cutsceneSprite.dispose();
+                    try {
+                        cutsceneSprite = new Texture(Gdx.files.internal(sprite));
+                        cutsceneSpriteTimer = 0f;
+                        cutsceneSpriteDuration = duration;
+                        cutsceneSpriteRect[0] = x;
+                        cutsceneSpriteRect[1] = y;
+                        cutsceneSpriteRect[2] = w;
+                        cutsceneSpriteRect[3] = h;
+                    } catch (Exception e) {
+                        Gdx.app.error("Cutscene", "Cannot load sprite: " + sprite, e);
+                        cutsceneSprite = null;
+                    }
+                }
+
+                @Override
+                public void onSwapSprite(String target, String newSprite, float x, float y, float w, float h) {
+                    if (cutsceneSprite != null) cutsceneSprite.dispose();
+                    try {
+                        cutsceneSprite = new Texture(Gdx.files.internal(newSprite));
+                        cutsceneSpriteTimer = 0f;
+                        if (x >= 0) cutsceneSpriteRect[0] = x;
+                        if (y >= 0) cutsceneSpriteRect[1] = y;
+                        if (w >= 0) cutsceneSpriteRect[2] = w;
+                        if (h >= 0) cutsceneSpriteRect[3] = h;
+                    } catch (Exception e) {
+                        Gdx.app.error("Cutscene", "Cannot swap sprite: " + newSprite, e);
+                        cutsceneSprite = null;
+                    }
+                }
+
+                @Override
+                public void onPlayVideo(String src, float x, float y, float w, float h) {
+                    try {
+                        if (videoPlayer != null) {
+                            videoPlayer.dispose();
                         }
-                        cutsceneManager.play("cutscene_rs_0");
+                        videoPlayer = VideoPlayerCreator.createVideoPlayer();
+                        videoPlayer.setOnCompletionListener(player -> {
+                            videoPlaying = false;
+                            if (cutsceneManager.isPlaying()) {
+                                cutsceneManager.onVideoFinished();
+                            }
+                        });
+                        videoRect[0] = x;
+                        videoRect[1] = y;
+                        videoRect[2] = w;
+                        videoRect[3] = h;
+                        videoPlayer.play(Gdx.files.internal(src));
+                        videoPlaying = true;
+                    } catch (Exception e) {
+                        Gdx.app.error("Cutscene", "Cannot play video: " + src, e);
+                        videoPlaying = false;
+                        cutsceneManager.onVideoFinished();
+                    }
+                }
+
+                @Override
+                public void onShake(float intensity, float duration) {
+                }
+
+                @Override
+                public void onFadeOut(float duration) {
+                    screenFader.startFade(() -> {
                     });
                 }
-                // Nếu RS chạm mốc 100 (hoặc vượt quá)
-                else if (newValue >= 100 && oldValue < 100) {
-                    Gdx.app.postRunnable(() -> {
-                        // buộc hội thoại hiện tại phải kết thúc ngay lập tức
-                        if (dialogueUI.isVisible()) {
-                            dialogueUI.displayNode(null);
-                        }
-                        cutsceneManager.play("cutscene_rs_100");
-                    });
+
+                @Override
+                public void onFadeIn(float duration) {
+                    screenFader.startFadeIn();
                 }
-            }
-            @Override
-            public void onThresholdCrossed(boolean isAbove) {}
-        });
-        rsUI.updateRS(game.getRsManager().getRS());
 
-        setupInteractionSystem();
-        setupInputProcessors();
-
-        if (firstShow) {
-            handleFirstShow();
-            firstShow = false;
-        }
-
-        // Phát nhạc game (crossfade từ menu)
-        if (game.getAudioManager() != null) {
-            game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
-        }
-
-        cutsceneManager = new com.gnivol.game.system.scene.CutsceneManager();
-        cutsceneManager.setRSManager(game.getRsManager());
-        cutsceneManager.setAudioManager(game.getAudioManager());
-        cutsceneManager.loadCutscenes("data/cutscenes.json");
-
-        cutsceneManager.setListener(new com.gnivol.game.system.scene.CutsceneManager.CutsceneListener() {
-            @Override
-            public void onFlash(String color, float duration) {
-                isFlashing = true;
-                flashAlpha = 1f;
-                if ("white".equalsIgnoreCase(color)) flashColor = Color.WHITE;
-                else if ("red".equalsIgnoreCase(color)) flashColor = Color.RED;
-            }
-
-            @Override
-            public void onDialogue(String dialogueId) {
-                triggerDialogue(dialogueId);
-            }
-
-            @Override public void onShowSprite(String sprite, float duration, float x, float y, float w, float h) {
-                if (cutsceneSprite != null) cutsceneSprite.dispose();
-                try {
-                    cutsceneSprite = new Texture(Gdx.files.internal(sprite));
-                    cutsceneSpriteTimer = 0f;
-                    cutsceneSpriteDuration = duration;
-                    cutsceneSpriteRect[0] = x;
-                    cutsceneSpriteRect[1] = y;
-                    cutsceneSpriteRect[2] = w;
-                    cutsceneSpriteRect[3] = h;
-                } catch (Exception e) {
-                    Gdx.app.error("Cutscene", "Cannot load sprite: " + sprite, e);
-                    cutsceneSprite = null;
+                @Override
+                public void onChangeScene(String sceneId) {
+                    if ("return_to_menu".equals(sceneId)) {
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
+                            GameScreen.this.dispose();
+                        });
+                        return;
+                    }
+                    sceneManager.changeScene(sceneId);
+                    game.getGameState().setCurrentRoom(sceneId);
                 }
-            }
-            @Override public void onSwapSprite(String target, String newSprite, float x, float y, float w, float h) {
-                if (cutsceneSprite != null) cutsceneSprite.dispose();
-                try {
-                    cutsceneSprite = new Texture(Gdx.files.internal(newSprite));
-                    cutsceneSpriteTimer = 0f;
-                    if (x >= 0) cutsceneSpriteRect[0] = x;
-                    if (y >= 0) cutsceneSpriteRect[1] = y;
-                    if (w >= 0) cutsceneSpriteRect[2] = w;
-                    if (h >= 0) cutsceneSpriteRect[3] = h;
-                } catch (Exception e) {
-                    Gdx.app.error("Cutscene", "Cannot swap sprite: " + newSprite, e);
-                    cutsceneSprite = null;
-                }
-            }
-            @Override public void onPlayVideo(String src, float x, float y, float w, float h) {
-                try {
+
+                @Override
+                public void onCutsceneFinished(String cutsceneId) {
+                    if (cutsceneSprite != null) {
+                        cutsceneSprite.dispose();
+                        cutsceneSprite = null;
+                    }
                     if (videoPlayer != null) {
                         videoPlayer.dispose();
-                    }
-                    videoPlayer = VideoPlayerCreator.createVideoPlayer();
-                    videoPlayer.setOnCompletionListener(player -> {
+                        videoPlayer = null;
                         videoPlaying = false;
-                        if (cutsceneManager.isPlaying()) {
-                            cutsceneManager.onVideoFinished();
-                        }
-                    });
-                    videoRect[0] = x;
-                    videoRect[1] = y;
-                    videoRect[2] = w;
-                    videoRect[3] = h;
-                    videoPlayer.play(Gdx.files.internal(src));
-                    videoPlaying = true;
-                } catch (Exception e) {
-                    Gdx.app.error("Cutscene", "Cannot play video: " + src, e);
-                    videoPlaying = false;
-                    cutsceneManager.onVideoFinished();
-                }
-            }
-            @Override public void onShake(float intensity, float duration) {}
-            @Override public void onFadeOut(float duration) { screenFader.startFade(() -> {}); }
-            @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
-            @Override public void onChangeScene(String sceneId) {
-                if ("return_to_menu".equals(sceneId)) {
-                    Gdx.app.postRunnable(() -> {
-                        game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
-                        GameScreen.this.dispose();
-                    });
-                    return;
-                }
-                sceneManager.changeScene(sceneId);
-                game.getGameState().setCurrentRoom(sceneId);
-            }
-            @Override public void onCutsceneFinished(String cutsceneId) {
-                if (cutsceneSprite != null) {
-                    cutsceneSprite.dispose();
-                    cutsceneSprite = null;
-                }
-                if (videoPlayer != null) {
-                    videoPlayer.dispose();
-                    videoPlayer = null;
-                    videoPlaying = false;
-                }
-                Gdx.app.log("Cutscene", "Finished: " + cutsceneId);
-            }
-            @Override
-            public void onOpenMinigame(String minigameId) {
-                if (screenFader.isFading()) return;
-                if ("puzzle_drawer".equals(minigameId)) {
-                    puzzleDrawerUI.show();
-                    return;
+                    }
+                    Gdx.app.log("Cutscene", "Finished: " + cutsceneId);
                 }
 
-                LoadingScreen.LoadingTarget targetType = null;
+                @Override
+                public void onOpenMinigame(String minigameId) {
+                    if (screenFader.isFading()) return;
+                    if ("puzzle_drawer".equals(minigameId)) {
+                        puzzleDrawerUI.show();
+                        return;
+                    }
 
-                if ("puzzle_laser".equals(minigameId)) {
-                    targetType = LoadingScreen.LoadingTarget.LASER_MINIGAME;
-                } else if ("puzzle_sliding_marble".equals(minigameId)) {
-                    targetType = LoadingScreen.LoadingTarget.SLIDING_MINIGAME;
-                }
+                    LoadingScreen.LoadingTarget targetType = null;
 
-                if (targetType != null) {
-                    final LoadingScreen.LoadingTarget finalTarget = targetType;
-                    if (inventoryUI != null) inventoryUI.setVisible(false);
+                    if ("puzzle_laser".equals(minigameId)) {
+                        targetType = LoadingScreen.LoadingTarget.LASER_MINIGAME;
+                    } else if ("puzzle_sliding_marble".equals(minigameId)) {
+                        targetType = LoadingScreen.LoadingTarget.SLIDING_MINIGAME;
+                    }
 
-                    screenFader.startFade(() -> {
-                        Gdx.app.postRunnable(() -> {
-                            game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, finalTarget, GameScreen.this));
+                    if (targetType != null) {
+                        final LoadingScreen.LoadingTarget finalTarget = targetType;
+                        if (inventoryUI != null) inventoryUI.setVisible(false);
+
+                        screenFader.startFade(() -> {
+                            Gdx.app.postRunnable(() -> {
+                                game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, finalTarget, GameScreen.this));
+                            });
                         });
-                    });
-                } else {
-                    puzzleManager.openPuzzle(minigameId);
+                    } else {
+                        puzzleManager.openPuzzle(minigameId);
+                    }
                 }
-            }
-        });
-
+            });
+            isInitialized = true;
+        }
+        setupInputProcessors();
     }
 
     private void setupPuzzleListeners() {
@@ -524,14 +554,15 @@ public class GameScreen extends BaseScreen {
                     if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
                         dialogueEngine.advance();
                         if (!dialogueEngine.isFinished()) {
-                            // Vẫn còn thoại -> Cập nhật lên UI
                             dialogueUI.displayNode(dialogueEngine.getCurrentNode());
                         } else {
                             if (cutsceneManager != null && cutsceneManager.isPlaying()) {
                                 cutsceneManager.onDialogueFinished();
                             }
-                            // HẾT THOẠI: Phải ẩn UI đi và báo cho hệ thống
                             dialogueUI.displayNode(null);
+                            if (game.getAutoSaveManager() != null) {
+                                game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
+                            }
                         }
                     }
                     return true;
@@ -604,6 +635,11 @@ public class GameScreen extends BaseScreen {
                 if (keycode == Input.Keys.F3) { dialogueUI.toggleDebugPortrait(); return true; }
                 if (keycode == Input.Keys.F4 && dialogueUI.isDebugPortrait()) { dialogueUI.exportPortraitCoordinates(); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
+                    boolean isCutsceneActive = (cutsceneManager != null && cutsceneManager.isPlaying());
+                    if (isCutsceneActive || isFlashing || cutsceneSprite != null || videoPlaying) {
+                        return false;
+                    }
+
                     if (overlayManager.isActive()) {
                         overlayManager.close();
                         hideInspectText();
@@ -877,8 +913,6 @@ public class GameScreen extends BaseScreen {
     @Override
     public void hide() {
         inputHandler.clear();
-        if (inspectTable != null) inspectTable.remove();
-        if (overlayManager != null) overlayManager.close();
     }
 
     private void checkEndGame(float delta) {

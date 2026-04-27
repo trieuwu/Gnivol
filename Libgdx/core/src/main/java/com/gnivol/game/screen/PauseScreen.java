@@ -93,12 +93,22 @@ public class PauseScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        // Nền mờ đen 50%
+        if (gameScreen != null) {
+            gameScreen.render(0f);
+        }
+        stage.getViewport().apply();
+        dimRenderer.setProjectionMatrix(stage.getCamera().combined);
+
         Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
         Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
         dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        dimRenderer.setColor(0f, 0f, 0f, 0.5f);
-        dimRenderer.rect(0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+
+        Color colorBottom = new Color(0f, 0f, 0f, 0.9f);
+        Color colorTop = new Color(0f, 0f, 0f, 0.4f);
+
+        dimRenderer.rect(0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT,
+            colorBottom, colorBottom, colorTop, colorTop);
+
         dimRenderer.end();
         Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
 
