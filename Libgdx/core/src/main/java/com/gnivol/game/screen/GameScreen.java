@@ -83,6 +83,7 @@ public class GameScreen extends BaseScreen {
     private float cutsceneSpriteDuration;
     private final float[] cutsceneSpriteRect = {-1, -1, -1, -1}; // x, y, w, h
     private boolean isGameOver = false;
+    private Texture vignetteTexture;
 
     public GnivolGame getGnivolGame() { return game; }
     public SceneManager getSceneManager() { return sceneManager; }
@@ -116,6 +117,8 @@ public class GameScreen extends BaseScreen {
         batch = new SpriteBatch();
         dimRenderer = new ShapeRenderer();
         debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
+
+        vignetteTexture = createVignetteTexture(512, 512);
 
         FontManager fm = game.getFontManager();
 
@@ -680,6 +683,9 @@ public class GameScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         sceneManager.render(batch);
+        if (vignetteTexture != null) {
+            batch.draw(vignetteTexture, 0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+        }
         batch.end();
 
         overlayManager.render(delta, batch, camera);
@@ -890,6 +896,31 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    private Texture createVignetteTexture(int width, int height) {
+        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(width, height, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        float centerX = width / 2f;
+        float centerY = height / 2f;
+        float maxDist = (float) Math.sqrt(centerX * centerX + centerY * centerY);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                float dist = (float) Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                float alpha = dist / maxDist;
+
+                alpha = (float) Math.pow(alpha, 2.0);
+
+                if (alpha > 0.85f) alpha = 0.85f;
+
+                pixmap.setColor(new Color(0f, 0f, 0f, alpha));
+                pixmap.drawPixel(x, y);
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pixmap.dispose();
+        return tex;
+    }
+
     @Override
     public void dispose() {
         if (batch != null) batch.dispose();
@@ -901,6 +932,8 @@ public class GameScreen extends BaseScreen {
         if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
+        if (vignetteTexture != null) vignetteTexture.dispose();
+        if (sceneManager != null) sceneManager.dispose();
     }
 
     public void openInventoryOverlay(String overlayId) {

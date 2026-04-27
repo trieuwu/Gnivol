@@ -38,6 +38,44 @@ public class SlidingScreen extends BaseScreen {
     private Texture texJumpscare;
     private boolean isMapReady = false;
 
+    private com.badlogic.gdx.scenes.scene2d.Stage uiStage;
+    private boolean showInstructions = true;
+    private Texture texDim;
+    private float instructionDelayTimer = 0f;
+
+    private void createInstructionUI(String titleText, String contentText) {
+        uiStage = new com.badlogic.gdx.scenes.scene2d.Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+
+        com.badlogic.gdx.graphics.Pixmap pix = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        pix.setColor(0, 0, 0, 0.9f);
+        pix.fill();
+        texDim = new Texture(pix);
+        pix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Image dimImg = new com.badlogic.gdx.scenes.scene2d.ui.Image(texDim);
+        dimImg.setFillParent(true);
+        uiStage.addActor(dimImg);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Table table = new com.badlogic.gdx.scenes.scene2d.ui.Table();
+        table.setFillParent(true);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontTitle, Color.RED);
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle textStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontVietnamese, Color.WHITE);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label title = new com.badlogic.gdx.scenes.scene2d.ui.Label(titleText, titleStyle);
+        com.badlogic.gdx.scenes.scene2d.ui.Label content = new com.badlogic.gdx.scenes.scene2d.ui.Label(contentText, textStyle);
+        content.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label hint = new com.badlogic.gdx.scenes.scene2d.ui.Label("(Click or press any key to begin)", textStyle);
+        hint.setColor(Color.LIGHT_GRAY);
+
+        table.add(title).padBottom(30).row();
+        table.add(content).padBottom(50).row();
+        table.add(hint);
+
+        uiStage.addActor(table);
+    }
+
     public SlidingScreen(GnivolGame game, BaseScreen previousScreen) {
         super(game);
         this.logic = new SlidingLogic();
@@ -58,7 +96,7 @@ public class SlidingScreen extends BaseScreen {
 
     private void loadAssets() {
         texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/anhnenminigame.jpg"));
-        texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/walls.png"));
+        texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/wall1.png"));
         texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/box.png"));
         texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/x.png"));
 
@@ -103,9 +141,16 @@ public class SlidingScreen extends BaseScreen {
     public void show() {
         game.getScreenFader().startFadeIn();
 
+        createInstructionUI("THE SHIFTING GRAVES",
+            "Click the border arrows to push the heavy wooden crates.\nYour task is to drag all of them to the bloody 'X' marks.\n\nBeware... the more steps you wander, the deeper the madness will consume your mind.");
+
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (showInstructions) {
+                    if (instructionDelayTimer > 1.0f) showInstructions = false;
+                    return true;
+                }
 
                 if (!isMapReady || button != Input.Buttons.LEFT || isAnimating || isJumpscareActive) return false;
 
@@ -118,6 +163,11 @@ public class SlidingScreen extends BaseScreen {
 
             @Override
             public boolean keyDown(int keycode) {
+                if (showInstructions) {
+                    showInstructions = false;
+                    return true;
+                }
+
                 if (isJumpscareActive) return false;
 
                 if (keycode == Input.Keys.ESCAPE) {
@@ -298,12 +348,21 @@ public class SlidingScreen extends BaseScreen {
 
         batch.end();
 
+        if (showInstructions) {
+            instructionDelayTimer += delta;
+            if (uiStage != null) {
+                uiStage.act(delta);
+                uiStage.draw();
+            }
+        }
+
         game.getScreenFader().update(delta);
         game.getScreenFader().render();
     }
 
     @Override
     public void resize(int width, int height) {
+        if (uiStage != null) uiStage.getViewport().update(width, height, true);
         viewport.update(width, height, true);
     }
 
@@ -322,5 +381,7 @@ public class SlidingScreen extends BaseScreen {
 
         if (texDoneBox != null) texDoneBox.dispose();
         if (texJumpscare != null) texJumpscare.dispose();
+        if (uiStage != null) uiStage.dispose();
+        if (texDim != null) texDim.dispose();
     }
 }

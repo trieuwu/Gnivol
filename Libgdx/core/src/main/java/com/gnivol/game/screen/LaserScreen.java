@@ -48,6 +48,46 @@ public class LaserScreen extends BaseScreen {
 
     private boolean isMapReady = false;
 
+    private com.badlogic.gdx.scenes.scene2d.Stage uiStage;
+    private boolean showInstructions = true;
+    private Texture texDim;
+    private float instructionDelayTimer = 0f;
+
+    private void createInstructionUI(String titleText, String contentText) {
+        uiStage = new com.badlogic.gdx.scenes.scene2d.Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+
+        // Tạo kính mờ đen 85%
+        com.badlogic.gdx.graphics.Pixmap pix = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        pix.setColor(0, 0, 0, 0.9f);
+        pix.fill();
+        texDim = new Texture(pix);
+        pix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Image dimImg = new com.badlogic.gdx.scenes.scene2d.ui.Image(texDim);
+        dimImg.setFillParent(true);
+        uiStage.addActor(dimImg);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Table table = new com.badlogic.gdx.scenes.scene2d.ui.Table();
+        table.setFillParent(true);
+
+        // Lấy font từ game
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontTitle, Color.RED);
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle textStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontVietnamese, Color.WHITE);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label title = new com.badlogic.gdx.scenes.scene2d.ui.Label(titleText, titleStyle);
+        com.badlogic.gdx.scenes.scene2d.ui.Label content = new com.badlogic.gdx.scenes.scene2d.ui.Label(contentText, textStyle);
+        content.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label hint = new com.badlogic.gdx.scenes.scene2d.ui.Label("(Click or press any key to begin)", textStyle);
+        hint.setColor(Color.LIGHT_GRAY);
+
+        table.add(title).padBottom(30).row();
+        table.add(content).padBottom(50).row();
+        table.add(hint);
+
+        uiStage.addActor(table);
+    }
+
     public LaserScreen(GnivolGame game, BaseScreen previousScreen) {
         super(game);
         this.logic = new LaserLogic();
@@ -73,9 +113,27 @@ public class LaserScreen extends BaseScreen {
     public void show() {
         game.getScreenFader().startFadeIn();
 
+        createInstructionUI("THE LABYRINTH",
+            "Use W-A-S-D or Arrow keys to navigate the dark.\nEvade the crimson lasers and find the exit, or be burned alive.\n\nRemember... with every step you take, the turrets shift their gaze.\nThey are watching your every move.");
+
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (showInstructions) {
+                    if (instructionDelayTimer > 1.0f) showInstructions = false;
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
             public boolean keyDown(int keycode) {
+                if (showInstructions) {
+                    if (instructionDelayTimer > 1.0f) showInstructions = false;
+                    return true;
+                }
+
+
                 if (isMoving || isJumpscareActive) return false;
 
                 if (keycode == Input.Keys.ESCAPE) {
@@ -102,6 +160,7 @@ public class LaserScreen extends BaseScreen {
                 return false;
             }
         });
+
     }
 
     private void handleMove(int dx, int dy) {
@@ -156,6 +215,7 @@ public class LaserScreen extends BaseScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         viewport.update(width, height, true);
+        if (uiStage != null) uiStage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -306,6 +366,13 @@ public class LaserScreen extends BaseScreen {
         }
 
         batch.end();
+        if (showInstructions) {
+            instructionDelayTimer += delta;
+            if (uiStage != null) {
+                uiStage.act(delta);
+                uiStage.draw();
+            }
+        }
         game.getScreenFader().update(delta);
         game.getScreenFader().render();
 
@@ -358,5 +425,8 @@ public class LaserScreen extends BaseScreen {
         texPlayerUp.dispose(); texPlayerDown.dispose(); texPlayerLeft.dispose(); texPlayerRight.dispose();
         texTurretUp.dispose(); texTurretDown.dispose(); texTurretLeft.dispose(); texTurretRight.dispose();
         texLaserH.dispose(); texLaserV.dispose();
+        if (uiStage != null) uiStage.dispose();
+        if (texDim != null) texDim.dispose();
+
     }
 }

@@ -105,9 +105,10 @@ public class InventoryUI {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 boolean isBackpackVisible = !backpackTable.isVisible();
-                backpackTable.setVisible(isBackpackVisible);
 
+                backpackTable.setVisible(isBackpackVisible);
                 quickbarTable.setVisible(!isBackpackVisible);
+                resetHighlights();
                 if (!isBackpackVisible) {
                     resetHighlights();
                 } else {
@@ -479,6 +480,7 @@ public class InventoryUI {
     public void setVisible(boolean visible) {
         if (topTable != null) topTable.setVisible(visible);
         if (!visible) {
+            resetHighlights();
             if (quickbarTable != null) quickbarTable.setVisible(false);
             if (backpackTable != null && backpackTable.isVisible()) {
                 backpackTable.setVisible(false);
