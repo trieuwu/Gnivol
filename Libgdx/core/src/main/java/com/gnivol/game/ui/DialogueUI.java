@@ -80,6 +80,8 @@ public class DialogueUI {
     // --- THÊM 2 BIẾN NÀY ĐỂ ĐẾM 1 GIÂY ---
     private float glitchTimer = 0f;
     private boolean isGlitchedState = false;
+    private float autoAdvanceTimer = 0f;
+
     public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
         this.game = game;
         this.engine = engine;
@@ -264,6 +266,7 @@ public class DialogueUI {
         }
 
         rootTable.setVisible(true);
+        autoAdvanceTimer = 0f;
 
         isCurrentThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
         float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
@@ -497,9 +500,23 @@ public class DialogueUI {
                     // Gõ xong rồi
                     typeIndex = fullContentText.length();
                     isTyping = false;
-                    showChoices(); // Gõ xong mới ném nút A/B ra
+                    showChoices();
+                    autoAdvanceTimer = 0f;// Gõ xong mới ném nút A/B ra
                 }
                 updateContentLabel();
+            }
+        } else {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+            if (currentRS <= 0f || currentRS >= 100f) {
+                DialogueNode node = engine.getCurrentNode();
+                if (node != null && !node.hasChoice()) {
+                    autoAdvanceTimer += delta;
+                    if (autoAdvanceTimer >= 3.0f) {
+                        autoAdvanceTimer = 0f;
+                        engine.advance();
+                        displayNode(engine.getCurrentNode());
+                    }
+                }
             }
         }
         // 2. LOGIC ĐỒNG HỒ 1 GIÂY (Chỉ áp dụng khi RS < 35 và không phải là Suy nghĩ)

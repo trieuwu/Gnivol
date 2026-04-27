@@ -56,11 +56,6 @@ public class RSManager {
             notifySpecificThreshold(maxThreshold, false);
         }
     }
-    /** Giữ RS trong khoảng [minThreshold, maxThreshold] */
-    private void clampRS() {
-        currentRS = Math.max(0, Math.min(currentRS, maxRS));
-    }
-
     private void notifyListeners(float oldValue, float newValue) {
         for (RSListener listener : listeners) {
             try {
@@ -98,8 +93,11 @@ public class RSManager {
     public void removeListener(RSListener listener) { listeners.remove(listener); }
 
     // --- For save/load ---
-    public void setRS(float value) {
-        this.currentRS = Math.max(0, Math.min(value, maxRS));
+    public boolean isEndGame() {
+        return currentRS <= 0 || currentRS >= maxRS;
+    }
+    private void clampRS() {
+        currentRS = Math.max(0, Math.min(currentRS, maxRS));
     }
 
     public void setCurrentRS(float currentRS) {

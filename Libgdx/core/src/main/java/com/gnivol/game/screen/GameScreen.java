@@ -82,6 +82,8 @@ public class GameScreen extends BaseScreen {
     private float cutsceneSpriteTimer;
     private float cutsceneSpriteDuration;
     private final float[] cutsceneSpriteRect = {-1, -1, -1, -1}; // x, y, w, h
+    private boolean isGameOver = false;
+    private Texture vignetteTexture;
 
     public GnivolGame getGnivolGame() { return game; }
     public SceneManager getSceneManager() { return sceneManager; }
@@ -115,6 +117,8 @@ public class GameScreen extends BaseScreen {
         batch = new SpriteBatch();
         dimRenderer = new ShapeRenderer();
         debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
+
+        vignetteTexture = createVignetteTexture(512, 512);
 
         FontManager fm = game.getFontManager();
 
@@ -311,7 +315,10 @@ public class GameScreen extends BaseScreen {
             @Override public void onFadeIn(float duration) { screenFader.startFadeIn(); }
             @Override public void onChangeScene(String sceneId) {
                 if ("return_to_menu".equals(sceneId)) {
-                    game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
+                        GameScreen.this.dispose();
+                    });
                     return;
                 }
                 sceneManager.changeScene(sceneId);
@@ -334,13 +341,25 @@ public class GameScreen extends BaseScreen {
                 if (screenFader.isFading()) return;
                 if ("puzzle_drawer".equals(minigameId)) {
                     puzzleDrawerUI.show();
-                } else if ("puzzle_laser".equals(minigameId)) {
-                    screenFader.startFade(() -> {
-                        game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
-                    });
+                    return;
+                }
+
+                LoadingScreen.LoadingTarget targetType = null;
+
+                if ("puzzle_laser".equals(minigameId)) {
+                    targetType = LoadingScreen.LoadingTarget.LASER_MINIGAME;
                 } else if ("puzzle_sliding_marble".equals(minigameId)) {
+                    targetType = LoadingScreen.LoadingTarget.SLIDING_MINIGAME;
+                }
+
+                if (targetType != null) {
+                    final LoadingScreen.LoadingTarget finalTarget = targetType;
+                    if (inventoryUI != null) inventoryUI.setVisible(false);
+
                     screenFader.startFade(() -> {
-                        game.setScreen(new com.gnivol.game.screen.SlidingScreen(game, GameScreen.this));
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, finalTarget, GameScreen.this));
+                        });
                     });
                 } else {
                     puzzleManager.openPuzzle(minigameId);
@@ -371,14 +390,20 @@ public class GameScreen extends BaseScreen {
                 puzzleDrawerUI.show();
             } else if ("puzzle_laser".equals(puzzleId)) {
                 if (screenFader.isFading()) return;
+                if (inventoryUI != null) inventoryUI.setVisible(false);
                 screenFader.startFade(() -> {
-                    game.setScreen(new com.gnivol.game.screen.LaserScreen(game, GameScreen.this));
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, LoadingScreen.LoadingTarget.LASER_MINIGAME, GameScreen.this));
+                    });
                 });
             }
             else if ("puzzle_sliding_marble".equals(puzzleId)) {
                 if (screenFader.isFading()) return;
+                if (inventoryUI != null) inventoryUI.setVisible(false);
                 screenFader.startFade(() -> {
-                    game.setScreen(new com.gnivol.game.screen.SlidingScreen(game, GameScreen.this));
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, LoadingScreen.LoadingTarget.SLIDING_MINIGAME, GameScreen.this));
+                    });
                 });
             }
 
@@ -641,17 +666,26 @@ public class GameScreen extends BaseScreen {
     }
     @Override
     public void render(float delta) {
+        checkEndGame(delta);
+
         ScreenUtils.clear(0, 0, 0, 1);
-        sceneManager.update(delta);
         screenFader.update(delta);
+        if (!isGameOver) {
+            sceneManager.update(delta);
+        }
         if (dialogueUI != null) dialogueUI.update(delta);
         game.getStage().act(delta);
         if (inventoryUI != null) inventoryUI.setVisible(!dialogueUI.isVisible());
+        if (cutsceneManager != null) cutsceneManager.update(delta);
+        if (game.getAudioManager() != null) game.getAudioManager().update(delta);
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         sceneManager.render(batch);
+        if (vignetteTexture != null) {
+            batch.draw(vignetteTexture, 0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+        }
         batch.end();
 
         overlayManager.render(delta, batch, camera);
@@ -684,9 +718,6 @@ public class GameScreen extends BaseScreen {
             dialogueUI.renderPortraitDebug(debugManager.getShapeRenderer(), game.getFontManager().fontDebug, batch);
         }
 
-
-        if (cutsceneManager != null) cutsceneManager.update(delta);
-        if (game.getAudioManager() != null) game.getAudioManager().update(delta);
         if (isFlashing) {
             flashAlpha -= delta * 4f;
             if (flashAlpha <= 0) isFlashing = false;
@@ -850,6 +881,46 @@ public class GameScreen extends BaseScreen {
         if (overlayManager != null) overlayManager.close();
     }
 
+    private void checkEndGame(float delta) {
+        if (isGameOver) return;
+
+        if (game.getRsManager().isEndGame()) {
+            isGameOver = true;
+
+            com.badlogic.gdx.files.FileHandle saveFile = Gdx.files.external(".gnivol/save_slot_1.json");
+            if (saveFile.exists()) {
+                saveFile.delete();
+                Gdx.app.log("EndGame", "Data is removed.");
+            }
+            if (inventoryUI != null) inventoryUI.setVisible(false);
+        }
+    }
+
+    private Texture createVignetteTexture(int width, int height) {
+        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(width, height, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        float centerX = width / 2f;
+        float centerY = height / 2f;
+        float maxDist = (float) Math.sqrt(centerX * centerX + centerY * centerY);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                float dist = (float) Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                float alpha = dist / maxDist;
+
+                alpha = (float) Math.pow(alpha, 2.0);
+
+                if (alpha > 0.85f) alpha = 0.85f;
+
+                pixmap.setColor(new Color(0f, 0f, 0f, alpha));
+                pixmap.drawPixel(x, y);
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pixmap.dispose();
+        return tex;
+    }
+
     @Override
     public void dispose() {
         if (batch != null) batch.dispose();
@@ -861,6 +932,8 @@ public class GameScreen extends BaseScreen {
         if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
+        if (vignetteTexture != null) vignetteTexture.dispose();
+        if (sceneManager != null) sceneManager.dispose();
     }
 
     public void openInventoryOverlay(String overlayId) {
@@ -875,4 +948,6 @@ public class GameScreen extends BaseScreen {
         }
         return null;
     }
+
+
 }
