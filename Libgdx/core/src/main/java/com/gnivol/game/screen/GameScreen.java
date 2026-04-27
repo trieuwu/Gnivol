@@ -145,7 +145,7 @@ public class GameScreen extends BaseScreen {
 
         FontManager fm = game.getFontManager();
 
-        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
+        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese, game.getAudioManager());
         inventoryUI.refreshUI();
 
         this.puzzleManager = game.getPuzzleManager();
