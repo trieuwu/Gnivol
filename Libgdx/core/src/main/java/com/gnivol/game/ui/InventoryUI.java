@@ -53,23 +53,24 @@ public class InventoryUI {
     private TextureRegionDrawable useGlitchBg;
 
     public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.gnivol.game.system.rs.RSManager rsManager, com.badlogic.gdx.graphics.g2d.BitmapFont font) {
-        this(stage, inv, craft, rsManager, font, null);
-    }
-
-    public InventoryUI(Stage stage, InventoryManager inv, CraftingManager craft, com.gnivol.game.system.rs.RSManager rsManager, com.badlogic.gdx.graphics.g2d.BitmapFont font, com.gnivol.game.audio.AudioManager audioManager) {
         this.stage = stage;
         this.inventoryManager = inv;
         this.craftingManager = craft;
-        this.rsManager = rsManager; // LƯU LẠI
+        this.rsManager = rsManager;
         this.font = font;
-        this.audioManager = audioManager;
 
         loadItemData();
         setupUI();
     }
 
+    /** Setter injection cho AudioManager — gọi sau construct để tránh đụng signature constructor cũ. */
     public void setAudioManager(com.gnivol.game.audio.AudioManager audioManager) {
         this.audioManager = audioManager;
+    }
+
+    /** Phát SFX nếu audioManager đã inject. Gom null-check một chỗ (DRY). */
+    private void playSfx(String id) {
+        if (audioManager != null) audioManager.playSFX(id);
     }
 
     private void loadItemData() {
@@ -114,9 +115,7 @@ public class InventoryUI {
         baloBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (audioManager != null) {
-                    audioManager.playSFX("open_bag");
-                }
+                playSfx("open_bag");
                 boolean isBackpackVisible = !backpackTable.isVisible();
 
                 backpackTable.setVisible(isBackpackVisible);
@@ -341,9 +340,7 @@ public class InventoryUI {
             String result = craftingManager.getMergeResult(selectedItem1, selectedItem2);
             if (result != null) {
                 Gdx.app.log("Crafting", "Success: " + result);
-                if (audioManager != null) {
-                    audioManager.playSFX("crafting");
-                }
+                playSfx("crafting");
                 inventoryManager.removeItem(selectedItem1);
                 inventoryManager.removeItem(selectedItem2);
                 inventoryManager.addItem(result);

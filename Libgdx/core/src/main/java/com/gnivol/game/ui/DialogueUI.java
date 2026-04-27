@@ -278,11 +278,7 @@ public class DialogueUI {
         if (isCurrentThought) {
             speakerLabel.setText("Suy Nghĩ");
         } else {
-            String speakerText = node.speaker;
-            if (game != null && game.getGameState() != null && speakerText != null) {
-                speakerText = speakerText.replace("{player}", game.getGameState().getPlayerName());
-            }
-            speakerLabel.setText(speakerText);
+            speakerLabel.setText(node.speaker);
         }
         if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
         else contentLabel.setColor(Color.WHITE);
