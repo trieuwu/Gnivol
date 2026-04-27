@@ -145,7 +145,7 @@ public class GameScreen extends BaseScreen {
 
         FontManager fm = game.getFontManager();
 
-        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese);
+        inventoryUI = new InventoryUI(game.getStage(), game.getInventoryManager(), game.getCraftingManager(), game.getRsManager(), fm.fontVietnamese, game.getAudioManager());
         inventoryUI.refreshUI();
 
         this.puzzleManager = game.getPuzzleManager();
@@ -858,9 +858,20 @@ public class GameScreen extends BaseScreen {
         showNotification(itemName, Color.MAROON);
     }
 
+    // Các scene chuyển cảnh không phải do mở cửa (chui vào, leo lên, chui ra...) — skip sfx open_door
+    // Áp dụng cả 2 chiều: vào scene này hoặc đi ra từ scene này đều không kêu sfx
+    private static final java.util.Set<String> NON_DOOR_SCENES = new java.util.HashSet<>(java.util.Arrays.asList(
+        "room_under_bed"
+    ));
+
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
-        game.getAudioManager().playSFX("open_door");
+        String currentSceneId = game.getGameState() != null ? game.getGameState().getCurrentRoom() : null;
+        boolean skipDoorSfx = NON_DOOR_SCENES.contains(targetSceneId)
+                           || (currentSceneId != null && NON_DOOR_SCENES.contains(currentSceneId));
+        if (!skipDoorSfx) {
+            game.getAudioManager().playSFX("open_door");
+        }
         screenFader.startFade(() -> {
             sceneManager.changeScene(targetSceneId);
             game.getGameState().setCurrentRoom(targetSceneId);
