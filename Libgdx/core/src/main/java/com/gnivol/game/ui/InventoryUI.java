@@ -44,6 +44,7 @@ public class InventoryUI {
     private java.util.HashMap<String, Texture> itemTextureCache = new java.util.HashMap<>();
 
     private com.gnivol.game.system.rs.RSManager rsManager;
+    private com.gnivol.game.audio.AudioManager audioManager;
     private ImageButton useBtn;
     private ImageButton mergeBtn;
     private TextureRegionDrawable mergeNormalBg;
@@ -55,11 +56,21 @@ public class InventoryUI {
         this.stage = stage;
         this.inventoryManager = inv;
         this.craftingManager = craft;
-        this.rsManager = rsManager; // LƯU LẠI
+        this.rsManager = rsManager;
         this.font = font;
 
         loadItemData();
         setupUI();
+    }
+
+    /** Setter injection cho AudioManager — gọi sau construct để tránh đụng signature constructor cũ. */
+    public void setAudioManager(com.gnivol.game.audio.AudioManager audioManager) {
+        this.audioManager = audioManager;
+    }
+
+    /** Phát SFX nếu audioManager đã inject. Gom null-check một chỗ (DRY). */
+    private void playSfx(String id) {
+        if (audioManager != null) audioManager.playSFX(id);
     }
 
     private void loadItemData() {
@@ -104,6 +115,7 @@ public class InventoryUI {
         baloBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                playSfx("open_bag");
                 boolean isBackpackVisible = !backpackTable.isVisible();
 
                 backpackTable.setVisible(isBackpackVisible);
@@ -328,6 +340,7 @@ public class InventoryUI {
             String result = craftingManager.getMergeResult(selectedItem1, selectedItem2);
             if (result != null) {
                 Gdx.app.log("Crafting", "Success: " + result);
+                playSfx("crafting");
                 inventoryManager.removeItem(selectedItem1);
                 inventoryManager.removeItem(selectedItem2);
                 inventoryManager.addItem(result);
