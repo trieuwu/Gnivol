@@ -36,23 +36,25 @@ public class SlidingScreen extends BaseScreen {
     private boolean isJumpscareActive = false;
     private float jumpscareTimer = 0f;
     private Texture texJumpscare;
+    private boolean isMapReady = false;
 
     public SlidingScreen(GnivolGame game, BaseScreen previousScreen) {
         super(game);
         this.logic = new SlidingLogic();
-        this.batch = new SpriteBatch();
         this.previousScreen = previousScreen;
 
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
+        this.batch = new SpriteBatch();
+        this.camera = new OrthographicCamera();
+        this.viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
 
-        loadAssets();
-        logic.generateValidMap(15, 4, 7);
+         loadAssets();
+        // logic.generateValidMap(15, 4, 7);
 
-        visX = new float[logic.marbles.size()];
-        visY = new float[logic.marbles.size()];
-        snapVisuals();
+//        visX = new float[logic.marbles.size()];
+//        visY = new float[logic.marbles.size()];
+//        snapVisuals();
     }
+
 
     private void loadAssets() {
         texBackground = new Texture(Gdx.files.internal("images/bed_ko_chan_final.png"));
@@ -73,6 +75,21 @@ public class SlidingScreen extends BaseScreen {
         }
     }
 
+    public void generateMapAsync(final Runnable onDone) {
+        new Thread(() -> {
+            logic.generateValidMap(15, 4, 7);
+
+            Gdx.app.postRunnable(() -> {
+                visX = new float[logic.marbles.size()];
+                visY = new float[logic.marbles.size()];
+                snapVisuals();
+
+                isMapReady = true;
+                if (onDone != null) onDone.run();
+            });
+        }).start();
+    }
+
     private void snapVisuals() {
         for (int i = 0; i < logic.marbles.size(); i++) {
             visX[i] = logic.marbles.get(i).x;
@@ -87,7 +104,8 @@ public class SlidingScreen extends BaseScreen {
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (button != Input.Buttons.LEFT || isAnimating || isJumpscareActive) return false;
+
+                if (!isMapReady || button != Input.Buttons.LEFT || isAnimating || isJumpscareActive) return false;
 
                 Vector3 touch = new Vector3(screenX, screenY, 0);
                 camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
@@ -170,6 +188,11 @@ public class SlidingScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        if (!isMapReady) {
+            ScreenUtils.clear(0, 0, 0, 1);
+            return;
+        }
+
         ScreenUtils.clear(0, 0, 0, 1);
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);

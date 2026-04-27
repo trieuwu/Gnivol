@@ -46,19 +46,29 @@ public class LaserScreen extends BaseScreen {
     private Texture texTurretUp, texTurretDown, texTurretLeft, texTurretRight;
     private Texture texLaserH, texLaserV;
 
+    private boolean isMapReady = false;
+
     public LaserScreen(GnivolGame game, BaseScreen previousScreen) {
         super(game);
         this.logic = new LaserLogic();
         this.batch = new SpriteBatch();
         this.previousScreen = previousScreen;
 
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
-
-        createTextures();
-        logic.generateValidMap(10, 15, 8);
+        this.camera = new OrthographicCamera();
+        this.viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
+        //createTextures();
+        //logic.generateValidMap(10, 15, 8);
     }
-
+    public void initAsync(final Runnable onDone) {
+        new Thread(() -> {
+            logic.generateValidMap(10, 15, 8);
+            Gdx.app.postRunnable(() -> {
+                createTextures();
+                isMapReady = true;
+                if (onDone != null) onDone.run();
+            });
+        }).start();
+    }
     @Override
     public void show() {
         game.getScreenFader().startFadeIn();
@@ -150,6 +160,10 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        if (!isMapReady) {
+            ScreenUtils.clear(0, 0, 0, 1);
+            return;
+        }
         ScreenUtils.clear(0, 0, 0, 1);
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
