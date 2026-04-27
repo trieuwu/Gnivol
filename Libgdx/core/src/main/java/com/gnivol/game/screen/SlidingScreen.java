@@ -21,7 +21,7 @@ public class SlidingScreen extends BaseScreen {
     private OrthographicCamera camera;
     private FitViewport viewport;
 
-    private Texture texBackground, texWall, texMarble, texHole;
+    private Texture texBackground, texWall, texMarble, texHole, texDoneBox;
     private Texture texBtnTop, texBtnBottom, texBtnLeft, texBtnRight;
 
     private float cellSize;
@@ -36,41 +36,98 @@ public class SlidingScreen extends BaseScreen {
     private boolean isJumpscareActive = false;
     private float jumpscareTimer = 0f;
     private Texture texJumpscare;
+    private boolean isMapReady = false;
+
+    private com.badlogic.gdx.scenes.scene2d.Stage uiStage;
+    private boolean showInstructions = true;
+    private Texture texDim;
+    private float instructionDelayTimer = 0f;
+
+    private void createInstructionUI(String titleText, String contentText) {
+        uiStage = new com.badlogic.gdx.scenes.scene2d.Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+
+        com.badlogic.gdx.graphics.Pixmap pix = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        pix.setColor(0, 0, 0, 0.9f);
+        pix.fill();
+        texDim = new Texture(pix);
+        pix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Image dimImg = new com.badlogic.gdx.scenes.scene2d.ui.Image(texDim);
+        dimImg.setFillParent(true);
+        uiStage.addActor(dimImg);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Table table = new com.badlogic.gdx.scenes.scene2d.ui.Table();
+        table.setFillParent(true);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontTitle, Color.RED);
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle textStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(game.getFontManager().fontVietnamese, Color.WHITE);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label title = new com.badlogic.gdx.scenes.scene2d.ui.Label(titleText, titleStyle);
+        com.badlogic.gdx.scenes.scene2d.ui.Label content = new com.badlogic.gdx.scenes.scene2d.ui.Label(contentText, textStyle);
+        content.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label hint = new com.badlogic.gdx.scenes.scene2d.ui.Label("(Click or press any key to begin)", textStyle);
+        hint.setColor(Color.LIGHT_GRAY);
+
+        table.add(title).padBottom(30).row();
+        table.add(content).padBottom(50).row();
+        table.add(hint);
+
+        uiStage.addActor(table);
+    }
 
     public SlidingScreen(GnivolGame game, BaseScreen previousScreen) {
         super(game);
         this.logic = new SlidingLogic();
-        this.batch = new SpriteBatch();
         this.previousScreen = previousScreen;
 
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
+        this.batch = new SpriteBatch();
+        this.camera = new OrthographicCamera();
+        this.viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
 
-        loadAssets();
-        logic.generateValidMap(15, 4, 7);
+         loadAssets();
+        // logic.generateValidMap(15, 4, 7);
 
-        visX = new float[logic.marbles.size()];
-        visY = new float[logic.marbles.size()];
-        snapVisuals();
+//        visX = new float[logic.marbles.size()];
+//        visY = new float[logic.marbles.size()];
+//        snapVisuals();
     }
 
+
     private void loadAssets() {
-        texBackground = new Texture(Gdx.files.internal("images/bed_ko_chan_final.png"));
-        texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/walls.png"));
-        texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/player_fw.png"));
-        texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/turet.png"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/anhnenminigame.jpg"));
+        texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/wall1.png"));
+        texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/box.png"));
+        texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/x.png"));
+
+        texDoneBox = new Texture(Gdx.files.internal("images/mini_games/mng2/done_box.png"));
 
         // --- LOAD ẢNH 4 NÚT ---
-        texBtnBottom = new Texture(Gdx.files.internal("images/mini_games/mng2/button1.png"));
-        texBtnLeft = new Texture(Gdx.files.internal("images/mini_games/mng2/button2.png"));
-        texBtnTop = new Texture(Gdx.files.internal("images/mini_games/mng2/button3.png"));
-        texBtnRight = new Texture(Gdx.files.internal("images/mini_games/mng2/button4.png"));
+        texBtnBottom = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_down.png"));
+        texBtnLeft = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_left.png"));
+        texBtnTop = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_up.png"));
+        texBtnRight = new Texture(Gdx.files.internal("images/mini_games/mng2/pointer_right.png"));
 
         try {
             texJumpscare = new Texture(Gdx.files.internal("images/horror/jumpscare.png"));
         } catch (Exception e) {
             Gdx.app.error("SlidingScreen", "Không tìm thấy ảnh jumpscare", e);
         }
+    }
+
+    public void generateMapAsync(final Runnable onDone) {
+        new Thread(() -> {
+            logic.generateValidMap(15, 4, 7);
+
+            Gdx.app.postRunnable(() -> {
+                visX = new float[logic.marbles.size()];
+                visY = new float[logic.marbles.size()];
+                snapVisuals();
+
+                isMapReady = true;
+                if (onDone != null) onDone.run();
+            });
+        }).start();
     }
 
     private void snapVisuals() {
@@ -84,10 +141,18 @@ public class SlidingScreen extends BaseScreen {
     public void show() {
         game.getScreenFader().startFadeIn();
 
+        createInstructionUI("THE SHIFTING GRAVES",
+            "Click the border arrows to push the heavy wooden crates.\nYour task is to drag all of them to the bloody 'X' marks.\n\nBeware... the more steps you wander, the deeper the madness will consume your mind.");
+
         Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (button != Input.Buttons.LEFT || isAnimating || isJumpscareActive) return false;
+                if (showInstructions) {
+                    if (instructionDelayTimer > 1.0f) showInstructions = false;
+                    return true;
+                }
+
+                if (!isMapReady || button != Input.Buttons.LEFT || isAnimating || isJumpscareActive) return false;
 
                 Vector3 touch = new Vector3(screenX, screenY, 0);
                 camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
@@ -98,6 +163,11 @@ public class SlidingScreen extends BaseScreen {
 
             @Override
             public boolean keyDown(int keycode) {
+                if (showInstructions) {
+                    showInstructions = false;
+                    return true;
+                }
+
                 if (isJumpscareActive) return false;
 
                 if (keycode == Input.Keys.ESCAPE) {
@@ -151,6 +221,16 @@ public class SlidingScreen extends BaseScreen {
         return tx >= bx && tx <= bx + cellSize && ty >= by && ty <= by + cellSize;
     }
 
+    private boolean isHoleOccupied(int x, int y) {
+        for (int i = 0; i < logic.marbles.size(); i++) {
+            com.gnivol.game.system.minigame.SlidingLogic.Marble m = logic.marbles.get(i);
+            if (m.locked && m.x == x && m.y == y && visX[i] == x && visY[i] == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void checkWin() {
         if (logic.isWin()) {
             Gdx.app.log("SlidingGame", "Victory!");
@@ -170,6 +250,11 @@ public class SlidingScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        if (!isMapReady) {
+            ScreenUtils.clear(0, 0, 0, 1);
+            return;
+        }
+
         ScreenUtils.clear(0, 0, 0, 1);
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
@@ -187,7 +272,9 @@ public class SlidingScreen extends BaseScreen {
                 float dy = boardOffsetY + y * cellSize;
 
                 if (logic.grid[x][y] == 2) {
-                    batch.draw(texHole, dx, dy, cellSize, cellSize);
+                    if (!isHoleOccupied(x, y)) {
+                        batch.draw(texHole, dx, dy, cellSize, cellSize);
+                    }
                 }
                 if (logic.grid[x][y] == 1) {
                     batch.draw(texWall, dx, dy, cellSize, cellSize);
@@ -216,10 +303,11 @@ public class SlidingScreen extends BaseScreen {
 
             if (m.locked && visX[i] == m.x && visY[i] == m.y) {
                 batch.setColor(1, 1, 1, 0.6f);
+                batch.draw(texDoneBox, dx, dy, cellSize, cellSize);
             } else {
                 batch.setColor(Color.WHITE);
+                batch.draw(texMarble, dx, dy, cellSize, cellSize);
             }
-            batch.draw(texMarble, dx, dy, cellSize, cellSize);
             batch.setColor(Color.WHITE);
         }
 
@@ -260,12 +348,21 @@ public class SlidingScreen extends BaseScreen {
 
         batch.end();
 
+        if (showInstructions) {
+            instructionDelayTimer += delta;
+            if (uiStage != null) {
+                uiStage.act(delta);
+                uiStage.draw();
+            }
+        }
+
         game.getScreenFader().update(delta);
         game.getScreenFader().render();
     }
 
     @Override
     public void resize(int width, int height) {
+        if (uiStage != null) uiStage.getViewport().update(width, height, true);
         viewport.update(width, height, true);
     }
 
@@ -282,6 +379,9 @@ public class SlidingScreen extends BaseScreen {
         texBtnLeft.dispose();
         texBtnRight.dispose();
 
+        if (texDoneBox != null) texDoneBox.dispose();
         if (texJumpscare != null) texJumpscare.dispose();
+        if (uiStage != null) uiStage.dispose();
+        if (texDim != null) texDim.dispose();
     }
 }

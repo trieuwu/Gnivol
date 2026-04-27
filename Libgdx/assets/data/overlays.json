@@ -1,7 +1,7 @@
 [
   {
     "id": "fridge_interior",
-    "background": "textures/objects/fridge_open.png",
+    "background": "images/tulanh_mo.png",
     "items": [
       {"itemId": "bone", "x": 500, "y": 350, "w": 64, "h": 64}
     ]
