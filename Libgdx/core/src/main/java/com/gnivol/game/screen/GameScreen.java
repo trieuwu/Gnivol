@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -77,6 +78,13 @@ public class GameScreen extends BaseScreen {
     private VideoPlayer videoPlayer;
     private boolean videoPlaying = false;
     private final float[] videoRect = {-1, -1, -1, -1}; // x, y, w, h
+
+    // Chroma key shader cho video (xóa nền xanh)
+    private ShaderProgram chromaShader;
+    // Màu key (xanh lá), threshold, smoothing — chỉnh ở đây nếu nền không khớp
+    private static final float[] CHROMA_KEY_RGB = {0.0f, 1.0f, 0.0f};
+    private static final float CHROMA_THRESHOLD = 0.4f;
+    private static final float CHROMA_SMOOTHING = 0.1f;
     // Cutscene sprite
     private Texture cutsceneSprite;
     private float cutsceneSpriteTimer;
@@ -119,8 +127,22 @@ public class GameScreen extends BaseScreen {
             batch = new SpriteBatch();
             dimRenderer = new ShapeRenderer();
             debugManager = new com.gnivol.game.system.debug.DebugRenderer(game);
-
             vignetteTexture = createVignetteTexture(512, 512);
+
+            // Load chroma key shader cho video (xóa nền xanh)
+            try {
+                String vert = Gdx.files.internal("shaders/chromakey.vert").readString();
+                String frag = Gdx.files.internal("shaders/chromakey.frag").readString();
+                chromaShader = new ShaderProgram(vert, frag);
+                if (!chromaShader.isCompiled()) {
+                    Gdx.app.error("GameScreen", "ChromaKey shader compile error: " + chromaShader.getLog());
+                    chromaShader.dispose();
+                    chromaShader = null;
+                }
+            } catch (Exception e) {
+                Gdx.app.error("GameScreen", "Failed to load chromakey shader", e);
+                chromaShader = null;
+            }
 
             FontManager fm = game.getFontManager();
 
@@ -467,11 +489,11 @@ public class GameScreen extends BaseScreen {
                 if (overlayManager.isActive() && overlayManager.getTexture() != null) {
                     com.badlogic.gdx.math.Vector3 touch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(touch, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                        viewport.getScreenWidth(), viewport.getScreenHeight());
 
                     // Tìm overlay data từ overlays.json
                     com.gnivol.game.ui.InventoryOverlay.OverlayData overlayData =
-                            (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
+                        (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
                             ? inventoryOverlaySystem.findByObjectId(overlayManager.getSourceId()) : null;
 
                     if (overlayData != null) {
@@ -486,7 +508,7 @@ public class GameScreen extends BaseScreen {
 
                         for (com.gnivol.game.ui.InventoryOverlay.OverlayItem item : overlayData.items) {
                             boolean hitItem = relX >= item.x && relX <= item.x + item.w
-                                    && relY >= item.y && relY <= item.y + item.h;
+                                && relY >= item.y && relY <= item.y + item.h;
                             if (!hitItem) continue;
 
                             if (debugManager.isDebugMode()) {
@@ -506,7 +528,7 @@ public class GameScreen extends BaseScreen {
                                 if (roomData != null) {
                                     for (RoomData.RoomObject roomObj : roomData.getObjects()) {
                                         if (roomObj.id.equals(overlayManager.getSourceId()) && roomObj.properties != null
-                                                && roomObj.properties.altTextures != null) {
+                                            && roomObj.properties.altTextures != null) {
                                             String takenPath = roomObj.properties.altTextures.get("taken");
                                             if (takenPath != null) {
                                                 overlayManager.swapTexture(takenPath);
@@ -529,10 +551,10 @@ public class GameScreen extends BaseScreen {
 
                 // Debug: drag cutscene sprite
                 if (debugManager.isDebugMode() && button == Input.Buttons.LEFT && cutsceneSprite != null
-                        && cutsceneSpriteRect[0] >= 0) {
+                    && cutsceneSpriteRect[0] >= 0) {
                     com.badlogic.gdx.math.Vector3 csTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(csTouch, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                        viewport.getScreenWidth(), viewport.getScreenHeight());
                     if (debugManager.handleCutsceneSpriteClick(csTouch.x, csTouch.y, cutsceneSpriteRect)) {
                         return true;
                     }
@@ -571,7 +593,7 @@ public class GameScreen extends BaseScreen {
                 if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
                     com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(overlayTouch, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                        viewport.getScreenWidth(), viewport.getScreenHeight());
                     if (!inventoryOverlaySystem.handleClick(overlayTouch.x, overlayTouch.y)) {
                         inventoryOverlaySystem.close();
                     }
@@ -590,14 +612,14 @@ public class GameScreen extends BaseScreen {
                 if (debugManager.isDebugMode() && debugManager.isDraggingCutsceneSprite()) {
                     com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                        viewport.getScreenWidth(), viewport.getScreenHeight());
                     debugManager.handleCutsceneSpriteDrag(t.x, t.y);
                     return true;
                 }
                 if (debugManager.isDebugMode() && debugManager.isDraggingOverlayItem() && overlayManager.isActive() && overlayManager.getTexture() != null) {
                     com.badlogic.gdx.math.Vector3 t = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(t, viewport.getScreenX(), viewport.getScreenY(),
-                            viewport.getScreenWidth(), viewport.getScreenHeight());
+                        viewport.getScreenWidth(), viewport.getScreenHeight());
                     float maxW = 700f, maxH = 550f;
                     float imgW = overlayManager.getTexture().getWidth(), imgH = overlayManager.getTexture().getHeight();
                     float scale = Math.min(maxW / imgW, maxH / imgH);
@@ -695,8 +717,8 @@ public class GameScreen extends BaseScreen {
     public void hideInspectText() {
         if (inspectTable.isVisible()) {
             inspectTable.addAction(Actions.sequence(
-                    Actions.fadeOut(0.3f),
-                    Actions.visible(false)
+                Actions.fadeOut(0.3f),
+                Actions.visible(false)
             ));
         }
     }
@@ -728,7 +750,7 @@ public class GameScreen extends BaseScreen {
         // Debug overlay items từ overlays.json
         if (debugManager.isDebugMode() && overlayManager.isActive() && overlayManager.getTexture() != null) {
             com.gnivol.game.ui.InventoryOverlay.OverlayData debugOverlay =
-                    (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
+                (inventoryOverlaySystem != null && overlayManager.getSourceId() != null)
                     ? inventoryOverlaySystem.findByObjectId(overlayManager.getSourceId()) : null;
             debugManager.renderOverlayItems(batch, camera, viewport, overlayManager.getTexture(), debugOverlay);
         }
@@ -826,9 +848,20 @@ public class GameScreen extends BaseScreen {
                     drawY = 0f;
                 }
                 batch.setProjectionMatrix(camera.combined);
+                if (chromaShader != null) {
+                    batch.setShader(chromaShader);
+                }
                 batch.begin();
+                if (chromaShader != null) {
+                    chromaShader.setUniformf("u_keyColor", CHROMA_KEY_RGB[0], CHROMA_KEY_RGB[1], CHROMA_KEY_RGB[2]);
+                    chromaShader.setUniformf("u_threshold", CHROMA_THRESHOLD);
+                    chromaShader.setUniformf("u_smoothing", CHROMA_SMOOTHING);
+                }
                 batch.draw(videoFrame, drawX, drawY, drawW, drawH);
                 batch.end();
+                if (chromaShader != null) {
+                    batch.setShader(null); // restore default shader
+                }
             }
         }
 
@@ -965,6 +998,7 @@ public class GameScreen extends BaseScreen {
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
         if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
+        if (chromaShader != null) chromaShader.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
         if (vignetteTexture != null) vignetteTexture.dispose();
         if (sceneManager != null) sceneManager.dispose();
