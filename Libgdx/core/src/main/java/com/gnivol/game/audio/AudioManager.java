@@ -1,8 +1,12 @@
 package com.gnivol.game.audio;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.gnivol.game.system.save.ISaveable;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +17,16 @@ import java.util.Map;
  */
 public class AudioManager {
 
-    private float musicVolume = 0.7f;
-    private float sfxVolume = 1.0f;
+    private float musicVolume;
+    private float sfxVolume;
+    private Preferences prefs;
+
+    public AudioManager() {
+        prefs = Gdx.app.getPreferences("GnivolSettings");
+
+        musicVolume = prefs.getFloat("musicVolume", 0.7f);
+        sfxVolume = prefs.getFloat("sfxVolume", 1.0f);
+    }
 
     private final Map<String, Music> bgmCache = new HashMap<String, Music>();
     private final Map<String, Sound> sfxCache = new HashMap<String, Sound>();
@@ -165,6 +177,8 @@ public class AudioManager {
         if (currentAmbient != null) {
             currentAmbient.setVolume(this.musicVolume);
         }
+        prefs.putFloat("musicVolume", this.musicVolume);
+        prefs.flush();
     }
 
     public void setBGMVolume(float v) {
@@ -176,7 +190,10 @@ public class AudioManager {
     }
 
     public void setSfxVolume(float volume) {
+
         this.sfxVolume = Math.max(0f, Math.min(1f, volume));
+        prefs.putFloat("sfxVolume", this.sfxVolume);
+        prefs.flush();
     }
 
     public void setSFXVolume(float v) {
