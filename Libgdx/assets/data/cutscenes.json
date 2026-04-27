@@ -92,5 +92,12 @@
       { "type": "flash", "color": "white", "duration": 0.3 },
       { "type": "open_minigame", "id": "puzzle_sliding_marble" }
     ]
+  },
+  {
+    "id": "mirror_video_jumpscare",
+    "steps": [
+      { "type": "video", "src": "video/hai_huoc_no1.webm", "x": 0, "y": 0, "w": 1280, "h": 720 },
+      { "type": "flash", "color": "white", "duration": 0.2 }
+    ]
   }
 ]
