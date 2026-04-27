@@ -860,6 +860,7 @@ public class GameScreen extends BaseScreen {
 
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
+        game.getAudioManager().playSFX("open_door");
         screenFader.startFade(() -> {
             sceneManager.changeScene(targetSceneId);
             game.getGameState().setCurrentRoom(targetSceneId);
