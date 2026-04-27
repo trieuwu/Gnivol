@@ -184,6 +184,10 @@ public class LaserScreen extends BaseScreen {
 
     private void onWin() {
         game.getPuzzleManager().markSolved("puzzle_laser");
+        if (game.getAutoSaveManager() != null) {
+            game.getAutoSaveManager().onSaveTrigger("puzzle_laser_solved");
+        }
+        // --
         game.getInventoryManager().addItem("ca_vat_final");
         game.setScreen(previousScreen);
 
