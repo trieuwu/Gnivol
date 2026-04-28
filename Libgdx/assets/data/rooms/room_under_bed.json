@@ -1,7 +1,7 @@
 {
   "roomId": "room_under_bed",
   "roomName": "Gầm giường",
-  "background": "images/final_under_bed.png",
+  "background": "images/back_ground/room/final_under_bed.png",
   "objects": [
     {
       "id": "door_back_bedroom",

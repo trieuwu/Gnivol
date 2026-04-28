@@ -1,7 +1,7 @@
 {
   "roomId": "room_hallway",
   "roomName": "Sảnh chung",
-  "background": "images/hall_final.png",
+  "background": "images/back_ground/hall/hall_final.png",
   "objects": [
     {
       "id": "door_back_bedroom",

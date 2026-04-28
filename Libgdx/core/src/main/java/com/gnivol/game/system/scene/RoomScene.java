@@ -42,9 +42,9 @@ public class RoomScene extends Scene {
     public void enter() {
         if ("room_bathroom".equals(sceneId)) {
             if (puzzleManager.isItemCollected("keo_502_final")) {
-                roomData.setBackground("images/bathroom_no_bottle.png");
+                roomData.setBackground("images/back_ground/bathroom/bathroom_no_bottle.png");
             } else {
-                roomData.setBackground("images/bathroom_bottle.png");
+                roomData.setBackground("images/back_ground/bathroom/bathroom_bottle.png");
             }
         }
         if (roomData.getBackground() != null) {

@@ -50,7 +50,7 @@ public class RoomInteractionHandler implements InteractionCallback {
 
         if ("keo_502_final".equals(itemId)) {
             if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/bathroom_no_bottle.png");
+                ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/bathroom/bathroom_no_bottle.png");
             }
         }
 
@@ -131,11 +131,11 @@ public class RoomInteractionHandler implements InteractionCallback {
                 screen.getCutsceneManager().play("mirror_video_jumpscare");
                 return;
             }
-            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
-                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
-            } else {
-                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
-            }
+//            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
+//                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
+//            } else {
+//                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
+//            }
             return;
         }
 
