@@ -1,0 +1,37 @@
+{
+  "roomId": "room_toilet_closeup",
+  "roomName": "Cận cảnh Bồn Cầu",
+  "background": "images/back_ground/bathroom/toilet.png",
+  "objects": [
+    {
+      "id": "back_to_bathroom_1",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_bathroom",
+        "inspectText": "Lùi lại...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "back_to_bathroom_2",
+      "type": "door",
+      "x": 873,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_bathroom",
+        "inspectText": "Lùi lại...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    }
+  ]
+}

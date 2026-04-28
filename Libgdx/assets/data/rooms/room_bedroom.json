@@ -159,9 +159,24 @@
       }
     },
     {
-      "id": "go_under_bed",
+      "id": "go_under_bed1",
       "type": "door",
       "x": 287,
+      "y": 0,
+      "w": 89,
+      "h": 108,
+      "properties": {
+        "targetScene": "room_under_bed",
+        "inspectText": "Chui xuống gầm giường xem có gì không.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "go_under_bed2",
+      "type": "door",
+      "x": 924,
       "y": 0,
       "w": 89,
       "h": 108,

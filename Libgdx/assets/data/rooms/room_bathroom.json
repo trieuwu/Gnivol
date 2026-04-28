@@ -1,22 +1,8 @@
 {
   "roomId": "room_bathroom",
   "roomName": "Nhà tắm",
-  "background": "images/back_ground/bathroom/batroom_bottle.png",
+  "background": "images/back_ground/bathroom/bathroom_bottle.png",
   "objects": [
-    {
-      "id": "keo_502_final",
-      "type": "item",
-      "x": 253,
-      "y": 405,
-      "w": 80,
-      "h": 80,
-      "properties": {
-        "itemId": "keo_502_final",
-        "collectible": true,
-        "inspectText": "Một tuýp keo 502. Có vẻ vẫn còn dùng được.",
-        "rsChange": 0
-      }
-    },
     {
       "id": "mirror",
       "type": "interactable",
@@ -62,13 +48,14 @@
     },
     {
       "id": "toilet",
-      "type": "interactable",
+      "type": "door",
       "x": 482,
       "y": 0,
       "w": 200,
       "h": 220,
       "properties": {
-        "inspectText": "Một chiếc bồn cầu cũ kỹ. Nước bên trong có màu đùng đục...",
+        "targetScene": "room_toilet_closeup",
+        "inspectText": "Nhìn gần vào bồn cầu...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0

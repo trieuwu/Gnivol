@@ -1,0 +1,37 @@
+{
+  "roomId": "room_chu_nha",
+  "roomName": "Phòng Chủ Nhà",
+  "background": "images/back_ground/chu_nha/chu_nha.png",
+  "objects": [
+    {
+      "id": "stairs_down_hallway1",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_hallway",
+        "inspectText": "Đi xuống lại sảnh hành lang.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down_hallway2",
+      "type": "door",
+      "x": 873,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_hallway",
+        "inspectText": "Đi xuống lại sảnh hành lang.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    }
+  ]
+}

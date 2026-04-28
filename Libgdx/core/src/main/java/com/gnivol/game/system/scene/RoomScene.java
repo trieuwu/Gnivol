@@ -40,13 +40,6 @@ public class RoomScene extends Scene {
 
     @Override
     public void enter() {
-        if ("room_bathroom".equals(sceneId)) {
-            if (puzzleManager.isItemCollected("keo_502_final")) {
-                roomData.setBackground("images/back_ground/bathroom/bathroom_no_bottle.png");
-            } else {
-                roomData.setBackground("images/back_ground/bathroom/bathroom_bottle.png");
-            }
-        }
         if (roomData.getBackground() != null) {
             backgroundTexture = new Texture(Gdx.files.internal(roomData.getBackground()));
         }
