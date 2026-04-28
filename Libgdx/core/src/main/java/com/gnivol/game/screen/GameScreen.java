@@ -405,7 +405,7 @@ public class GameScreen extends BaseScreen {
         }
         setupInputProcessors();
         if (inventoryUI != null) {
-            inventoryUI.refreshUI(); 
+            inventoryUI.refreshUI();
         }
     }
 
@@ -668,6 +668,10 @@ public class GameScreen extends BaseScreen {
         sceneManager.changeScene(room != null ? room : Constants.SCENE_BEDROOM);
         screenFader.startFadeIn();
         if (!game.isLoadedGame) {
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().onSaveTrigger("new_game_start");
+            }
+
             DialogueTree intro = dialogueDatabase.get("intro_thought");
             if (intro != null) {
                 dialogueEngine.loadDialogue(intro);
@@ -955,6 +959,10 @@ public class GameScreen extends BaseScreen {
 
         if (game.getRsManager().isEndGame()) {
             isGameOver = true;
+
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().setGameOver(true);
+            }
 
             com.badlogic.gdx.files.FileHandle saveFile = Gdx.files.external(".gnivol/save_slot_1.json");
             if (saveFile.exists()) {

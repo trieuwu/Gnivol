@@ -253,7 +253,7 @@ public class DialogueUI {
             if (onFinished != null) {
                 Runnable callback = onFinished;
                 onFinished = null;
-                callback.run();
+                onFinished = null;
             }
             // Bất chấp click ở đâu, hễ khung thoại tắt là nó ép Cutscene chạy tiếp!
             if (game != null && game.getScreen() instanceof com.gnivol.game.screen.GameScreen) {
