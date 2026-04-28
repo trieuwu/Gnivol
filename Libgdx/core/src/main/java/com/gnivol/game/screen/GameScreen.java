@@ -102,6 +102,14 @@ public class GameScreen extends BaseScreen {
     public DialogueEngine getDialogueEngine() { return dialogueEngine; }
     public DialogueUI getDialogueUI() { return dialogueUI; }
 
+    // --- BIẾN HIỆU ỨNG TÂM LÝ (RS GLITCH) ---
+    private float rsCycleTimer = 0f;          // Đồng hồ đếm chu kỳ 10s
+    private boolean isRsGlitching = false;    // Đang glitch hay không
+    private float rsGlitchDurationTimer = 0f; // Đồng hồ đếm thời gian giật (kéo dài 0.75s)
+    private float shaderTime = 0f;            // Biến truyền cho Shader
+    private ShaderProgram glitchShader;
+    private Vector2 originalCameraPos = new Vector2(); // Ghi nhớ vị trí gốc để rung xong trả về
+
     public RoomData.RoomObject getRoomObjectData(String id) {
         if (sceneManager.getCurrentScene() == null) return null;
         for (RoomData.RoomObject obj : sceneManager.getCurrentScene().getRoomData().objects) {
@@ -138,6 +146,28 @@ public class GameScreen extends BaseScreen {
                     Gdx.app.error("GameScreen", "ChromaKey shader compile error: " + chromaShader.getLog());
                     chromaShader.dispose();
                     chromaShader = null;
+                }
+                // 3. Load file FRAGMENT cho GLITCH (Nhiễu sóng)
+                // Tự viết một Vertex Shader chuẩn của LibGDX để nó ôm khít vào glitch.frag
+                String defaultVert =
+                    "attribute vec4 a_position;\n" +
+                        "attribute vec4 a_color;\n" +
+                        "attribute vec2 a_texCoord0;\n" +
+                        "uniform mat4 u_projTrans;\n" +
+                        "varying vec4 v_color;\n" +
+                        "varying vec2 v_texCoords;\n" +
+                        "void main() {\n" +
+                        "    v_color = a_color;\n" +
+                        "    v_texCoords = a_texCoord0;\n" +
+                        "    gl_Position = u_projTrans * a_position;\n" +
+                        "}";
+
+                String fragGlitch = Gdx.files.internal("shaders/glitch.frag").readString();
+                glitchShader = new ShaderProgram(defaultVert, fragGlitch);
+
+                if (!glitchShader.isCompiled()) {
+                    Gdx.app.error("GameScreen", "Glitch shader lỗi: " + glitchShader.getLog());
+                    glitchShader = null;
                 }
             } catch (Exception e) {
                 Gdx.app.error("GameScreen", "Failed to load chromakey shader", e);
@@ -566,16 +596,23 @@ public class GameScreen extends BaseScreen {
                 }
 
                 if (dialogueUI != null && dialogueUI.isVisible()) {
+                    if (!dialogueUI.canClick()) {
+                        return true;
+                    }
                     // Kích hoạt khi có thoại và đó KHÔNG phải là màn hình chọn A B C
                     if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
-                        dialogueEngine.advance();
-                        // displayNode tự xử lý cả 2 case (node hoặc null) — bao gồm gọi
-                        // cutsceneManager.onDialogueFinished() bên trong nhánh null,
-                        // nên KHÔNG gọi onDialogueFinished thêm ở đây để tránh double-advance
-                        // (sẽ skip step dialogue tiếp theo trong cutscene).
-                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                        if (dialogueEngine.isFinished() && game.getAutoSaveManager() != null) {
-                            game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
+                        if (dialogueUI.isTyping()) {
+                            dialogueUI.finishTyping();
+                        } else {
+                            dialogueEngine.advance();
+                            // displayNode tự handle cả 2 case (node/null) + tự gọi
+                            // cutsceneManager.onDialogueFinished() bên trong nhánh null.
+                            // KHÔNG gọi onDialogueFinished ngoài này để tránh double-advance
+                            // (sẽ skip step dialogue tiếp theo trong cutscene — bug đã fix ở PR #73).
+                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                            if (dialogueEngine.isFinished() && game.getAutoSaveManager() != null) {
+                                game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
+                            }
                         }
                     }
                     return true;
@@ -725,6 +762,54 @@ public class GameScreen extends BaseScreen {
         screenFader.update(delta);
         if (!isGameOver) {
             sceneManager.update(delta);
+
+            // Lưu lại vị trí camera chuẩn xác nhất lúc game mới bật
+            if (originalCameraPos.x == 0 && originalCameraPos.y == 0) {
+                originalCameraPos.set(camera.position.x, camera.position.y);
+            }
+            float currentRS = game.getRsManager().getRS();
+            // 1. Kiểm tra nếu RS nằm ngoài vùng an toàn (35 -> 65)
+            if (currentRS < 35f || currentRS > 65f) {
+                rsCycleTimer += delta;
+
+                // Đủ 10 giây -> Kích hoạt cơn điên
+                if (rsCycleTimer >= 10f) {
+                    rsCycleTimer = 0f;
+                    isRsGlitching = true;
+                    rsGlitchDurationTimer = 0f;
+
+                    // Phát tiếng dè dè như game đag bị lỗi
+                    // if (game.getAudioManager() != null) game.getAudioManager().playSFX("sfx_glitch_noise");
+                }
+            } else {
+                rsCycleTimer = 0f;
+                isRsGlitching = false;
+            }
+
+            // 2. Xử lý Rung Camera kéo dài 0.75 giây
+            if (isRsGlitching) {
+                rsGlitchDurationTimer += delta;
+                shaderTime += delta;
+
+                // Tính toán độ bạo lực: Càng lệch khỏi mức 50, rung càng mạnh
+                float severity = (currentRS < 35f) ? (35f - currentRS) : (currentRS - 65f);
+                float shakeAmount = 2f + (severity * 0.15f);
+
+                camera.position.x = originalCameraPos.x + (float)(Math.random() - 0.5) * shakeAmount;
+                camera.position.y = originalCameraPos.y + (float)(Math.random() - 0.5) * shakeAmount;
+                camera.update();
+
+                // Dừng lại sau 0.75s
+                if (rsGlitchDurationTimer > 0.75f) {
+                    isRsGlitching = false;
+                }
+            } else {
+                // Gim camera về chỗ cũ, tránh bị kẹt lệch màn hình
+                if (camera.position.x != originalCameraPos.x || camera.position.y != originalCameraPos.y) {
+                    camera.position.set(originalCameraPos.x, originalCameraPos.y, 0);
+                    camera.update();
+                }
+            }
         }
         if (dialogueUI != null) dialogueUI.update(delta);
         game.getStage().act(delta);
@@ -734,13 +819,33 @@ public class GameScreen extends BaseScreen {
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
+
+        // 1. CHỈ GẮN SHADER VÀO BATCH (TRƯỚC KHI BEGIN)
+        if (isRsGlitching && glitchShader != null) {
+            batch.setShader(glitchShader);
+        }
+
+        // --- BẬT CÔNG TẮC VẼ ---
         batch.begin();
+
+        // 2. TRUYỀN BIẾN (UNIFORM) SAU KHI ĐÃ BEGIN
+        if (isRsGlitching && glitchShader != null) {
+            glitchShader.setUniformf("u_time", shaderTime);
+            // Tính toán cường độ nhiễu (0.0 đến 1.0)
+            float currentRS = game.getRsManager().getRS();
+            float intensity = (currentRS < 35f) ? (35f - currentRS) / 35f : (currentRS - 65f) / 35f;
+            glitchShader.setUniformf("u_intensity", intensity);
+        }
         sceneManager.render(batch);
         if (vignetteTexture != null) {
             batch.draw(vignetteTexture, 0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
         }
         batch.end();
 
+        // --- TẮT SHADER (Bảo vệ UI & Khung thoại không bị lỗi màu) ---
+        if (batch.getShader() == glitchShader) {
+            batch.setShader(null);
+        }
         overlayManager.render(delta, batch, camera);
         // Debug overlay items từ overlays.json
         if (debugManager.isDebugMode() && overlayManager.isActive() && overlayManager.getTexture() != null) {
@@ -1021,6 +1126,7 @@ public class GameScreen extends BaseScreen {
         if (cutsceneSprite != null) cutsceneSprite.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
         if (chromaShader != null) chromaShader.dispose();
+        if (glitchShader != null) glitchShader.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
         if (vignetteTexture != null) vignetteTexture.dispose();
         if (sceneManager != null) sceneManager.dispose();
