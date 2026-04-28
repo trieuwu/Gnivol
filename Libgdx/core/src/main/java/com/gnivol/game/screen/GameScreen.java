@@ -297,6 +297,12 @@ public class GameScreen extends BaseScreen {
 
                 @Override
                 public void onDialogue(String dialogueId) {
+                    // Clear cutscene sprite overlay khi vào dialogue → dialog hiện trên background phòng,
+                    // không bị kẹt sprite jumpscare cuối (vd /1.png của door_neighbor).
+                    if (cutsceneSprite != null) {
+                        cutsceneSprite.dispose();
+                        cutsceneSprite = null;
+                    }
                     triggerDialogue(dialogueId);
                 }
 
@@ -434,6 +440,9 @@ public class GameScreen extends BaseScreen {
             isInitialized = true;
         }
         setupInputProcessors();
+        if (inventoryUI != null) {
+            inventoryUI.refreshUI();
+        }
     }
 
     private void setupPuzzleListeners() {
@@ -594,19 +603,15 @@ public class GameScreen extends BaseScreen {
                     if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
                         if (dialogueUI.isTyping()) {
                             dialogueUI.finishTyping();
-                        }
-                        else{
+                        } else {
                             dialogueEngine.advance();
-                            if (!dialogueEngine.isFinished()) {
-                                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                            } else {
-                                if (cutsceneManager != null && cutsceneManager.isPlaying()) {
-                                    cutsceneManager.onDialogueFinished();
-                                }
-                                dialogueUI.displayNode(null);
-                                if (game.getAutoSaveManager() != null) {
-                                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
-                                }
+                            // displayNode tự handle cả 2 case (node/null) + tự gọi
+                            // cutsceneManager.onDialogueFinished() bên trong nhánh null.
+                            // KHÔNG gọi onDialogueFinished ngoài này để tránh double-advance
+                            // (sẽ skip step dialogue tiếp theo trong cutscene — bug đã fix ở PR #73).
+                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                            if (dialogueEngine.isFinished() && game.getAutoSaveManager() != null) {
+                                game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
                             }
                         }
                     }
@@ -703,6 +708,10 @@ public class GameScreen extends BaseScreen {
         sceneManager.changeScene(room != null ? room : Constants.SCENE_BEDROOM);
         screenFader.startFadeIn();
         if (!game.isLoadedGame) {
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().onSaveTrigger("new_game_start");
+            }
+
             DialogueTree intro = dialogueDatabase.get("intro_thought");
             if (intro != null) {
                 dialogueEngine.loadDialogue(intro);
@@ -1004,7 +1013,16 @@ public class GameScreen extends BaseScreen {
             sceneManager.changeScene(targetSceneId);
             game.getGameState().setCurrentRoom(targetSceneId);
             if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
+            triggerFirstTimeSceneEvents(targetSceneId);
         });
+    }
+
+    /** Cutscene/event chỉ play LẦN ĐẦU vào scene cụ thể. Gate bằng FlagManager. */
+    private void triggerFirstTimeSceneEvents(String targetSceneId) {
+        if ("room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
+            game.getFlagManager().set("first_time_hallway", true);
+            cutsceneManager.play("door_neighbor");
+        }
     }
 
     public void triggerDialogue(String dialogueId) {
@@ -1058,6 +1076,10 @@ public class GameScreen extends BaseScreen {
 
         if (game.getRsManager().isEndGame()) {
             isGameOver = true;
+
+            if (game.getAutoSaveManager() != null) {
+                game.getAutoSaveManager().setGameOver(true);
+            }
 
             com.badlogic.gdx.files.FileHandle saveFile = Gdx.files.external(".gnivol/save_slot_1.json");
             if (saveFile.exists()) {

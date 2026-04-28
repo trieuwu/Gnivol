@@ -28,6 +28,7 @@ public class SettingScreen extends BaseScreen {
     private Skin skin;
     private Label musicValueLabel;
     private Label sfxValueLabel;
+    private com.badlogic.gdx.graphics.glutils.ShapeRenderer dimRenderer;
 
     public SettingScreen(GnivolGame game, Screen previousScreen) {
         super(game);
@@ -40,6 +41,8 @@ public class SettingScreen extends BaseScreen {
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
         stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
         Gdx.input.setInputProcessor(stage);
+
+        dimRenderer = new com.badlogic.gdx.graphics.glutils.ShapeRenderer();
 
         com.gnivol.game.system.FontManager fm = game.getFontManager();
 
@@ -95,17 +98,53 @@ public class SettingScreen extends BaseScreen {
         backBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(previousScreen);
+                stage.getRoot().setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+
+                stage.getRoot().addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut(0.5f),
+                    com.badlogic.gdx.scenes.scene2d.actions.Actions.run(() -> game.setScreen(previousScreen))
+                ));
             }
         });
         table.add(backBtn).colspan(3).padTop(50f).row();
 
         stage.addActor(table);
+
+        stage.getRoot().getColor().a = 0f;
+        stage.getRoot().addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn(0.5f));
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0, 1);
+        if (previousScreen instanceof PauseScreen) {
+            ((PauseScreen) previousScreen).getGameScreen().render(0f);
+        } else if (previousScreen != null) {
+            previousScreen.render(0f);
+        }
+
+        stage.getViewport().apply();
+        dimRenderer.setProjectionMatrix(stage.getCamera().combined);
+
+        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+        Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
+        dimRenderer.begin(com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled);
+
+        float fadeAlpha = stage.getRoot().getColor().a;
+        float dimAlpha = fadeAlpha;
+
+        if (previousScreen instanceof PauseScreen) {
+            dimAlpha = 1.0f;
+        }
+
+        Color colorBottom = new Color(0f, 0f, 0f, 0.9f * dimAlpha);
+        Color colorTop = new Color(0f, 0f, 0f, 0.4f * dimAlpha);
+
+        dimRenderer.rect(0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT,
+            colorBottom, colorBottom, colorTop, colorTop);
+
+        dimRenderer.end();
+
+        Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
         stage.act(delta);
         stage.draw();
     }
@@ -123,5 +162,6 @@ public class SettingScreen extends BaseScreen {
     public void dispose() {
         if (stage != null) stage.dispose();
         if (skin != null) skin.dispose();
+        if (dimRenderer != null) dimRenderer.dispose();
     }
 }
