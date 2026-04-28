@@ -21,6 +21,7 @@ public class PauseScreen extends BaseScreen {
     private final GameScreen gameScreen;
     private Stage stage;
     private ShapeRenderer dimRenderer;
+    private boolean isInitialized = false;
 
     public PauseScreen(GnivolGame game, GameScreen gameScreen) {
         super(game);
@@ -29,66 +30,70 @@ public class PauseScreen extends BaseScreen {
 
     @Override
     public void show() {
-        stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
-        dimRenderer = new ShapeRenderer();
+        if (!isInitialized) {
+            stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+            dimRenderer = new ShapeRenderer();
 
-        com.gnivol.game.system.FontManager fm = game.getFontManager();
+            com.gnivol.game.system.FontManager fm = game.getFontManager();
 
-        Label.LabelStyle titleStyle = new Label.LabelStyle(fm.fontTitle, Color.WHITE);
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.font = fm.fontButton;
-        buttonStyle.fontColor = Color.WHITE;
-        buttonStyle.overFontColor = Color.YELLOW;
+            Label.LabelStyle titleStyle = new Label.LabelStyle(fm.fontTitle, Color.WHITE);
+            TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+            buttonStyle.font = fm.fontButton;
+            buttonStyle.fontColor = Color.WHITE;
+            buttonStyle.overFontColor = Color.YELLOW;
 
-        Table table = new Table();
-        table.setFillParent(true);
-        table.center();
+            Table table = new Table();
+            table.setFillParent(true);
+            table.center();
 
-        table.add(new Label("PAUSED", titleStyle)).padBottom(60f).row();
+            table.add(new Label("PAUSED", titleStyle)).padBottom(60f).row();
 
-        TextButton resumeBtn = new TextButton("Resume Game", buttonStyle);
-        resumeBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(gameScreen);
-            }
-        });
-        table.add(resumeBtn).padBottom(25f).row();
-
-        TextButton settingBtn = new TextButton("Settings", buttonStyle);
-        settingBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingScreen(game, PauseScreen.this));
-            }
-        });
-        table.add(settingBtn).padBottom(25f).row();
-
-        TextButton quitBtn = new TextButton("Quit to Menu", buttonStyle);
-        quitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gameScreen.dispose();
-                game.setScreen(new MainMenuScreen(game));
-            }
-        });
-        table.add(quitBtn).padBottom(25f).row();
-
-        stage.addActor(table);
-
-        Gdx.input.setInputProcessor(stage);
-
-        // ESC → resume
-        stage.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
+            TextButton resumeBtn = new TextButton("Resume Game", buttonStyle);
+            resumeBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
                     game.setScreen(gameScreen);
-                    return true;
                 }
-                return false;
-            }
-        });
+            });
+            table.add(resumeBtn).padBottom(25f).row();
+
+            TextButton settingBtn = new TextButton("Settings", buttonStyle);
+            settingBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.setScreen(new SettingScreen(game, PauseScreen.this));
+                }
+            });
+            table.add(settingBtn).padBottom(25f).row();
+
+            TextButton quitBtn = new TextButton("Quit to Menu", buttonStyle);
+            quitBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    gameScreen.dispose();
+                    game.setScreen(new MainMenuScreen(game));
+                }
+            });
+            table.add(quitBtn).padBottom(25f).row();
+
+            stage.addActor(table);
+            // ESC → resume
+            stage.addListener(new InputListener() {
+                @Override
+                public boolean keyDown(InputEvent event, int keycode) {
+                    if (keycode == Input.Keys.ESCAPE) {
+                        game.setScreen(gameScreen);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            isInitialized = true;
+        }
+        stage.getRoot().getColor().a = 0f;
+        stage.getRoot().addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn(0.5f));
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -120,6 +125,10 @@ public class PauseScreen extends BaseScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         if (stage != null) stage.getViewport().update(width, height, true);
+    }
+
+    public GameScreen getGameScreen() {
+        return gameScreen;
     }
 
     @Override

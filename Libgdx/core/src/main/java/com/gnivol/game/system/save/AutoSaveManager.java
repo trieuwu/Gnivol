@@ -10,6 +10,11 @@ public class AutoSaveManager {
 
     private final GameSnapshot gameSnapshot;
     private final SaveUIController saveUIController;
+    private boolean isGameOver = false;
+
+    public void setGameOver(boolean gameOver) {
+        this.isGameOver = gameOver;
+    }
 
     public AutoSaveManager(GameSnapshot snapshot, SaveUIController uiController) {
         this.dirtyTracker = new DirtyTracker();
@@ -21,6 +26,10 @@ public class AutoSaveManager {
     }
 
     public void onSaveTrigger(String triggerKey) {
+        if (isGameOver) {
+            Gdx.app.log("AutoSave", "Game Over detected, block saving!");
+            return;
+        }
         dirtyTracker.markDirty(triggerKey);
 
         if (!dirtyTracker.hasAnyDirty()) return;
@@ -48,7 +57,7 @@ public class AutoSaveManager {
             public void onError(Exception e) {
                 Gdx.app.error("AutoSave", "Error while saving: ", e);
                 saveLock.unlock();
-                
+
             }
         });
     }

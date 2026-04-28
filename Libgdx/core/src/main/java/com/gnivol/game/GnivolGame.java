@@ -2,7 +2,9 @@ package com.gnivol.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.ashley.core.Engine;
@@ -66,8 +68,20 @@ public class GnivolGame extends Game {
         gameSnapshot.register(puzzleManager);
         gameSnapshot.register(flagManager);
 
+        try {
+            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("images/cursor.png"));
+            Cursor customCursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
+            Gdx.graphics.setCursor(customCursor);
+            cursorPixmap.dispose();
+            Gdx.app.log("Game", "Custom cursor loaded successfully.");
+        } catch (Exception e) {
+            Gdx.app.error("Game", "Không thể tải con trỏ chuột: " + e.getMessage());
+        }
+        // --------------------------------------
 
         setScreen(new LoginScreen(this));
+
+
     }
 
     @Override
@@ -113,6 +127,7 @@ public class GnivolGame extends Game {
         if (rsManager != null) rsManager.reset();
         if (flagManager != null) flagManager.reset();
         if (gameState != null) gameState.setCurrentRS(35);
+        if (autoSaveManager != null) autoSaveManager.setGameOver(false);
 
         isLoadedGame = false;
         Gdx.app.log("Game", "Cleared");
@@ -129,6 +144,7 @@ public class GnivolGame extends Game {
             com.badlogic.gdx.utils.JsonReader reader = new com.badlogic.gdx.utils.JsonReader();
             com.badlogic.gdx.utils.JsonValue root = reader.parse(jsonStr);
 
+            if (autoSaveManager != null) autoSaveManager.setGameOver(false);
             if (inventoryManager != null) inventoryManager.clearInventory();
             if (puzzleManager != null) puzzleManager.reset();
             if (sceneManager != null) sceneManager.reset();

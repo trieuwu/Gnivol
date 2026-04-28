@@ -21,116 +21,178 @@ public class MainMenuScreen extends BaseScreen {
 
     private Stage stage;
     private Texture backgroundTexture;
+    private Texture helpTex;
+    private long lastClickTime = 0;
+    private Texture vignetteTexture;
+    private boolean isInitialized = false;
 
     public MainMenuScreen(GnivolGame game) {
         super(game);
     }
 
+    private Texture createVignetteTexture(int width, int height) {
+        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(width, height, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        float centerX = width / 2f;
+        float centerY = height / 2f;
+        float maxDist = (float) Math.sqrt(centerX * centerX + centerY * centerY);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                float dist = (float) Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                float alpha = dist / maxDist;
+
+                alpha = (float) Math.pow(alpha, 4);
+                if (alpha > 0.15f) alpha = 0.15f;
+
+                pixmap.setColor(new Color(0f, 0f, 0f, alpha));
+                pixmap.drawPixel(x, y);
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pixmap.dispose();
+        return tex;
+    }
+
     @Override
     public void show() {
-        game.getStage().clear();
-        stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
-        Gdx.input.setInputProcessor(stage);
-        backgroundTexture = new Texture(Gdx.files.internal("images/final_login_bg.png"));
+        if (!isInitialized) {
+            game.getStage().clear();
+            stage = new Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
+            backgroundTexture = new Texture(Gdx.files.internal("images/final_login_bg.png"));
 
-        com.badlogic.gdx.scenes.scene2d.ui.Image bgImage = new com.badlogic.gdx.scenes.scene2d.ui.Image(backgroundTexture);
-        bgImage.setSize(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
-        stage.addActor(bgImage);
+            com.badlogic.gdx.scenes.scene2d.ui.Image bgImage = new com.badlogic.gdx.scenes.scene2d.ui.Image(backgroundTexture);
+            bgImage.setSize(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+            bgImage.setOrigin(Align.center);
+            stage.addActor(bgImage);
 
-        // Phát nhạc menu
-        if (game.getAudioManager() != null) {
-            game.getAudioManager().playBGM("menu_bgm");
-        }
+            vignetteTexture = createVignetteTexture(512, 512);
+            com.badlogic.gdx.scenes.scene2d.ui.Image vignetteImage = new com.badlogic.gdx.scenes.scene2d.ui.Image(vignetteTexture);
+            vignetteImage.setSize(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+            vignetteImage.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+            stage.addActor(vignetteImage);
 
-        com.gnivol.game.system.FontManager fm = game.getFontManager();
-
-        TextButton.TextButtonStyle titleStyle = new TextButton.TextButtonStyle();
-        titleStyle.font = fm.fontTitle;
-        titleStyle.fontColor = Color.WHITE;
-        titleStyle.overFontColor = Color.YELLOW;
-
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.font = fm.fontButton;
-        buttonStyle.fontColor = Color.WHITE;
-        buttonStyle.overFontColor = Color.YELLOW;
-
-        Table table = new Table();
-        table.setFillParent(true);
-        table.left().bottom();
-        table.padLeft(125f);
-        table.padBottom(150f);
-
-        TextButton newGameBtn = new TextButton("New Game", buttonStyle);
-        newGameBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Kiểm tra xem đã có file save chưa
-                if (Gdx.files.external(".gnivol/save_slot_1.json").exists()) {
-                    showNewGameConfirmDialog(buttonStyle);
-                } else {
-                    startNewGame();
-                }
+            // Phát nhạc menu
+            if (game.getAudioManager() != null) {
+                game.getAudioManager().playBGM("menu_bgm");
             }
-        });
 
-        // Nút Load Game
-        TextButton loadGameBtn = new TextButton("Load Game", buttonStyle);
-        loadGameBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                boolean isLoaded = game.loadGame();
-                if (isLoaded) {
-                    game.isLoadedGame = true;
+            com.gnivol.game.system.FontManager fm = game.getFontManager();
 
-                    if (game.getScreenFader() != null) {
-                        game.getScreenFader().startFade(() -> {
-                            Gdx.app.postRunnable(() -> {
-                                game.setScreen(new LoadingScreen(game, LoadingScreen.LoadingTarget.LOAD_GAME, null));
-                                MainMenuScreen.this.dispose();
-                            });
-                        });
+            TextButton.TextButtonStyle titleStyle = new TextButton.TextButtonStyle();
+            titleStyle.font = fm.fontTitle;
+            titleStyle.fontColor = Color.WHITE;
+            titleStyle.overFontColor = Color.YELLOW;
+
+            TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+            buttonStyle.font = fm.fontButton;
+            buttonStyle.fontColor = Color.WHITE;
+            buttonStyle.overFontColor = Color.YELLOW;
+
+            Table table = new Table();
+            table.setFillParent(true);
+            table.left().bottom();
+            table.padLeft(125f);
+            table.padBottom(150f);
+
+            TextButton newGameBtn = new TextButton("New Game", buttonStyle);
+            newGameBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+
+                    if (Gdx.files.external(".gnivol/save_slot_1.json").exists()) {
+                        showNewGameConfirmDialog(buttonStyle);
                     } else {
-                        game.setScreen(new LoadingScreen(game, LoadingScreen.LoadingTarget.LOAD_GAME, null));
-                        MainMenuScreen.this.dispose();
+                        startNewGame();
                     }
-                } else {
-                    showNoSaveDataDialog();
                 }
+            });
+
+            // Nút Load Game
+            TextButton loadGameBtn = new TextButton("Load Game", buttonStyle);
+            loadGameBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (com.badlogic.gdx.utils.TimeUtils.millis() - lastClickTime < 500) return;
+                    lastClickTime = com.badlogic.gdx.utils.TimeUtils.millis();
+
+                    boolean isLoaded = game.loadGame();
+                    if (isLoaded) {
+                        game.isLoadedGame = true;
+
+                        if (game.getScreenFader() != null) {
+                            game.getScreenFader().startFade(() -> {
+                                Gdx.app.postRunnable(() -> {
+                                    game.setScreen(new LoadingScreen(game, LoadingScreen.LoadingTarget.LOAD_GAME, null));
+                                    MainMenuScreen.this.dispose();
+                                });
+                            });
+                        } else {
+                            game.setScreen(new LoadingScreen(game, LoadingScreen.LoadingTarget.LOAD_GAME, null));
+                            MainMenuScreen.this.dispose();
+                        }
+                    } else {
+                        showNoSaveDataDialog();
+                    }
+                }
+            });
+
+            // Nút Settings
+            TextButton settingBtn = new TextButton("Settings", buttonStyle);
+            settingBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.setScreen(new SettingScreen(game, MainMenuScreen.this));
+                }
+            });
+
+            // Nút Quit
+            TextButton quitBtn = new TextButton("Quit", buttonStyle);
+            quitBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.app.exit();
+                }
+            });
+
+            TextButton Title = new TextButton("GNIVOL", titleStyle);
+
+            float btnWidth = 25f;
+            table.add(Title).left().width(btnWidth).padBottom(25f).row();
+            table.add(newGameBtn).left().width(btnWidth).padBottom(25f).row();
+            table.add(loadGameBtn).left().width(btnWidth).padBottom(25f).row();
+            table.add(settingBtn).left().width(btnWidth).padBottom(25f).row();
+            table.add(quitBtn).left().width(btnWidth).padBottom(25f).row();
+            stage.addActor(table);
+
+            try {
+                helpTex = new Texture(Gdx.files.internal("images/UI/thinking_final.png"));
+                com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable helpDrawable = new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(new com.badlogic.gdx.graphics.g2d.TextureRegion(helpTex));
+                com.badlogic.gdx.scenes.scene2d.ui.ImageButton helpBtn = new com.badlogic.gdx.scenes.scene2d.ui.ImageButton(helpDrawable);
+
+                Table helpTable = new Table();
+                helpTable.setFillParent(true);
+                helpTable.top().right().pad(30f);
+                helpTable.add(helpBtn).size(60, 60);
+
+                helpBtn.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        if (com.badlogic.gdx.utils.TimeUtils.millis() - lastClickTime < 500) return;
+                        lastClickTime = com.badlogic.gdx.utils.TimeUtils.millis();
+                        showHelpOverlay();
+                    }
+                });
+                stage.addActor(helpTable);
+            } catch (Exception e) {
+                Gdx.app.error("MainMenuScreen", "Không tìm thấy file: images/UI/help_icon.png", e);
             }
-        });
-
-        // Nút Settings
-        TextButton settingBtn = new TextButton("Settings", buttonStyle);
-        settingBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingScreen(game, MainMenuScreen.this));
+            if (game.getScreenFader() != null) {
+                game.getScreenFader().startFadeIn();
             }
-        });
-
-        // Nút Quit
-        TextButton quitBtn = new TextButton("Quit", buttonStyle);
-        quitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
-            }
-        });
-
-        TextButton Title = new TextButton("GNIVOL", titleStyle);
-
-        float btnWidth = 25f;
-        table.add(Title).left().width(btnWidth).padBottom(25f).row();
-        table.add(newGameBtn).left().width(btnWidth).padBottom(25f).row();
-        table.add(loadGameBtn).left().width(btnWidth).padBottom(25f).row();
-        table.add(settingBtn).left().width(btnWidth).padBottom(25f).row();
-        table.add(quitBtn).left().width(btnWidth).padBottom(25f).row();
-        stage.addActor(table);
-
-        if (game.getScreenFader() != null) {
-            game.getScreenFader().startFadeIn();
+            isInitialized = true;
         }
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -138,6 +200,7 @@ public class MainMenuScreen extends BaseScreen {
         ScreenUtils.clear(0, 0, 0, 1);
         stage.act(delta);
         stage.draw();
+
 
         if (game.getScreenFader() != null) {
             game.getScreenFader().update(delta);
@@ -158,8 +221,8 @@ public class MainMenuScreen extends BaseScreen {
 
         float centerX = width / 2f;
 
-        int startY = 40;
-        int endY = 240;
+//        int startY = 40;
+//        int endY = 240;
 
         for (int x = 0; x < width; x++) {
             float distanceToCenter = Math.abs(x - centerX);
@@ -167,7 +230,7 @@ public class MainMenuScreen extends BaseScreen {
             float finalAlpha = Math.max(0f, alpha * 0.85f); // Ngăn alpha bị âm
 
             bgPix.setColor(new Color(0f, 0f, 0f, finalAlpha));
-            bgPix.drawLine(x, startY, x, endY);
+            bgPix.drawLine(x, 0, x, height);
         }
 
         Texture texture = new Texture(bgPix);
@@ -339,6 +402,113 @@ public class MainMenuScreen extends BaseScreen {
         });
     }
 
+    private void showHelpOverlay() {
+        com.badlogic.gdx.graphics.Pixmap dimPix = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        dimPix.setColor(new Color(0f, 0f, 0f, 0.75f));
+        dimPix.fill();
+        final Texture dimTex = new Texture(dimPix);
+        dimPix.dispose();
+
+        final Table overlayTable = new Table();
+        overlayTable.setFillParent(true);
+        overlayTable.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(new com.badlogic.gdx.graphics.g2d.TextureRegion(dimTex)));
+        overlayTable.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.enabled);
+        stage.addActor(overlayTable);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle windowStyle = new com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle();
+        windowStyle.titleFont = game.getFontManager().fontVietnamese;
+        windowStyle.background = createDialogBackground(800, 500);
+
+        final com.badlogic.gdx.scenes.scene2d.ui.Dialog dialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", windowStyle) {
+            @Override public float getPrefWidth() { return 800f; }
+            @Override public float getPrefHeight() { return 500f; }
+        };
+
+        Label.LabelStyle titleStyle = new Label.LabelStyle(game.getFontManager().fontTitle, Color.valueOf("#8B0000")); // Đổi sang màu đỏ máu (Blood Red) thay vì vàng gold
+        Label titleLabel = new Label("SURVIVAL GUIDE", titleStyle);
+
+        Label.LabelStyle textStyle = new Label.LabelStyle(game.getFontManager().fontVietnamese, Color.LIGHT_GRAY); // Chữ xám nhạt u ám
+
+        // Văn bản tiếng Anh với phong cách rùng rợn
+        String helpText =
+            "\"They tell you it's just a dream. They lie.\"\n\n" +
+                "You are trapped in a place where reality is fragile. The shadows hold forgotten secrets, and every object you touch carries a curse from those who came before you.\n\n" +
+                "To survive, you must scavenge for fragments of the truth. Examine them closely. Some artifacts are broken and must be merged together to unlock doors that should have stayed closed.\n\n" +
+                "But above all, guard your mind. Your Reality Stability (RS) is constantly slipping. Let the terror consume you (100), and your sanity will shatter. Lose all emotion (0), and you will become one of the hollow shells wandering in the dark.\n\n" +
+                "Tread carefully. The dark is listening.";
+
+        Label contentLabel = new Label(helpText, textStyle);
+        contentLabel.setWrap(true);
+        contentLabel.setAlignment(Align.left);
+
+        com.badlogic.gdx.scenes.scene2d.ui.ScrollPane scrollPane = new com.badlogic.gdx.scenes.scene2d.ui.ScrollPane(contentLabel);
+        scrollPane.setScrollingDisabled(true, false); // Khóa cuộn ngang, chỉ cho phép cuộn dọc
+        scrollPane.setFadeScrollBars(false);
+
+        TextButton.TextButtonStyle closeStyle = new TextButton.TextButtonStyle();
+        closeStyle.font = game.getFontManager().fontTitle;
+        closeStyle.fontColor = Color.RED;
+        closeStyle.overFontColor = Color.WHITE;
+        TextButton closeBtn = new TextButton("X", closeStyle);
+
+        Runnable closeTask = () -> {
+            dialog.hide();
+            overlayTable.remove();
+            dimTex.dispose();
+        };
+
+        closeBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                closeTask.run();
+            }
+        });
+
+        Table topRow = new Table();
+        topRow.add(titleLabel).expandX().center().padLeft(40f);
+        topRow.add(closeBtn).right().padRight(20f);
+
+        com.badlogic.gdx.graphics.Pixmap linePix = new com.badlogic.gdx.graphics.Pixmap(1, 2, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        linePix.setColor(new Color(0.8f, 0.7f, 0.4f, 0.6f));
+        linePix.fill();
+        Texture lineTex = new Texture(linePix);
+        com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable lineDrawable =
+            new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(new com.badlogic.gdx.graphics.g2d.TextureRegion(lineTex));
+        linePix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Image separatorLine = new com.badlogic.gdx.scenes.scene2d.ui.Image(lineDrawable);
+
+        closeBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                closeTask.run();
+            }
+        });
+
+        dialog.clearListeners();
+        dialog.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+            @Override
+            public boolean keyDown(com.badlogic.gdx.scenes.scene2d.InputEvent event, int keycode) {
+                if (keycode == com.badlogic.gdx.Input.Keys.ESCAPE) {
+                    if (com.badlogic.gdx.utils.TimeUtils.millis() - lastClickTime < 200) return true;
+                    lastClickTime = com.badlogic.gdx.utils.TimeUtils.millis();
+                    closeTask.run();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        dialog.getContentTable().clearChildren();
+        dialog.getContentTable().add(topRow).fillX().padTop(20f).row();
+        dialog.getContentTable().add(separatorLine).width(650).height(2).center().padTop(15f).padBottom(25f).row();
+        dialog.getContentTable().add(scrollPane).expand().fill().padLeft(40f).padRight(40f).padBottom(40f);
+
+        dialog.show(stage);
+        stage.setKeyboardFocus(dialog);
+        stage.setScrollFocus(scrollPane);
+    }
+
     private void startNewGame() {
         game.getRsManager().reset();
         game.getInventoryManager().clearInventory();
@@ -348,6 +518,7 @@ public class MainMenuScreen extends BaseScreen {
         if (game.getSceneManager() != null) game.getSceneManager().reset();
         if (game.getPuzzleManager() != null) game.getPuzzleManager().reset();
 
+        if (game.getAutoSaveManager() != null) game.getAutoSaveManager().setGameOver(false);
 
         com.badlogic.gdx.files.FileHandle saveFile = Gdx.files.external(".gnivol/save_slot_1.json");
         if (saveFile.exists()) {
@@ -372,5 +543,7 @@ public class MainMenuScreen extends BaseScreen {
     public void dispose() {
         if (stage != null) stage.dispose();
         if (backgroundTexture != null) backgroundTexture.dispose();
+        if (helpTex != null) helpTex.dispose();
+        if (vignetteTexture != null) vignetteTexture.dispose();
     }
 }
