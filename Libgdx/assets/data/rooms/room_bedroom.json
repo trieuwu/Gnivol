@@ -1,7 +1,7 @@
 {
   "roomId": "room_bedroom",
   "roomName": "Phòng ngủ",
-  "background": "images/Room.png",
+  "background": "images/back_ground/room/room.png",
   "objects": [
     {
       "id": "wardrobe",

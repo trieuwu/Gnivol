@@ -1,7 +1,7 @@
 {
   "roomId": "room_bathroom",
   "roomName": "Nhà tắm",
-  "background": "images/batroom_bottle.png",
+  "background": "images/back_ground/bathroom/batroom_bottle.png",
   "objects": [
     {
       "id": "keo_502_final",

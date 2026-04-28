@@ -54,6 +54,36 @@ public class MainMenuScreen extends BaseScreen {
         return tex;
     }
 
+    private com.badlogic.gdx.scenes.scene2d.utils.Drawable createConfirmBackground(int width, int height) {
+        com.badlogic.gdx.graphics.Pixmap bgPix = new com.badlogic.gdx.graphics.Pixmap(width, height, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+
+        float centerX = width / 2f;
+
+        int startY = 40;
+        int endY = height - 63;
+
+        for (int x = 0; x < width; x++) {
+            float distanceToCenter = Math.abs(x - centerX);
+            float alpha = 1f - (distanceToCenter / centerX);
+            float finalAlpha = Math.max(0f, alpha * 0.85f);
+
+            bgPix.setColor(new Color(0f, 0f, 0f, finalAlpha));
+
+            bgPix.drawLine(x, startY, x, endY);
+        }
+
+        Texture texture = new Texture(bgPix);
+        bgPix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable drawable =
+            new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(new com.badlogic.gdx.graphics.g2d.TextureRegion(texture));
+
+        drawable.setMinWidth(width);
+        drawable.setMinHeight(height);
+
+        return drawable;
+    }
+
     @Override
     public void show() {
         if (!isInitialized) {
@@ -274,7 +304,7 @@ public class MainMenuScreen extends BaseScreen {
 
         com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle windowStyle = new com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle();
         windowStyle.titleFont = game.getFontManager().fontVietnamese;
-        windowStyle.background = createDialogBackground(1000, 300);
+        windowStyle.background = createConfirmBackground(1000, 300);
 
         com.badlogic.gdx.scenes.scene2d.ui.Dialog dialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", windowStyle) {
 
