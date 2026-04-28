@@ -64,7 +64,11 @@
       { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/1.png" },
       { "type": "sfx", "id": "sfx_heavy_breathing_panic" },
       { "type": "rs_change", "value": 20 },
-      { "type": "dialogue", "id": "neighbor_door_smell" }
+      { "type": "dialogue", "id": "neighbor_door_smell" },
+
+      { "type": "dialogue", "id": "mot_sach" },
+      { "type": "flash", "color": "white", "duration": 0.3 },
+      { "type": "open_minigame", "id": "puzzle_sliding_marble" }
     ]
   },
   {
@@ -83,14 +87,6 @@
       { "type": "sfx", "id": "sfx_flatline_heart" },
       { "type": "fade_out", "duration": 0.5 },
       { "type": "change_scene", "id": "return_to_menu" }
-    ]
-  },
-  {
-    "id": "creepy_painting",
-    "steps": [
-      { "type": "dialogue", "id": "mot_sach"},
-      { "type": "flash", "color": "white", "duration": 0.3 },
-      { "type": "open_minigame", "id": "puzzle_sliding_marble" }
     ]
   },
   {
