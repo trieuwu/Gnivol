@@ -67,6 +67,7 @@ public class DialogueUI {
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
 
+    private float clickDelayTimer = 0f;
     private String fullContentText = "";      // Chứa toàn bộ nội dung câu thoại
     private float typeTimer = 0f;             // Đồng hồ đếm ngược để gõ chữ
     private int typeIndex = 0;                // Vị trí chữ đang gõ tới đâu
@@ -152,6 +153,7 @@ public class DialogueUI {
         dialogBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!canClick()) return;
                 if (choiceOverlayTable != null && choiceOverlayTable.isVisible()) return;
                 if (isTyping) {
                     // Đang gõ thì click để hiện full text luôn
@@ -307,6 +309,7 @@ public class DialogueUI {
         typeIndex = 0;
         isTyping = true;
         typeTimer = 0f;
+        clickDelayTimer = 0f;
 
         updateContentLabel();
         choicesTable.clearChildren();
@@ -500,7 +503,9 @@ public class DialogueUI {
 
     public void update(float delta) {
         if (!rootTable.isVisible()) return;
-
+        if (clickDelayTimer < 2.0f) {
+            clickDelayTimer += delta;
+        }
         if (isTyping) {
             typeTimer += delta;
             // Cứ qua 0.05 giây thì nhích thêm 1 ký tự
@@ -621,5 +626,19 @@ public class DialogueUI {
 
     public boolean isVisible() {
         return rootTable.isVisible();
+    }
+    public boolean isTyping() {
+        return isTyping;
+    }
+    public void finishTyping() {
+        if (isTyping) {
+            typeIndex = fullContentText.length();
+            isTyping = false;
+            updateContentLabel();
+            showChoices();
+        }
+    }
+    public boolean canClick() {
+        return clickDelayTimer >= 2.0f; // Đúng 2 giây mới cho trả về true
     }
 }
