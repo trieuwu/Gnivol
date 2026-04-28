@@ -212,14 +212,14 @@ public class GameScreen extends BaseScreen {
             dialogueEngine = new DialogueEngine(game.getRsManager());
             dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
             loadDialogueDatabase();
-            dialogueUI.setOnFinished(() -> {
-                if (cutsceneManager.isPlaying()) {
-                    cutsceneManager.onDialogueFinished();
-                }
-                if (game.getAutoSaveManager() != null) {
-                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
-                }
-            });
+//            dialogueUI.setOnFinished(() -> {
+//                if (cutsceneManager.isPlaying()) {
+//                    cutsceneManager.onDialogueFinished();
+//                }
+//                if (game.getAutoSaveManager() != null) {
+//                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
+//                }
+//            });
 
             Label.LabelStyle labelStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
             inspectLabel = new Label("", labelStyle);
@@ -711,24 +711,46 @@ public class GameScreen extends BaseScreen {
             if (game.getAutoSaveManager() != null) {
                 game.getAutoSaveManager().onSaveTrigger("new_game_start");
             }
-
-            DialogueTree intro = dialogueDatabase.get("intro_thought");
-            if (intro != null) {
-                dialogueEngine.loadDialogue(intro);
-                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                game.getGameState().markDialogueFinished("intro_thought");
-                dialogueUI.setOnFinished(() -> {
-                    DialogueTree call = dialogueDatabase.get("intro_phone_call");
-                    if (call != null) {
-                        dialogueEngine.loadDialogue(call);
-                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                        game.getGameState().markDialogueFinished("intro_phone_call");
-                    }
-                });
-            }
+            playIntroSequence();
+        } else {
+            triggerFirstTimeSceneEvents(room);
+            playIntroSequence();
         }
         game.isLoadedGame = false;
     }
+
+    private void playIntroSequence() {
+        if (game.getGameState().isDialogueFinished("intro_phone_call")) return;
+
+        if (!game.getGameState().isDialogueFinished("intro_thought")) {
+            DialogueTree intro = dialogueDatabase.get("intro_thought");
+            if (intro != null) {
+                dialogueUI.setOnFinished(() -> {
+                    game.getGameState().markDialogueFinished("intro_thought");
+                    playIntroPhoneCall(); // Xong suy nghĩ thì gọi điện thoại
+                });
+                dialogueEngine.loadDialogue(intro);
+                dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+            }
+        } else {
+            playIntroPhoneCall();
+        }
+    }
+
+    private void playIntroPhoneCall() {
+        DialogueTree call = dialogueDatabase.get("intro_phone_call");
+        if (call != null) {
+            dialogueUI.setOnFinished(() -> {
+                game.getGameState().markDialogueFinished("intro_phone_call");
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("intro_ended");
+                }
+            });
+            dialogueEngine.loadDialogue(call);
+            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+        }
+    }
+
 
     public void openOverlay(String texturePath) {
         overlayManager.open(texturePath, null);
@@ -1029,9 +1051,19 @@ public class GameScreen extends BaseScreen {
         hideInspectText();
         com.gnivol.game.model.dialogue.DialogueTree tree = dialogueDatabase.get(dialogueId);
         if (tree != null) {
+            dialogueUI.setOnFinished(() -> {
+                if (cutsceneManager != null && cutsceneManager.isPlaying()) {
+                    cutsceneManager.onDialogueFinished();
+                }
+
+                game.getGameState().markDialogueFinished(dialogueId);
+
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
+                }
+            });
             dialogueEngine.loadDialogue(tree);
             dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-            game.getGameState().markDialogueFinished(dialogueId);
         }
     }
 
