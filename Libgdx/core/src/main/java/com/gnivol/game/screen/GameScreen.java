@@ -1017,7 +1017,11 @@ public class GameScreen extends BaseScreen {
 
     // Scenes chuyển cảnh không phải do mở cửa (chui vào, leo lên, chui ra...) — skip sfx open_door cả 2 chiều
     private static final java.util.Set<String> NON_DOOR_SCENES = new java.util.HashSet<>(java.util.Arrays.asList(
-        "room_under_bed"
+        "room_under_bed",
+        "room_chu_nha",
+        "room_tang_1",
+        "room_toilet_closeup",
+        "room_chua_chay_closeup"
     ));
 
     private boolean isDoorTransition(String targetSceneId) {

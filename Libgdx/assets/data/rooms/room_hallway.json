@@ -6,10 +6,10 @@
     {
       "id": "door_back_bedroom",
       "type": "door",
-      "x": 874,
+      "x": 880,
       "y": 0,
-      "w": 200,
-      "h": 100,
+      "w": 379,
+      "h": 112,
       "properties": {
         "targetScene": "room_bedroom",
         "inspectText": "Quay lại phòng của tôi. Cảm giác ngoài này không an toàn chút nào.",
@@ -33,14 +33,105 @@
       }
     },
     {
-      "id": "stairs",
-      "type": "interactable",
+      "id": "stairs_up1",
+      "type": "door",
       "x": 0,
       "y": 0,
-      "w": 440,
-      "h": 450,
+      "w": 108,
+      "h": 601,
       "properties": {
-        "inspectText": "Cầu thang tối om. Trông gai cả ốc, tôi không muốn xuống đó bây giờ.",
+        "targetScene": "room_chu_nha",
+        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up2",
+      "type": "door",
+      "x": 107,
+      "y": 0,
+      "w": 102,
+      "h": 548,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up3",
+      "type": "door",
+      "x": 211,
+      "y": 0,
+      "w": 106,
+      "h": 465,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up4",
+      "type": "door",
+      "x": 317,
+      "y": 0,
+      "w": 58,
+      "h": 207,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down1",
+      "type": "door",
+      "x": 497,
+      "y": 117,
+      "w": 125,
+      "h": 393,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down2",
+      "type": "door",
+      "x": 377,
+      "y": 149,
+      "w": 117,
+      "h": 307,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down3",
+      "type": "door",
+      "x": 321,
+      "y": 207,
+      "w": 55,
+      "h": 239,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
