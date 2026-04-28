@@ -267,6 +267,12 @@ public class GameScreen extends BaseScreen {
 
                 @Override
                 public void onDialogue(String dialogueId) {
+                    // Clear cutscene sprite overlay khi vào dialogue → dialog hiện trên background phòng,
+                    // không bị kẹt sprite jumpscare cuối (vd /1.png của door_neighbor).
+                    if (cutsceneSprite != null) {
+                        cutsceneSprite.dispose();
+                        cutsceneSprite = null;
+                    }
                     triggerDialogue(dialogueId);
                 }
 
@@ -560,16 +566,13 @@ public class GameScreen extends BaseScreen {
                     // Kích hoạt khi có thoại và đó KHÔNG phải là màn hình chọn A B C
                     if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
                         dialogueEngine.advance();
-                        if (!dialogueEngine.isFinished()) {
-                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
-                        } else {
-                            if (cutsceneManager != null && cutsceneManager.isPlaying()) {
-                                cutsceneManager.onDialogueFinished();
-                            }
-                            dialogueUI.displayNode(null);
-                            if (game.getAutoSaveManager() != null) {
-                                game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
-                            }
+                        // displayNode tự xử lý cả 2 case (node hoặc null) — bao gồm gọi
+                        // cutsceneManager.onDialogueFinished() bên trong nhánh null,
+                        // nên KHÔNG gọi onDialogueFinished thêm ở đây để tránh double-advance
+                        // (sẽ skip step dialogue tiếp theo trong cutscene).
+                        dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                        if (dialogueEngine.isFinished() && game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
                         }
                     }
                     return true;
@@ -898,7 +901,16 @@ public class GameScreen extends BaseScreen {
             sceneManager.changeScene(targetSceneId);
             game.getGameState().setCurrentRoom(targetSceneId);
             if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
+            triggerFirstTimeSceneEvents(targetSceneId);
         });
+    }
+
+    /** Cutscene/event chỉ play LẦN ĐẦU vào scene cụ thể. Gate bằng FlagManager. */
+    private void triggerFirstTimeSceneEvents(String targetSceneId) {
+        if ("room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
+            game.getFlagManager().set("first_time_hallway", true);
+            cutsceneManager.play("door_neighbor");
+        }
     }
 
     public void triggerDialogue(String dialogueId) {

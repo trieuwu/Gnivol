@@ -81,19 +81,13 @@ public class RoomInteractionHandler implements InteractionCallback {
     public void onObjectInteracted(GameObject obj) {
         String id = obj.getId();
 
-        // 1. Cửa hàng xóm
+        // 1. Cửa hàng xóm: có rìu → vào phòng đối diện; không có → dialogue mùi xác chết
+        // Cutscene jumpscare đã chuyển sang trigger lần đầu vào hành lang (xem GameScreen.changeSceneWithFade)
         if ("door_neighbor".equals(id)) {
             if ("axe".equals(screen.getInventoryUI().getSelectedItem())) {
                 screen.changeSceneWithFade("room_opposite");
             } else {
-                if (!game.getFlagManager().get("neighbor_door_checked")) {
-                    game.getFlagManager().set("neighbor_door_checked", true);
-                    game.getRsManager().addRS(5f);
-                    screen.getCutsceneManager().play("door_neighbor");
-                }
-                else{
-                    onDialogueTriggered("neighbor_door_smell");
-                }
+                onDialogueTriggered("neighbor_door_smell");
             }
             return;
         }
@@ -164,12 +158,9 @@ public class RoomInteractionHandler implements InteractionCallback {
             }
             return;
         }
+        // Tranh creepy: chỉ hiện inspect text khi click (cutscene đã move sang sau door_neighbor)
         if ("creepy_painting".equals(id)) {
-            if (!game.getFlagManager().get("creepy_painting_dialogue")) {
-                game.getFlagManager().set("creepy_painting_dialogue", true);
-                screen.getCutsceneManager().play("creepy_painting");
-                return;
-            }
+            return;
         }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
