@@ -32,6 +32,23 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "chu_tro_npc",
+      "type": "interactable",
+      "x": 455,
+      "y": 150,
+      "w": 524,
+      "h": 560,
+      "scale": 1.0,
+      "offsetX": 0,
+      "offsetY": 0,
+      "properties": {
+        "inspectText": "Bác chủ trọ đang ngồi đó. Mặt trông không vui.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
     }
   ]
 }

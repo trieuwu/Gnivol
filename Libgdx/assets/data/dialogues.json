@@ -540,5 +540,159 @@
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_1",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_1", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_1",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày có xéo mau không?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0},
+          {"id": "B_1_4", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": null, "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "(Lưỡi dao loé lên... mọi thứ tối sầm lại. Bí mật phòng khám của bác chủ trọ vĩnh viễn được giữ kín.) — TODO: trigger ending 'super_doctor_landlord' nếu toilet_clogged chưa set",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_2",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_2", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_2",
+        "speaker": "Bác chủ trọ",
+        "content": "Không có việc đừng tìm tao",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0},
+          {"id": "B_1_4", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": null, "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "(Lưỡi dao loé lên... mọi thứ tối sầm lại.) — TODO: trigger ending 'super_doctor_landlord' nếu toilet_clogged chưa set",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_3",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_3", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_3",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày có xéo mau không? Đến lần thứ 3 rồi đấy!",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0},
+          {"id": "B_1_4_final", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": "death_xien", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "(Lưỡi dao loé lên... mọi thứ tối sầm lại.) — TODO: trigger ending 'super_doctor_landlord' nếu toilet_clogged chưa set",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "death_xien",
+        "speaker": "Bác chủ trọ",
+        "content": "(Đã quá tam ba bận. Lần này tao xiên mày thật đấy.) — TODO: trigger death by xiên",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
   }
 ]

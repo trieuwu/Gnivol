@@ -639,6 +639,6 @@ public class DialogueUI {
         }
     }
     public boolean canClick() {
-        return clickDelayTimer >= 2.0f; // Đúng 2 giây mới cho trả về true
+        return clickDelayTimer >= 0f; // Click ngay khi dialogue mở (delay = 0s)
     }
 }
