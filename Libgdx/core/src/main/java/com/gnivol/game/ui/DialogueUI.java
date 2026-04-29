@@ -263,6 +263,11 @@ public class DialogueUI {
         rootTable.setVisible(true);
         autoAdvanceTimer = 0f;
 
+        // Play one-shot SFX khi vào node (VD: sike, scream2...)
+        if (node.onEnterSfx != null && game != null && game.getAudioManager() != null) {
+            game.getAudioManager().playSFX(node.onEnterSfx);
+        }
+
         isCurrentThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
         float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
 

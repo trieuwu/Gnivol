@@ -724,7 +724,10 @@ public class GameScreen extends BaseScreen {
         if (!game.getGameState().isDialogueFinished("intro_thought")) {
             DialogueTree intro = dialogueDatabase.get("intro_thought");
             if (intro != null) {
+                // Phone ringing loop trong suốt intro_thought, dừng khi sang intro_phone_call
+                game.getAudioManager().playSFXLoop("phone_ringing");
                 dialogueUI.setOnFinished(() -> {
+                    game.getAudioManager().stopSFXLoop("phone_ringing");
                     game.getGameState().markDialogueFinished("intro_thought");
                     playIntroPhoneCall(); // Xong suy nghĩ thì gọi điện thoại
                 });
@@ -1029,9 +1032,22 @@ public class GameScreen extends BaseScreen {
         return !NON_DOOR_SCENES.contains(targetSceneId) && !NON_DOOR_SCENES.contains(currentSceneId);
     }
 
+    /** Chuyển cảnh dùng cầu thang: hallway ↔ chu_nha (lên) / tang_1 (xuống). */
+    private boolean isStairsTransition(String targetSceneId) {
+        String currentSceneId = game.getGameState() != null ? game.getGameState().getCurrentRoom() : null;
+        if (currentSceneId == null) return false;
+        boolean toStairs = "room_hallway".equals(currentSceneId)
+                && ("room_chu_nha".equals(targetSceneId) || "room_tang_1".equals(targetSceneId));
+        boolean fromStairs = ("room_chu_nha".equals(currentSceneId) || "room_tang_1".equals(currentSceneId))
+                && "room_hallway".equals(targetSceneId);
+        return toStairs || fromStairs;
+    }
+
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
-        if (isDoorTransition(targetSceneId)) {
+        if (isStairsTransition(targetSceneId)) {
+            game.getAudioManager().playSFX("stairs");
+        } else if (isDoorTransition(targetSceneId)) {
             game.getAudioManager().playSFX("open_door");
         }
         screenFader.startFade(() -> {
