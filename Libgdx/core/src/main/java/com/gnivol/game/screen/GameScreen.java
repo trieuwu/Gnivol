@@ -395,6 +395,17 @@ public class GameScreen extends BaseScreen {
                 @Override
                 public void onChangeScene(String sceneId) {
                     if ("return_to_menu".equals(sceneId)) {
+                        isGameOver = true;
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().setGameOver(true);
+                        }
+                        com.badlogic.gdx.files.FileHandle saveFile = Gdx.files.external(".gnivol/save_slot_1.json");
+                        if (saveFile.exists()) {
+                            saveFile.delete();
+                            Gdx.app.log("EndGame", "Data is removed.");
+                        }
+                        if (inventoryUI != null) inventoryUI.setVisible(false);
+
                         Gdx.app.postRunnable(() -> {
                             game.setScreen(new com.gnivol.game.screen.MainMenuScreen(game));
                             GameScreen.this.dispose();
@@ -629,6 +640,10 @@ public class GameScreen extends BaseScreen {
                     return true;
                 }
 
+                // NẾU ĐANG CHIẾU CUTSCENE -> NUỐT CLICK, KHÔNG CHO BẤM LUNG TUNG
+                if (cutsceneManager != null && cutsceneManager.isPlaying()) {
+                    return true;
+                }
                 if (inventoryOverlaySystem != null && inventoryOverlaySystem.isOpen()) {
                     com.badlogic.gdx.math.Vector3 overlayTouch = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
                     camera.unproject(overlayTouch, viewport.getScreenX(), viewport.getScreenY(),

@@ -187,6 +187,62 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "ceiling_fan",
+      "type": "interactable",
+      "x": 512,
+      "y": 653,
+      "w": 270,
+      "h": 65,
+      "properties": {
+        "inspectText": "Chiếc quạt trần cũ kỹ. Nó cứ cọt kẹt quay từng vòng chậm chạp.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "air_conditioner_1",
+      "type": "furniture",
+      "x": 1093,
+      "y": 609,
+      "w": 63,
+      "h": 62,
+      "properties": {
+        "inspectText": "Điều hòa nhiệt độ. Gió thổi ra lạnh toát sống lưng.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "air_conditioner_2",
+      "type": "furniture",
+      "x": 1022,
+      "y": 573,
+      "w": 69,
+      "h": 82,
+      "properties": {
+        "inspectText": "Điều hòa nhiệt độ. Gió thổi ra lạnh toát sống lưng.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "qr_code_frame",
+      "type": "interactable",
+      "x": 1035,
+      "y": 335,
+      "w": 113,
+      "h": 207,
+      "properties": {
+        "inspectText": "Một bức tranh chứa mã QR kỳ lạ... Có nên quét thử không?",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
     }
   ]
 }

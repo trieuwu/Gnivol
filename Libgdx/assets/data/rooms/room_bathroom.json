@@ -60,6 +60,90 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "shelf_shampoo",
+      "type": "furniture",
+      "x": 255,
+      "y": 318,
+      "w": 85,
+      "h": 167,
+      "properties": {
+        "inspectText": "Kệ để đồ tắm rỉ sét. Vài chai lọ rỗng tuếch, bốc mùi ẩm mốc nồng nặc.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "shower",
+      "type": "furniture",
+      "x": 365,
+      "y": 240,
+      "w": 79,
+      "h": 407,
+      "properties": {
+        "inspectText": "Vòi hoa sen ố vàng. Vài giọt nước đùng đục vẫn đang rỉ xuống từng giọt... tong... tong...",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -2
+      }
+    },
+    {
+      "id": "towel",
+      "type": "furniture",
+      "x": 503,
+      "y": 272,
+      "w": 110,
+      "h": 343,
+      "properties": {
+        "inspectText": "Chiếc khăn sờn rách. Nó ướt sũng và lạnh ngắt... như thể có ai đó vừa dùng xong.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -5
+      }
+    },
+    {
+      "id": "soap_dish",
+      "type": "furniture",
+      "x": 748,
+      "y": 306,
+      "w": 80,
+      "h": 51,
+      "properties": {
+        "inspectText": "Khay xà phòng gắn tường. Không có xà phòng, chỉ có những vết cặn bám đen ngòm.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "toilet_paper",
+      "type": "furniture",
+      "x": 735,
+      "y": 178,
+      "w": 80,
+      "h": 51,
+      "properties": {
+        "inspectText": "Cuộn giấy vệ sinh ố vàng, mủn ra vì ngấm hơi nước.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "toothbrush_cup",
+      "type": "furniture",
+      "x": 854,
+      "y": 306,
+      "w": 54,
+      "h": 104,
+      "properties": {
+        "inspectText": "Cốc đựng bàn chải đánh răng. Lông bàn chải đã tòe ra, dính thứ gì đó sền sệt màu nâu...",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -2
+      }
     }
   ]
 }
