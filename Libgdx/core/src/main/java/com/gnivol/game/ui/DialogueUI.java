@@ -257,13 +257,6 @@ public class DialogueUI {
                 onFinished = null;
                 callback.run();
             }
-            // Bất chấp click ở đâu, hễ khung thoại tắt là nó ép Cutscene chạy tiếp!
-            if (game != null && game.getScreen() instanceof com.gnivol.game.screen.GameScreen) {
-                com.gnivol.game.screen.GameScreen gs = (com.gnivol.game.screen.GameScreen) game.getScreen();
-                if (gs.getCutsceneManager() != null && gs.getCutsceneManager().isPlaying()) {
-                    gs.getCutsceneManager().onDialogueFinished();
-                }
-            }
             return;
         }
 
@@ -639,6 +632,8 @@ public class DialogueUI {
         }
     }
     public boolean canClick() {
-        return clickDelayTimer >= 2.0f; // Đúng 2 giây mới cho trả về true
+        boolean choiceNotVisible = (choiceOverlayTable == null || !choiceOverlayTable.isVisible());
+        boolean timeOk = clickDelayTimer >= 2.0f; // Đúng 2 giây mới cho trả về true
+        return timeOk && choiceNotVisible;
     }
 }

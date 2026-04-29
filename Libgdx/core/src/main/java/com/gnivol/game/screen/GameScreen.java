@@ -599,8 +599,7 @@ public class GameScreen extends BaseScreen {
                     if (!dialogueUI.canClick()) {
                         return true;
                     }
-                    // Kích hoạt khi có thoại và đó KHÔNG phải là màn hình chọn A B C
-                    if (dialogueEngine.getCurrentNode() != null && !dialogueEngine.getCurrentNode().hasChoice()) {
+                    if (dialogueEngine.getCurrentNode() != null) {
                         if (dialogueUI.isTyping()) {
                             dialogueUI.finishTyping();
                         } else {
