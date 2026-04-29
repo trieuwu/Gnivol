@@ -449,9 +449,9 @@ public class GameScreen extends BaseScreen {
         // Chỉ còn lắng nghe kết quả từ ngăn kéo (drawer)
         puzzleDrawerUI.setListener(puzzleId -> {
             if ("puzzle_drawer".equals(puzzleId)) {
-                game.getInventoryManager().addItem("chia_khoa_final");
+                game.getInventoryManager().addItem("keo_502_final");
                 inventoryUI.refreshUI();
-                showNotification("Cạch! Ngăn kéo đã mở. Nhận được chìa khóa!", Color.GREEN);
+                showNotification("Cạch! Ngăn kéo đã mở. Nhận được lọ keo 502!", Color.GREEN);
                 if (sceneManager.getCurrentScene() instanceof RoomScene) {
                     ((RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
                 }
