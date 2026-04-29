@@ -43,6 +43,9 @@ public class SlidingScreen extends BaseScreen {
     private Texture texDim;
     private float instructionDelayTimer = 0f;
 
+    /** BGM id của room trước khi vào minigame, để restore khi exit. */
+    private String previousBgmId;
+
     private void createInstructionUI(String titleText, String contentText) {
         uiStage = new com.badlogic.gdx.scenes.scene2d.Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
 
@@ -140,6 +143,12 @@ public class SlidingScreen extends BaseScreen {
     @Override
     public void show() {
         game.getScreenFader().startFadeIn();
+
+        // Lưu BGM hiện tại của room rồi cross sang minigame_music
+        if (game.getAudioManager() != null) {
+            previousBgmId = game.getAudioManager().getCurrentBGMId();
+            game.getAudioManager().crossfadeBGM("minigame_music", 0.5f);
+        }
 
         createInstructionUI("THE SHIFTING GRAVES",
             "Click the border arrows to push the heavy wooden crates.\nYour task is to drag all of them to the bloody 'X' marks.\n\nBeware... the more steps you wander, the deeper the madness will consume your mind.");
@@ -245,6 +254,10 @@ public class SlidingScreen extends BaseScreen {
 
     private void exitMinigame() {
         if (game.getScreenFader().isFading()) return;
+        // Restore BGM của room trước khi rời minigame
+        if (game.getAudioManager() != null && previousBgmId != null) {
+            game.getAudioManager().crossfadeBGM(previousBgmId, 0.5f);
+        }
         game.getScreenFader().startFade(() -> {
             game.setScreen(previousScreen);
             game.getScreenFader().startFadeIn();
@@ -254,6 +267,9 @@ public class SlidingScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        // BGM crossfade cần update mỗi frame (GameScreen không render khi minigame active)
+        if (game.getAudioManager() != null) game.getAudioManager().update(delta);
+
         if (!isMapReady) {
             ScreenUtils.clear(0, 0, 0, 1);
             return;

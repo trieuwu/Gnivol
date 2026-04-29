@@ -58,6 +58,12 @@ public class GnivolGame extends Game {
         gameState = new com.gnivol.game.model.GameState();
 
         sceneManager = new SceneManager(puzzleManager);
+        sceneManager.setAudioManager(audioManager);
+        // Map sceneId → bgmId để SceneManager auto-crossfade khi đổi phòng
+        sceneManager.setSceneBGM("room_bedroom", "bedroom_bgm");
+        sceneManager.setSceneBGM("room_hallway", "outside");
+        sceneManager.setSceneBGM("room_tang_1", "outside");
+        sceneManager.setSceneBGM("room_chu_nha", "outside");
         playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager, puzzleManager);
 
         gameSnapshot = new com.gnivol.game.system.save.GameSnapshot();
