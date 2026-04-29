@@ -342,6 +342,7 @@
         "nextNodeId": "node_05",
         "portrait": "images/characters/nerdy_kid1_final.char.png",
         "portraitSide": "center",
+        "onEnterSfx": "sike",
         "choices": []
       },
       {
