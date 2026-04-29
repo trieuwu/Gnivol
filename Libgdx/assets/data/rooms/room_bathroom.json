@@ -14,7 +14,7 @@
         "inspectText": "Gương soi. Phản chiếu khuôn mặt mờ ảo... có gì đó không đúng.",
         "collectible": false,
         "hasGlitch": true,
-        "rsChange": -5
+        "rsChange": -10
       }
     },
     {
@@ -40,7 +40,6 @@
       "w": 200,
       "h": 100,
       "properties": {
-        "inspectText": "Bồn rửa mặt cáu bẩn. Bên dưới có một bảng điện tử bị hở mạch.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0

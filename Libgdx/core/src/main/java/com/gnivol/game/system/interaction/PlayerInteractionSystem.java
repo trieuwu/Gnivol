@@ -25,7 +25,6 @@ public class PlayerInteractionSystem {
     private final SceneManager sceneManager;
     private final InventoryManager inventoryManager;
     private final RSManager rsManager;
-
     private final Vector3 touchPoint = new Vector3();
 
     // Callback để GameScreen xử lý phần visual (inspect text, overlay, scene change)
@@ -169,4 +168,5 @@ public class PlayerInteractionSystem {
         if (callback == null) return;
         callback.onDoorInteracted(obj);
     }
+
 }
