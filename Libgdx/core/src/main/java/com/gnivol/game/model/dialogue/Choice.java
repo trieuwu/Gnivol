@@ -7,5 +7,5 @@ public class Choice {
     public String nextNodeId;        // ID của node tiếp theo nếu chọn cái này
     public boolean textEffects;      // Có hiệu ứng text (rung, đỏ...) không
     public int rsChange = 0;
-
+    public String cutsceneId;
 }

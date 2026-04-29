@@ -75,6 +75,12 @@ public class DialogueEngine {
                     );
                     rsManager.processEvent(event);
                 }
+                // gọi cutscene
+                if (selectedChoice.cutsceneId != null && !selectedChoice.cutsceneId.isEmpty()) {
+                    if (cutsceneListener != null) {
+                        cutsceneListener.onCutsceneTriggered(selectedChoice.cutsceneId);
+                    }
+                }
                 // Chuyển tới node tiếp theo
                 currentNode = nodeMap.get(selectedChoice.nextNodeId);
                 nodeMap.remove(finishedNodeId);

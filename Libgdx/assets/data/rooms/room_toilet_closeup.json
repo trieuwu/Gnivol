@@ -32,6 +32,19 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "toilet",
+      "x": 471,
+      "y": 6,
+      "w": 468,
+      "h": 707,
+      "properties": {
+        "inspectText": "Hệ thống xả nước có vẻ vẫn hoạt động bình thường.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
     }
   ]
 }
