@@ -236,6 +236,7 @@ public class CutsceneManager {
             if (listener != null) {
                 listener.onDialogue(step.id);
             }
+            return;
         } else if ("change_scene".equals(type)) {
             stepDuration = 0f;
             if (listener != null) {
