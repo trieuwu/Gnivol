@@ -53,6 +53,9 @@ public class LaserScreen extends BaseScreen {
     private Texture texDim;
     private float instructionDelayTimer = 0f;
 
+    /** BGM id của room trước khi vào minigame, để restore khi exit. */
+    private String previousBgmId;
+
     private void createInstructionUI(String titleText, String contentText) {
         uiStage = new com.badlogic.gdx.scenes.scene2d.Stage(new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT));
 
@@ -113,6 +116,12 @@ public class LaserScreen extends BaseScreen {
     public void show() {
         game.getScreenFader().startFadeIn();
 
+        // Lưu BGM hiện tại của room rồi cross sang minigame_music
+        if (game.getAudioManager() != null) {
+            previousBgmId = game.getAudioManager().getCurrentBGMId();
+            game.getAudioManager().crossfadeBGM("minigame_music", 0.5f);
+        }
+
         createInstructionUI("THE LABYRINTH",
             "Use W-A-S-D or Arrow keys to navigate the dark.\nEvade the crimson lasers and find the exit, or be burned alive.\n\nRemember... with every step you take, the turrets shift their gaze.\nThey are watching your every move.");
 
@@ -138,6 +147,9 @@ public class LaserScreen extends BaseScreen {
 
                 if (keycode == Input.Keys.ESCAPE) {
                     if (game.getScreenFader().isFading()) return false;
+                    if (game.getAudioManager() != null && previousBgmId != null) {
+                        game.getAudioManager().crossfadeBGM(previousBgmId, 0.5f);
+                    }
                     game.getScreenFader().startFade(() -> {
                         game.setScreen(previousScreen);
                         game.getScreenFader().startFadeIn();
@@ -189,6 +201,9 @@ public class LaserScreen extends BaseScreen {
         }
         // --
         game.getInventoryManager().addItem("ca_vat_final");
+        if (game.getAudioManager() != null && previousBgmId != null) {
+            game.getAudioManager().crossfadeBGM(previousBgmId, 0.5f);
+        }
         game.setScreen(previousScreen);
 
         game.getScreenFader().startFade(() -> {
@@ -224,6 +239,9 @@ public class LaserScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        // BGM crossfade cần update mỗi frame (GameScreen không render khi minigame active)
+        if (game.getAudioManager() != null) game.getAudioManager().update(delta);
+
         if (!isMapReady) {
             ScreenUtils.clear(0, 0, 0, 1);
             return;

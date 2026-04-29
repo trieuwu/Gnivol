@@ -12,6 +12,7 @@ public class DialogueNode {
     public String nextNodeId;        // Dùng khi KHÔNG CÓ choice (chuyển thẳng tới node này)
 
     public String onEnterCutscene;  // cutscene ID to trigger when entering this node
+    public String onEnterSfx;        // SFX id to play when entering this node (VD: "sike", "scream2")
     public String portrait;          // đường dẫn ảnh nhân vật (VD: "images/characters/Linh.char.png")
     public String portraitSide;      // "left" hoặc "right" (mặc định "left")
     public float portraitX = -1;     // toạ độ X (-1 = dùng mặc định theo side)

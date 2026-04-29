@@ -32,6 +32,9 @@ public class AudioManager {
     private final Map<String, Sound> sfxCache = new HashMap<String, Sound>();
     private final Map<String, Music> ambientCache = new HashMap<String, Music>();
 
+    /** Active streamIds cho SFX đang loop. Key = sfx id, Value = streamId của Sound.loop(). */
+    private final Map<String, Long> loopingSfxStreams = new HashMap<String, Long>();
+
     private Music currentBGM;
     private String currentBGMId;
     private Music currentAmbient;
@@ -138,6 +141,43 @@ public class AudioManager {
         }
     }
 
+    /** Phát SFX dạng loop. Idempotent: gọi lại với cùng id khi đang loop sẽ no-op. */
+    public void playSFXLoop(String id) {
+        playSFXLoop(id, sfxVolume);
+    }
+
+    public void playSFXLoop(String id, float volume) {
+        if (id == null) return;
+        if (loopingSfxStreams.containsKey(id)) return; // đang loop rồi, không restart
+        Sound sound = loadSFX(id);
+        if (sound != null) {
+            long streamId = sound.loop(volume);
+            loopingSfxStreams.put(id, streamId);
+        }
+    }
+
+    /** Dừng instance loop của SFX này. No-op nếu chưa loop. */
+    public void stopSFXLoop(String id) {
+        if (id == null) return;
+        Long streamId = loopingSfxStreams.remove(id);
+        if (streamId == null) return;
+        Sound sound = sfxCache.get(id);
+        if (sound != null) {
+            sound.stop(streamId);
+        }
+    }
+
+    /** Dừng mọi SFX đang loop. */
+    public void stopAllSFXLoops() {
+        for (Map.Entry<String, Long> entry : loopingSfxStreams.entrySet()) {
+            Sound sound = sfxCache.get(entry.getKey());
+            if (sound != null) {
+                sound.stop(entry.getValue());
+            }
+        }
+        loopingSfxStreams.clear();
+    }
+
     // --- Ambient ---
 
     public void playAmbient(String id) {
@@ -203,6 +243,8 @@ public class AudioManager {
     // --- Dispose ---
 
     public void dispose() {
+        stopAllSFXLoops();
+
         for (Music m : bgmCache.values()) {
             m.dispose();
         }
@@ -228,15 +270,31 @@ public class AudioManager {
 
     private Music loadBGM(String id) {
         Music music = bgmCache.get(id);
-        if (music == null) {
+        if (music != null) return music;
+
+        // Thử các đường dẫn quen thuộc — ogg/bgm trước, fallback sang mp3 trong sfx/
+        String[] candidates = {
+            "audio/bgm/" + id + ".ogg",
+            "audio/bgm/" + id + ".mp3",
+            "sfx/" + id + ".mp3",
+            "sfx/" + id + ".ogg"
+        };
+        for (String path : candidates) {
             try {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/bgm/" + id + ".ogg"));
-                bgmCache.put(id, music);
-            } catch (Exception e) {
-                Gdx.app.error("AudioManager", "Failed to load BGM: " + id, e);
-            }
+                if (Gdx.files.internal(path).exists()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal(path));
+                    bgmCache.put(id, music);
+                    return music;
+                }
+            } catch (Exception ignored) {}
         }
-        return music;
+        Gdx.app.error("AudioManager", "Failed to load BGM: " + id);
+        return null;
+    }
+
+    /** Trả về id của BGM đang phát (null nếu không có). */
+    public String getCurrentBGMId() {
+        return currentBGMId;
     }
 
     private Sound loadSFX(String id) {

@@ -48,12 +48,6 @@ public class RoomInteractionHandler implements InteractionCallback {
         screen.hideInspectText();
         screen.showItemNotification(itemId);
 
-        if ("keo_502_final".equals(itemId)) {
-            if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/bathroom/bathroom_no_bottle.png");
-            }
-        }
-
         if (game.getAutoSaveManager() != null) {
             game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
         }
