@@ -49,10 +49,10 @@
     {
       "id": "toilet",
       "type": "door",
-      "x": 482,
-      "y": 0,
-      "w": 200,
-      "h": 220,
+      "x": 527,
+      "y": 100,
+      "w": 156,
+      "h": 157,
       "properties": {
         "targetScene": "room_toilet_closeup",
         "inspectText": "Nhìn gần vào bồn cầu...",
