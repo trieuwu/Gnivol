@@ -33,6 +33,11 @@ public class ItemDatabase {
         return database.get(itemID);
     }
 
+    /** Trả về toàn bộ itemID đã load — phục vụ debug/cheat. */
+    public java.util.Set<String> getAllItemIds() {
+        return database.keySet();
+    }
+
     private void loadDataFromJson() {
         Json json = new Json();
 

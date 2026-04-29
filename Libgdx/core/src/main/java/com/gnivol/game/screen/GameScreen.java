@@ -693,6 +693,16 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.F1) { debugManager.toggleDebugMode(); return true; }
                 if (keycode == Input.Keys.F2 && debugManager.isDebugMode()) { debugManager.exportDebugCoordinates(sceneManager.getCurrentScene()); return true; }
+                // Cheat: giữ F3 + bấm F6 → cho toàn bộ item vào inventory (check TRƯỚC F3 toggle)
+                if (keycode == Input.Keys.F6 && Gdx.input.isKeyPressed(Input.Keys.F3)) {
+                    int added = 0;
+                    for (String itemId : com.gnivol.game.data.ItemDatabase.getInstance().getAllItemIds()) {
+                        if (game.getInventoryManager().addItem(itemId)) added++;
+                    }
+                    if (inventoryUI != null) inventoryUI.refreshUI();
+                    showNotification("CHEAT: +" + added + " items", Color.YELLOW);
+                    return true;
+                }
                 if (keycode == Input.Keys.F3) { dialogueUI.toggleDebugPortrait(); return true; }
                 if (keycode == Input.Keys.F4 && dialogueUI.isDebugPortrait()) { dialogueUI.exportPortraitCoordinates(); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
