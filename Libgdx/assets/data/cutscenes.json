@@ -73,7 +73,15 @@
   {
     "id": "cutscene_rs_0",
     "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
       { "type": "dialogue", "id": "ending_text_rs0" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
       { "type": "sfx", "id": "sfx_peaceful_wind" },
       { "type": "fade_out", "duration": 0.5 },
       { "type": "change_scene", "id": "return_to_menu" }
@@ -82,7 +90,15 @@
   {
     "id": "cutscene_rs_100",
     "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
       { "type": "dialogue", "id": "ending_text_rs100" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
       { "type": "sfx", "id": "sfx_flatline_heart" },
       { "type": "fade_out", "duration": 0.5 },
       { "type": "change_scene", "id": "return_to_menu" }
@@ -93,6 +109,80 @@
     "steps": [
       { "type": "video", "src": "video/hai_huoc_no1.webm", "x": 0, "y": 0, "w": 1280, "h": 720 },
       { "type": "flash", "color": "white", "duration": 0.2 }
+    ]
+  },
+  {
+    "id": "cutscene_death_super_doctor",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "death_super_doctor" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_death_super_doctor" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_death_xien",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "death_xien" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_death_xien" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_mot_sach_kill",
+    "steps": [
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_cutscene_mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "window_jumscare",
+    "steps": [
+      { "type": "sfx", "id": "sfx_power_out" },
+      { "type": "wait", "duration": 0.2 },
+      { "type": "flash", "color": "white", "duration": 0.1 },
+      { "type": "sfx", "id": "sfx_deafening_scream" },
+      { "type": "shake", "intensity": 35.0, "duration": 0.6 },
+      { "type": "show_sprite", "sprite": "images/back_ground/room/new_blank_room_1.png", "duration": 1 },
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "rs_change", "value": -10 }
     ]
   }
 ]

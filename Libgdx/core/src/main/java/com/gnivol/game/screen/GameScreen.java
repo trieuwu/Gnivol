@@ -210,6 +210,18 @@ public class GameScreen extends BaseScreen {
                 }
             });
             dialogueEngine = new DialogueEngine(game.getRsManager());
+
+            dialogueEngine.setCutsceneListener(new DialogueEngine.DialogueCutsceneListener() {
+                @Override
+                public void onCutsceneTriggered(String cutsceneId) {
+                    // Ép ẩn khung thoại đi để xem Cutscene cho rõ
+                    if (dialogueUI != null) {
+                        dialogueUI.displayNode(null);
+                    }
+                    cutsceneManager.play(cutsceneId);
+                }
+            });
+
             dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
             loadDialogueDatabase();
 //            dialogueUI.setOnFinished(() -> {
@@ -1063,6 +1075,13 @@ public class GameScreen extends BaseScreen {
         if ("room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
             game.getFlagManager().set("first_time_hallway", true);
             cutsceneManager.play("door_neighbor");
+        }
+        if (targetSceneId != null && targetSceneId.contains("bathroom")) {
+            // Kiểm tra xem đã gọi chủ trọ chưa và chưa bị chửi
+            if (game.getFlagManager().get("chu_tro_fixed_toilet") && !game.getFlagManager().get("chu_tro_bathroom_talked")) {
+                game.getFlagManager().set("chu_tro_bathroom_talked", true);
+                triggerDialogue("chu_tro_in_bathroom");
+            }
         }
     }
 
