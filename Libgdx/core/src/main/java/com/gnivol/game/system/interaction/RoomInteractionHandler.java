@@ -162,6 +162,30 @@ public class RoomInteractionHandler implements InteractionCallback {
         if ("creepy_painting".equals(id)) {
             return;
         }
+
+        // Bác chủ trọ: counter visit → angry_1 → angry_2 → angry_3 (lần 3 chết bằng xiên)
+        // Mỗi click trigger lại từ intro Y/N. Yes → angry tương ứng visit count. B → exit.
+        // TODO: chỉ tăng counter khi player thực sự reach angry node (hiện tại tăng cả khi pick "Không")
+        if ("chu_tro_npc".equals(id)) {
+            int visitCount;
+            if (game.getFlagManager().get("chu_tro_visited_2")) visitCount = 2;
+            else if (game.getFlagManager().get("chu_tro_visited_1")) visitCount = 1;
+            else visitCount = 0;
+
+            String dialogueId;
+            if (visitCount >= 2) {
+                dialogueId = "chu_tro_visit_3";
+            } else if (visitCount == 1) {
+                dialogueId = "chu_tro_visit_2";
+                game.getFlagManager().set("chu_tro_visited_2");
+            } else {
+                dialogueId = "chu_tro_visit_1";
+                game.getFlagManager().set("chu_tro_visited_1");
+            }
+            onDialogueTriggered(dialogueId);
+            return;
+        }
+
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
@@ -219,8 +243,9 @@ public class RoomInteractionHandler implements InteractionCallback {
         RoomData.RoomObject roomObj = screen.getRoomObjectData(obj.getId());
         if (roomObj == null || roomObj.properties == null) return;
 
-        // Dialogue cố định từ JSON
-        if (roomObj.properties.dialogueId != null && !game.getGameState().isDialogueFinished(roomObj.properties.dialogueId)) {
+        // Dialogue cố định từ JSON — repeatable=true bypass check finished (trigger được nhiều lần)
+        if (roomObj.properties.dialogueId != null
+                && (roomObj.properties.repeatable || !game.getGameState().isDialogueFinished(roomObj.properties.dialogueId))) {
             onDialogueTriggered(roomObj.properties.dialogueId);
             return;
         }

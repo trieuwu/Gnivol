@@ -632,8 +632,10 @@ public class DialogueUI {
         }
     }
     public boolean canClick() {
+        // Block click khi đang hiển thị overlay choice A/B (Thành's fix — PR #84)
         boolean choiceNotVisible = (choiceOverlayTable == null || !choiceOverlayTable.isVisible());
-        boolean timeOk = clickDelayTimer >= 2.0f; // Đúng 2 giây mới cho trả về true
+        // Delay 0s — click ngay khi dialogue mở (theo yêu cầu Duy Anh)
+        boolean timeOk = clickDelayTimer >= 0f;
         return timeOk && choiceNotVisible;
     }
 }

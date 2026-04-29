@@ -47,6 +47,20 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "main_exit_door",
+      "type": "door",
+      "x": 435,
+      "y": 203,
+      "w": 421,
+      "h": 501,
+      "properties": {
+        "inspectText": "Cửa này khóa rồi, chúng ta cần vân tay của bác chủ trọ mới mở được",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
     }
   ]
 }

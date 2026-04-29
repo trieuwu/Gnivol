@@ -112,6 +112,8 @@ public class RoomData {
         public HashMap<String, String> altTextures;
         public String dialogueId;
         public String overlayId;
+        /** Nếu true, dialogueId có thể trigger lại nhiều lần (mặc định false: chỉ 1 lần). */
+        public boolean repeatable;
 
         /** Constructor mặc định — BẮT BUỘC cho JSON parser */
         public Properties() {}
