@@ -97,9 +97,17 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("window".equals(id)) {
+            if (!game.getFlagManager().get("window_scare")) {
+                game.getFlagManager().set("window_scare");
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("window_jumscare");
+                return;
+            }
+        }
+
         // 3. Giường (chỉ hiện inspect text)
         if ("bed".equals(id)) {
-            return;
         }
 
         // 4. Ngăn kéo (Puzzle)
@@ -130,7 +138,6 @@ public class RoomInteractionHandler implements InteractionCallback {
 //            } else {
 //                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
 //            }
-            return;
         }
 
         // 6. Bồn rửa mặt (Minigame Laser)
@@ -149,18 +156,30 @@ public class RoomInteractionHandler implements InteractionCallback {
                 screen.hideInspectText();
                 game.getAudioManager().playSFX("scream2");
                 screen.getCutsceneManager().play("hand_under_bed");
+                return;
             }
-            return;
         }
         // Tranh creepy: chỉ hiện inspect text khi click (cutscene đã move sang sau door_neighbor)
         if ("creepy_painting".equals(id)) {
-            return;
         }
 
         // Bác chủ trọ: counter visit → angry_1 → angry_2 → angry_3 (lần 3 chết bằng xiên)
         // Mỗi click trigger lại từ intro Y/N. Yes → angry tương ứng visit count. B → exit.
         // TODO: chỉ tăng counter khi player thực sự reach angry node (hiện tại tăng cả khi pick "Không")
         if ("chu_tro_npc".equals(id)) {
+            // Kiểm tra xem bồn cầu đã tắc chưa
+            if (game.getFlagManager().get("toilet_clogged")) {
+                if (!game.getFlagManager().get("chu_tro_fixed_toilet")) {
+                    // Chưa gọi lên sửa -> Báo tắc
+                    game.getFlagManager().set("chu_tro_fixed_toilet");
+                    onDialogueTriggered("chu_tro_clogged_door");
+                } else {
+                    // Đã gọi rồi -> Bác chủ trọ đang đợi trong nhà tắm
+                    screen.showInspectText("Bác chủ nhà đang ở trong phòng tắm rồi.");
+                }
+                return;
+            }
+            // Nếu bồn cầu chưa tắc
             int visitCount;
             if (game.getFlagManager().get("chu_tro_visited_2")) visitCount = 2;
             else if (game.getFlagManager().get("chu_tro_visited_1")) visitCount = 1;

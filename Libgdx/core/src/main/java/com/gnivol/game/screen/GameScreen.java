@@ -210,6 +210,18 @@ public class GameScreen extends BaseScreen {
                 }
             });
             dialogueEngine = new DialogueEngine(game.getRsManager());
+
+            dialogueEngine.setCutsceneListener(new DialogueEngine.DialogueCutsceneListener() {
+                @Override
+                public void onCutsceneTriggered(String cutsceneId) {
+                    // Ép ẩn khung thoại đi để xem Cutscene cho rõ
+                    if (dialogueUI != null) {
+                        dialogueUI.displayNode(null);
+                    }
+                    cutsceneManager.play(cutsceneId);
+                }
+            });
+
             dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
             loadDialogueDatabase();
 //            dialogueUI.setOnFinished(() -> {
@@ -681,6 +693,16 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.F1) { debugManager.toggleDebugMode(); return true; }
                 if (keycode == Input.Keys.F2 && debugManager.isDebugMode()) { debugManager.exportDebugCoordinates(sceneManager.getCurrentScene()); return true; }
+                // Cheat: giữ F3 + bấm F6 → cho toàn bộ item vào inventory (check TRƯỚC F3 toggle)
+                if (keycode == Input.Keys.F6 && Gdx.input.isKeyPressed(Input.Keys.F3)) {
+                    int added = 0;
+                    for (String itemId : com.gnivol.game.data.ItemDatabase.getInstance().getAllItemIds()) {
+                        if (game.getInventoryManager().addItem(itemId)) added++;
+                    }
+                    if (inventoryUI != null) inventoryUI.refreshUI();
+                    showNotification("CHEAT: +" + added + " items", Color.YELLOW);
+                    return true;
+                }
                 if (keycode == Input.Keys.F3) { dialogueUI.toggleDebugPortrait(); return true; }
                 if (keycode == Input.Keys.F4 && dialogueUI.isDebugPortrait()) { dialogueUI.exportPortraitCoordinates(); return true; }
                 if (keycode == Input.Keys.ESCAPE) {
@@ -1063,6 +1085,13 @@ public class GameScreen extends BaseScreen {
         if ("room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
             game.getFlagManager().set("first_time_hallway", true);
             cutsceneManager.play("door_neighbor");
+        }
+        if (targetSceneId != null && targetSceneId.contains("bathroom")) {
+            // Kiểm tra xem đã gọi chủ trọ chưa và chưa bị chửi
+            if (game.getFlagManager().get("chu_tro_fixed_toilet") && !game.getFlagManager().get("chu_tro_bathroom_talked")) {
+                game.getFlagManager().set("chu_tro_bathroom_talked", true);
+                triggerDialogue("chu_tro_in_bathroom");
+            }
         }
     }
 
