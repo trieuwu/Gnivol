@@ -213,7 +213,9 @@ public class InventoryUI {
                     hideTooltip();
                 }
             });
-            gridTable.add(slotBtn).size(65, 65).pad(10f);
+            float padVertical = 10f;
+            float padHorizontal = 10f;
+            gridTable.add(slotBtn).size(65, 65).pad(padVertical, padHorizontal, padVertical, padHorizontal);
             backpackSlots.add(slotBtn);
 
             if ((i + 1) % 5 == 0) gridTable.row();
@@ -232,7 +234,20 @@ public class InventoryUI {
         useBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("InventoryUI", "Nút USE được bấm (Chưa có chức năng)");
+                if (selectedItem1 != null) {
+                    inventoryManager.moveItemToFront(selectedItem1);
+                    String itemName = selectedItem1;
+                    com.badlogic.gdx.utils.JsonValue itemData = itemDatabase.get(selectedItem1);
+                    if (itemData != null && itemData.getString("itemName", null) != null) {
+                        itemName = itemData.getString("itemName");
+                    }
+                    playSfx("open_bag");
+
+                    refreshUI();
+                    resetHighlights();
+                } else {
+                    showNotification("Chưa chọn vật phẩm nào!", Color.RED);
+                }
             }
         });
 
@@ -246,7 +261,7 @@ public class InventoryUI {
 
         com.badlogic.gdx.scenes.scene2d.ui.Stack overlayStack = new com.badlogic.gdx.scenes.scene2d.ui.Stack();
         Table gridLayer = new Table();
-        gridLayer.add(gridTable).center();
+        gridLayer.add(gridTable).center().padLeft(4f);
         overlayStack.add(gridLayer);
 
         Table actionLayer = new Table();
