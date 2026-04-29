@@ -64,7 +64,6 @@
       { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/1.png" },
       { "type": "sfx", "id": "sfx_heavy_breathing_panic" },
       { "type": "rs_change", "value": 20 },
-      { "type": "dialogue", "id": "neighbor_door_smell" },
 
       { "type": "dialogue", "id": "mot_sach" },
       { "type": "flash", "color": "white", "duration": 0.3 },
