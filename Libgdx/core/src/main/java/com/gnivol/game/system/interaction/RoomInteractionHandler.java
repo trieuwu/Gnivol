@@ -74,7 +74,33 @@ public class RoomInteractionHandler implements InteractionCallback {
     @Override
     public void onObjectInteracted(GameObject obj) {
         String id = obj.getId();
+        if ("mirror".equals(id)) {
+            // 1. Nếu chưa xem video ma -> Chiếu video
+            if (!game.getFlagManager().get("mirror_video_seen")) {
+                game.getFlagManager().set("mirror_video_seen");
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("mirror_video_jumpscare");
+                return;
+            }
 
+            // 2. Nếu ĐÃ xem video rồi -> Cho phép đập gương
+            if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
+                RoomScene rs = (RoomScene) screen.getSceneManager().getCurrentScene();
+
+                if (!screen.getGnivolGame().getInventoryManager().hasItem("glass_shard")) {
+                    rs.startMirrorBreakEvent();
+
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            screen.getGnivolGame().getInventoryManager().addItem("glass_shard");
+                            screen.getInventoryUI().refreshUI();
+                        }
+                    }, 3.0f);
+                }
+            }
+            return;
+        }
         // 1. Cửa hàng xóm: có rìu → vào phòng đối diện; không có → dialogue mùi xác chết
         // Cutscene jumpscare đã chuyển sang trigger lần đầu vào hành lang (xem GameScreen.changeSceneWithFade)
         if ("door_neighbor".equals(id)) {
@@ -124,20 +150,6 @@ public class RoomInteractionHandler implements InteractionCallback {
         if ("toilet".equals(id)) {
             handleToiletInteraction();
             return;
-        }
-
-        if ("mirror".equals(id)) {
-            if (!game.getFlagManager().get("mirror_video_seen")) {
-                game.getFlagManager().set("mirror_video_seen");
-                screen.hideInspectText();
-                screen.getCutsceneManager().play("mirror_video_jumpscare");
-                return;
-            }
-//            if (screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
-//                screen.showNotification("Bạn đã giải mã xong bí mật của gấu bông.", Color.LIGHT_GRAY);
-//            } else {
-//                screen.getPuzzleManager().openPuzzle("puzzle_sliding_marble");
-//            }
         }
 
         // 6. Bồn rửa mặt (Minigame Laser)

@@ -67,6 +67,14 @@ public class InventoryManager implements ISaveable {
         }
     }
 
+    public void moveItemToFront(String itemID) {
+        if (items.contains(itemID)) {
+            items.remove(itemID);
+            items.add(0, itemID);
+            Gdx.app.log("Inventory", "Moved item to front: " + itemID);
+        }
+    }
+
 
     public boolean hasItem(String itemID) {
         return items.contains(itemID);

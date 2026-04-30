@@ -122,7 +122,6 @@
       "w": 96,
       "h": 35,
       "properties": {
-        "inspectText": "Ngăn kéo khóa chặt. Cần chìa khóa để mở.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
