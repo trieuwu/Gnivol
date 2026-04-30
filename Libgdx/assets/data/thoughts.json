@@ -43,5 +43,100 @@
     "LOW": "Nó vừa chớp mắt! Con gấu này bị nguyền rủa, nó đang thì thầm vào tai tôi!",
     "MID": "Một con gấu bông cũ nát. Tại sao nụ cười của nó lại được khâu bằng chỉ đỏ méo mó thế này?",
     "HIGH": "Mày cũng cô đơn như tao đúng không? Không sao, tao sẽ kể cho mày nghe những bí mật nhuốm máu."
+  },
+  "hop_chua_chay": {
+    "LOW": "Chiếc rìu... lưỡi rìu đang rỉ máu! Có ai đó đang đứng ngay sau lớp kính, ánh mắt đầy sát khí chờ tôi mở cửa!",
+    "MID": "Hộp chữa cháy khóa chặt. Nếu xảy ra hỏa hoạn thật thì làm sao mà lấy được chiếc rìu bên trong chứ?",
+    "HIGH": "Một công cụ tuyệt vời để đập tan mọi chướng ngại. Phá vỡ lớp kính này đi, và thứ sức mạnh chết chóc kia sẽ là của tôi."
+  },
+  "phe_lieu": {
+    "LOW": "Có thứ gì đó đang bò lổm ngổm dưới đống giẻ rách kia! Tiếng sột soạt... chúng đang từ từ bò về phía tôi!",
+    "MID": "Chỉ là một đống rác bám đầy mạng nhện. Ai lại vứt cả đống chai lọ rỗng với giấy lộn ở đây thế này?",
+    "HIGH": "Kẻ ngu ngốc mới gọi đây là rác rưởi. Từng vết ố, từng mảnh giấy nhàu nát này đều là những mảnh ghép hoàn hảo của sự thật."
+  },
+  "wardrobe": {
+    "LOW": "Có tiếng móng tay cào xé từ bên trong... Đừng mở ra! Thứ đó sẽ vồ lấy tôi mất!",
+    "MID": "Tủ quần áo bằng gỗ. Cánh cửa ọp ẹp, bên trong tối om chẳng có gì đáng chú ý.",
+    "HIGH": "Không gian chật hẹp thế này thật lý tưởng. Một nơi hoàn hảo để giấu đi một cái xác... hoặc để tôi trốn vào đó chờ con mồi."
+  },
+  "fridge": {
+    "LOW": "Tiếng động cơ nghe như tiếng rên rỉ của ai đó đang chết cóng... Tủ lạnh này đang chảy máu!",
+    "MID": "Tủ lạnh mini. Tiếng vo ve kêu đều đều, hy vọng bên trong còn chút đồ ăn.",
+    "HIGH": "Bảo quản ở nhiệt độ thấp là cách tốt nhất để thịt không bị phân hủy. Một phát minh tuyệt vời."
+  },
+  "phone": {
+    "LOW": "Nó đang reo! Nó đang reo! Đầu dây bên kia là tiếng thở dốc... Không! Tha cho tôi!",
+    "MID": "Điện thoại bàn bị đứt dây. Chắc chắn không thể gọi đi đâu được nữa rồi.",
+    "HIGH": "Tôi có thể dùng sợi dây điện thoại này quấn quanh cổ một ai đó. Nhanh gọn và vô cùng êm ái."
+  },
+  "drawer": {
+    "LOW": "Nó bị khóa! Chắc chắn có thứ gì đó khủng khiếp đang bị phong ấn bên trong!",
+    "MID": "Ngăn kéo bàn khóa chặt. Phải tìm được chìa khóa mới biết bên trong có gì.",
+    "HIGH": "Càng bị cất giấu kỹ, tôi càng khao khát muốn đập nát nó ra để chiêm ngưỡng bí mật bên trong."
+  },
+  "ceiling_fan": {
+    "LOW": "Nó sắp rơi xuống rồi! Cánh quạt quay nhanh quá, nó sẽ chém đứt đầu tôi mất!",
+    "MID": "Quạt trần cũ rích. Tiếng kêu cọt kẹt của nó giữa đêm khuya thật khó chịu.",
+    "HIGH": "Cứ quay đi. Cứ chém tan không khí đi. Từng vòng quay như đang đếm ngược thời gian sống của bọn chúng."
+  },
+  "air_conditioner_1": {
+    "LOW": "Gió lạnh quá... giống hệt hơi thở của người chết phả vào gáy tôi... Ai đang đứng phía sau vậy?!",
+    "MID": "Điều hòa vẫn đang chạy, nhưng thổi ra cái mùi hơi ẩm mốc của rêu phong.",
+    "HIGH": "Không khí lạnh giúp máu đông chậm hơn một chút. Rất tiện lợi cho việc dọn dẹp hiện trường."
+  },
+  "air_conditioner_2": {
+    "LOW": "Gió lạnh quá... giống hệt hơi thở của người chết phả vào gáy tôi... Ai đang đứng phía sau vậy?!",
+    "MID": "Điều hòa vẫn đang chạy, nhưng thổi ra cái mùi hơi ẩm mốc của rêu phong.",
+    "HIGH": "Không khí lạnh giúp máu đông chậm hơn một chút. Rất tiện lợi cho việc dọn dẹp hiện trường."
+  },
+  "qr_code_frame": {
+    "LOW": "Những vạch đen này đang ngoe nguẩy như lũ giòi bọ! Nó đang xếp thành khuôn mặt của ác quỷ!",
+    "MID": "Một mã QR được đóng khung cẩn thận treo trên tường. Trông thật lạc lõng ở nơi tồi tàn này.",
+    "HIGH": "Một tấm bản đồ dẫn đến chân lý. Kẻ nào tạo ra nó quả thực là một nghệ sĩ có tâm hồn giống hệt tôi."
+  },
+  "shelf_shampoo": {
+    "LOW": "Những chai lọ này chứa đầy máu và axit! Chỉ cần chạm vào là thịt xương tôi sẽ tan chảy!",
+    "MID": "Kệ để đồ tắm gỉ sét. Toàn mấy chai lọ rỗng bốc mùi hôi hám.",
+    "HIGH": "Chỉ cần trộn lẫn các loại hóa chất cặn bã này lại, tôi có thể tạo ra một thứ độc dược chết người."
+  },
+  "shower": {
+    "LOW": "Vòi sen không chảy ra nước... Nó đang chảy ra thứ chất lỏng đặc quánh màu đỏ thẫm!",
+    "MID": "Vòi sen cũ kỹ, rỉ nước từng giọt. Tiếng tong tong vang vọng nghe thật cô đơn.",
+    "HIGH": "Nước có thể rửa trôi bùn đất, nhưng không bao giờ gột rửa được sự nhơ nhớp của tòa nhà này."
+  },
+  "towel": {
+    "LOW": "Chiếc khăn này đang quấn quanh một cái đầu lâu! Nó cựa quậy kìa! Tránh xa tao ra!",
+    "MID": "Chiếc khăn ướt sũng. Bốc mùi ẩm mốc khó chịu, chắc bỏ đi từ lâu rồi.",
+    "HIGH": "Rất dai và ướt. Tuyệt vời để nhét vào miệng lũ ngốc hay la hét để bắt chúng phải câm lặng."
+  },
+  "soap_dish": {
+    "LOW": "Cái cặn đen nhầy nhụa kia là da thịt người chết bị phân hủy! Tôi buồn nôn quá!",
+    "MID": "Khay xà phòng trống không. Chỉ toàn vết ố bám chặt không tẩy được.",
+    "HIGH": "Sự sạch sẽ chỉ là ảo giác dối trá. Sự bẩn thỉu và thối nát mới là bản chất thật của nhân loại."
+  },
+  "toilet_paper": {
+    "LOW": "Trên giấy có viết chữ bằng máu! 'MÀY SẼ CHẾT'! Ai đã viết nó?!",
+    "MID": "Cuộn giấy vệ sinh mủn ra vì ẩm ướt. Không dùng được nữa.",
+    "HIGH": "Một thứ sinh ra để lau đi cặn bã. Sự tồn tại yếu ớt và rẻ mạt, hệt như mạng sống của những kẻ ở đây."
+  },
+  "toothbrush_cup": {
+    "LOW": "Lông bàn chải dính đầy răng rụng và kẽ bám của xác chết! Có cả giòi bò lúc nhúc!",
+    "MID": "Cốc đựng bàn chải bẩn thỉu. Tôi thà không bao giờ đánh răng còn hơn đụng vào nó.",
+    "HIGH": "Cái cán bàn chải bằng nhựa dẻo này... vót nhọn một chút là có thể đâm xuyên cuống họng. Khá thực dụng."
+  },
+  "door_neighbor": {
+    "LOW": "Có tiếng cào xé và gào thét đằng sau cánh cửa! Máu đang rỉ ra từ khe cửa kìa!",
+    "MID": "Cửa phòng hàng xóm. Đóng im ỉm, mùi bốc ra thật lợm giọng.",
+    "HIGH": "Mùi thịt thối rữa này thật kích thích. Tôi muốn phá cửa để chiêm ngưỡng tác phẩm nghệ thuật bên trong."
+  },
+  "fire_hose_box": {
+    "LOW": "Bên trong hộp không phải rìu... Đó là cánh tay bị chặt đứt của tôi! Nó đang vẫy vẫy!",
+    "MID": "Hộp chữa cháy ở ngoài hành lang. Chẳng biết đến bao giờ mới dùng đến cái này.",
+    "HIGH": "Màu đỏ rực rỡ thật quyến rũ. Nó như báo hiệu cho một cuộc tàn sát sắp sửa bắt đầu."
+  },
+  "main_exit_door": {
+    "LOW": "Không thể ra ngoài! Làn sương ngoài kia sẽ nuốt chửng tôi! Bọn chúng đang há miệng chờ sẵn!",
+    "MID": "Cửa chính bị khóa chặt bằng mã vân tay. Chắc chắn phải qua mặt bác chủ nhà mới ra được.",
+    "HIGH": "Lối thoát duy nhất à? Không, tôi chưa hề muốn rời đi. Trò chơi máu me ở đây vẫn còn dang dở."
   }
 }

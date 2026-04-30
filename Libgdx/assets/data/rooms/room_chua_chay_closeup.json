@@ -32,6 +32,34 @@
         "hasGlitch": false,
         "rsChange": 0
       }
+    },
+    {
+      "id": "hop_chua_chay",
+      "type": "interactable",
+      "x": 819,
+      "y": 152,
+      "w": 310,
+      "h": 410,
+      "properties": {
+        "inspectText": "Một hộp chữa cháy khóa chặt. Bên trong có một cây rìu cứu hỏa sắc lẹm.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "phe_lieu",
+      "type": "furniture",
+      "x": 162,
+      "y": 156,
+      "w": 371,
+      "h": 201,
+      "properties": {
+        "inspectText": "Đống phế liệu bám đầy mạng nhện. Vài tờ giấy cũ, chai lọ rỗng và đống giẻ rách.",
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
     }
   ]
 }
