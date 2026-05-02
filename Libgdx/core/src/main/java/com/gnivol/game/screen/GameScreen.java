@@ -218,6 +218,72 @@ public class GameScreen extends BaseScreen {
                     if (dialogueUI != null) {
                         dialogueUI.displayNode(null);
                     }
+                    // Tắc bồn cầu
+                    if ("action_clog_toilet".equals(cutsceneId)) {
+                        game.getFlagManager().set("toilet_clogged", true);
+                        game.getInventoryManager().removeItem("fabric_piece");
+
+                        inventoryUI.clearSelection();
+                        inventoryUI.refreshUI();
+                        showNotification("Ục ục... Bồn cầu đã tắc!", Color.GREEN);
+
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
+                        }
+                        return;
+                    }
+                    // Rạch giường
+                    if ("action_cut_bed".equals(cutsceneId)) {
+                        game.getFlagManager().set("bed_cut", true);
+                        game.getInventoryManager().removeItem("glass_shard");
+                        game.getInventoryManager().addItem("fabric_piece");
+                        inventoryUI.clearSelection();
+                        inventoryUI.refreshUI();
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("cat_xoet");
+                        showNotification("Bạn đã nhận được 1 mảnh vải", Color.YELLOW);
+
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("event_bed_cut");
+                        }
+                        return;
+                    }
+                    // Nhận vân tay sau khi trò chuyện
+                    if("action_pickup_van_tay".equals(cutsceneId)){
+                        game.getInventoryManager().addItem("manh_kinh_van_tay");
+                        inventoryUI.clearSelection();
+                        inventoryUI.refreshUI();
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("pickup_item");
+                        showNotification("Bạn đã nhận được 1 mảnh kính chứa vân tay của chủ trọ", Color.YELLOW);
+
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("event_pickup_van_tay");
+                        }
+                        return;
+                    }
+                    // Đặt ghế lên giường
+                    if ("action_move_chair".equals(cutsceneId)) {
+                        game.getFlagManager().set("chair_on_bed", true);
+                        // thay phòng
+                        changeSceneWithFade("new_blank_room_chair_on_bed");
+
+                        showNotification("Đã đặt ghế lên giường.", Color.LIGHT_GRAY);
+                        if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_chair_moved");
+                        return;
+                    }
+                    // Treo cà vạt lên trên quạt trần
+                    if ("action_hang_tie".equals(cutsceneId)) {
+                        game.getFlagManager().set("tie_hung", true);
+
+                        game.getInventoryManager().removeItem("ca_vat_final");
+                        inventoryUI.clearSelection();
+                        inventoryUI.refreshUI();
+                        // thay phòng
+                        changeSceneWithFade("the_end");
+
+                        showNotification("Đã treo cà vạt lên quạt trần.", Color.LIGHT_GRAY);
+                        if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_tie_hung");
+                        return;
+                    }
                     cutsceneManager.play(cutsceneId);
                 }
             });
@@ -466,8 +532,12 @@ public class GameScreen extends BaseScreen {
         if (inventoryUI != null) {
             inventoryUI.refreshUI();
         }
+        // Hiển thị Dialogue hệ thống chào mừng quay lại
+        if (game.isLoadedGame) {
+            triggerDialogue("system_welcome_back");
+            game.isLoadedGame = false;
+        }
     }
-
     private void setupPuzzleListeners() {
         // Chỉ còn lắng nghe kết quả từ ngăn kéo (drawer)
         puzzleDrawerUI.setListener(puzzleId -> {
@@ -750,9 +820,7 @@ public class GameScreen extends BaseScreen {
             playIntroSequence();
         } else {
             triggerFirstTimeSceneEvents(room);
-            playIntroSequence();
         }
-        game.isLoadedGame = false;
     }
 
     private void playIntroSequence() {
@@ -1082,16 +1150,27 @@ public class GameScreen extends BaseScreen {
 
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
+        // Kiểm tra trạng thái phòng ngủ
+        String actualTarget = targetSceneId;
+        if ("room_bedroom".equals(actualTarget)) {
+            if (game.getFlagManager().get("tie_hung")) {
+                actualTarget = "the_end"; // Đã treo cà vạt
+            } else if (game.getFlagManager().get("chair_on_bed")) {
+                actualTarget = "new_blank_room_chair_on_bed"; // Mới bê ghế
+            }
+        }
+        final String finalTarget = actualTarget;
+
         if (isStairsTransition(targetSceneId)) {
             game.getAudioManager().playSFX("stairs");
         } else if (isDoorTransition(targetSceneId)) {
             game.getAudioManager().playSFX("open_door");
         }
         screenFader.startFade(() -> {
-            sceneManager.changeScene(targetSceneId);
-            game.getGameState().setCurrentRoom(targetSceneId);
-            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("enter_room_" + targetSceneId);
-            triggerFirstTimeSceneEvents(targetSceneId);
+            sceneManager.changeScene(finalTarget);
+            game.getGameState().setCurrentRoom(finalTarget);
+            if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("enter_room_" + finalTarget);
+            triggerFirstTimeSceneEvents(finalTarget);
         });
     }
 
@@ -1132,33 +1211,7 @@ public class GameScreen extends BaseScreen {
 
     public void showToiletConfirmDialog() {
         hideInspectText();
-        com.badlogic.gdx.scenes.scene2d.ui.Dialog confirmDialog = new com.badlogic.gdx.scenes.scene2d.ui.Dialog("", defaultSkin) {
-            @Override
-            protected void result(Object object) {
-                if (object.equals(true)) {
-                    game.getFlagManager().set("toilet_clogged", true);
-                    game.getInventoryManager().removeItem("ca_vat_final");
-                    inventoryUI.clearSelection();
-                    inventoryUI.refreshUI();
-                    showNotification("Ục ục... Bồn cầu đã tắc!", Color.GREEN);
-                    if (game.getAutoSaveManager() != null) {
-                        game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
-                    }
-                }
-            }
-        };
-
-        com.gnivol.game.system.FontManager fm = game.getFontManager();
-        Label.LabelStyle lblStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
-        confirmDialog.text(new Label("Ném vải vào bồn cầu?", lblStyle));
-
-        TextButton.TextButtonStyle btnStyle = defaultSkin.get(TextButton.TextButtonStyle.class);
-        TextButton.TextButtonStyle viBtnStyle = new TextButton.TextButtonStyle(btnStyle);
-        viBtnStyle.font = fm.fontVietnamese;
-
-        confirmDialog.button(new TextButton("Có", viBtnStyle), true);
-        confirmDialog.button(new TextButton("Không", viBtnStyle), false);
-        confirmDialog.show(game.getStage());
+        triggerDialogue("confirm_clog_toilet");
     }
 
     @Override

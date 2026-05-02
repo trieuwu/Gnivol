@@ -173,16 +173,24 @@
     ]
   },
   {
-    "id": "window_jumscare",
+    "id": "cutscene_suicide_ending",
     "steps": [
-      { "type": "sfx", "id": "sfx_power_out" },
-      { "type": "wait", "duration": 0.2 },
-      { "type": "flash", "color": "white", "duration": 0.1 },
-      { "type": "sfx", "id": "sfx_deafening_scream" },
-      { "type": "shake", "intensity": 35.0, "duration": 0.6 },
-      { "type": "show_sprite", "sprite": "images/back_ground/room/new_blank_room_1.png", "duration": 1 },
+
       { "type": "flash", "color": "red", "duration": 0.15 },
-      { "type": "rs_change", "value": -10 }
+      { "type": "dialogue", "id": "mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "tu_tu" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "room_bedroom", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
     ]
   }
 ]
