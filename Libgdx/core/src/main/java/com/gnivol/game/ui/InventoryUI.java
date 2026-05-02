@@ -25,6 +25,16 @@ public class InventoryUI {
     private Image highlight2;
     private Texture highlightTexture;
 
+    private Table inspectCard1;
+    private Image inspectImage1;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label inspectName1;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label inspectDesc1;
+
+    private Table inspectCard2;
+    private Image inspectImage2;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label inspectName2;
+    private com.badlogic.gdx.scenes.scene2d.ui.Label inspectDesc2;
+
     private Table quickbarTable;
     private Table backpackTable;
     private Table topTable;
@@ -295,6 +305,68 @@ public class InventoryUI {
         stage.addActor(highlight1);
         stage.addActor(highlight2);
 
+        com.badlogic.gdx.graphics.Pixmap gradientPix = new com.badlogic.gdx.graphics.Pixmap(1, 128, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        for (int y = 0; y < 128; y++) {
+            float ratio = (float) y / 127f;
+            float c = 0.2f * (1f - ratio);
+            gradientPix.setColor(c, c, c, 0.95f);
+            gradientPix.drawPixel(0, y);
+        }
+        TextureRegionDrawable gradientBg = new TextureRegionDrawable(new TextureRegion(new Texture(gradientPix)));
+        gradientPix.dispose();
+
+        com.badlogic.gdx.graphics.Pixmap linePix = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        linePix.setColor(Color.GOLD);
+        linePix.fill();
+        TextureRegionDrawable lineBg = new TextureRegionDrawable(new TextureRegion(new Texture(linePix)));
+        linePix.dispose();
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle nameStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(this.font, Color.YELLOW);
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle descStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(this.font, Color.WHITE);
+
+        inspectCard1 = new Table();
+        inspectCard1.setBackground(gradientBg);
+        inspectCard1.setWidth(260); // Chỉ khóa chiều rộng, chiều cao sẽ tự giãn
+        inspectCard1.setVisible(false);
+        inspectCard1.top().pad(15); // Đệm viền xung quanh 15px
+
+        inspectImage1 = new Image();
+        inspectImage1.setScaling(com.badlogic.gdx.utils.Scaling.fit);
+        inspectName1 = new com.badlogic.gdx.scenes.scene2d.ui.Label("", nameStyle);
+        inspectName1.setAlignment(com.badlogic.gdx.utils.Align.center);
+        inspectDesc1 = new com.badlogic.gdx.scenes.scene2d.ui.Label("", descStyle);
+        inspectDesc1.setWrap(true);
+        inspectDesc1.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        // Sắp xếp: Ảnh -> Tên -> Gạch ngang -> Mô tả
+        inspectCard1.add(inspectImage1).size(120, 120).padBottom(10).row();
+        inspectCard1.add(inspectName1).width(230).padBottom(10).row();
+        inspectCard1.add(new Image(lineBg)).width(230).height(2).padBottom(10).row();
+        inspectCard1.add(inspectDesc1).width(230).row();
+
+        // ================= CARD 2 (BÊN PHẢI) =================
+        inspectCard2 = new Table();
+        inspectCard2.setBackground(gradientBg);
+        inspectCard2.setWidth(260);
+        inspectCard2.setVisible(false);
+        inspectCard2.top().pad(15);
+
+        inspectImage2 = new Image();
+        inspectImage2.setScaling(com.badlogic.gdx.utils.Scaling.fit);
+        inspectName2 = new com.badlogic.gdx.scenes.scene2d.ui.Label("", nameStyle);
+        inspectName2.setAlignment(com.badlogic.gdx.utils.Align.center);
+        inspectDesc2 = new com.badlogic.gdx.scenes.scene2d.ui.Label("", descStyle);
+        inspectDesc2.setWrap(true);
+        inspectDesc2.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        inspectCard2.add(inspectImage2).size(120, 120).padBottom(10).row();
+        inspectCard2.add(inspectName2).width(230).padBottom(10).row();
+        inspectCard2.add(new Image(lineBg)).width(230).height(2).padBottom(10).row();
+        inspectCard2.add(inspectDesc2).width(230).row();
+
+        stage.addActor(inspectCard1);
+        stage.addActor(inspectCard2);
+
         backpackTable.setTouchable(Touchable.enabled);
         backpackTable.addListener(new ClickListener() {
             @Override
@@ -415,6 +487,8 @@ public class InventoryUI {
                 highlight1.setVisible(true);
                 highlight1.clearActions();
                 highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
+
+
             }
             return;
         }
@@ -427,6 +501,19 @@ public class InventoryUI {
             highlight1.setVisible(true);
             highlight1.clearActions();
             highlight1.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
+
+            if (itemTextureCache.containsKey(itemId)) {
+                inspectImage1.setDrawable(new TextureRegionDrawable(new TextureRegion(itemTextureCache.get(itemId))));
+            }
+            com.badlogic.gdx.utils.JsonValue data1 = itemDatabase.get(itemId);
+            if (data1 != null) {
+                inspectName1.setText(data1.getString("itemName", "Vật phẩm bí ẩn"));
+                inspectDesc1.setText(data1.getString("inspectText", data1.getString("description", "")));
+            }
+            inspectCard1.pack(); // Tự động co giãn chiều cao cho vừa khít đoạn chữ
+            inspectCard1.setPosition(40, (720f - inspectCard1.getHeight()) / 2f); // Căn giữa màn hình
+
+            inspectCard1.setVisible(true);
         } else if (selectedItem1.equals(itemId) && selectedItem2 == null) {
             resetHighlights();
         } else if (selectedItem2 == null) {
@@ -437,6 +524,20 @@ public class InventoryUI {
             highlight2.setVisible(true);
             highlight2.clearActions();
             highlight2.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.5f, 0.5f), Actions.alpha(1f, 0.5f))));
+
+            if (itemTextureCache.containsKey(itemId)) {
+                inspectImage2.setDrawable(new TextureRegionDrawable(new TextureRegion(itemTextureCache.get(itemId))));
+            }
+            com.badlogic.gdx.utils.JsonValue data2 = itemDatabase.get(itemId);
+            if (data2 != null) {
+                inspectName2.setText(data2.getString("itemName", "Vật phẩm bí ẩn"));
+                inspectDesc2.setText(data2.getString("inspectText", data2.getString("description", "")));
+            }
+            inspectCard2.pack(); // Tự động co giãn chiều cao
+            inspectCard2.setPosition(990, (720f - inspectCard2.getHeight()) / 2f); // Căn giữa màn hình
+
+            inspectCard2.setVisible(true);
+
         } else {
             resetHighlights();
         }
@@ -450,6 +551,9 @@ public class InventoryUI {
         highlight2.setVisible(false);
         highlight2.clearActions();
         highlight2.getColor().a = 1f;
+
+        if (inspectCard1 != null) inspectCard1.setVisible(false);
+        if (inspectCard2 != null) inspectCard2.setVisible(false);
     }
 
     public void refreshUI() {
