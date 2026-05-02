@@ -124,16 +124,12 @@ public class RoomInteractionHandler implements InteractionCallback {
         }
 
         if ("window".equals(id)) {
-            if (!game.getFlagManager().get("window_scare")) {
-                game.getFlagManager().set("window_scare");
-                screen.hideInspectText();
-                screen.getCutsceneManager().play("window_jumscare");
-                return;
-            }
         }
 
         // 3. Giường (chỉ hiện inspect text)
         if ("bed".equals(id)) {
+            handleBedInteraction();
+            return;
         }
 
         // 4. Ngăn kéo (Puzzle)
@@ -210,7 +206,33 @@ public class RoomInteractionHandler implements InteractionCallback {
             onDialogueTriggered(dialogueId);
             return;
         }
+        if ("chair".equals(id)) {
+            if (game.getFlagManager().get("chair_on_bed")) {
+                screen.showInspectText("Chiếc ghế đã được đặt vững chãi trên giường.");
+            } else {
+                screen.hideInspectText();
+                onDialogueTriggered("confirm_move_chair");
+            }
+            return;
+        }
 
+        if ("ceiling_fan".equals(id)) {
+            if (game.getFlagManager().get("tie_hung")) {
+                // Đã treo cà vạt -> Hỏi tự tử
+                screen.hideInspectText();
+                onDialogueTriggered("confirm_suicide");
+            }
+            // Nếu ghế đã trên giường VÀ tay đang cầm cà vạt
+            else if (game.getFlagManager().get("chair_on_bed") && "ca_vat_final".equals(screen.getInventoryUI().getSelectedItem())) {
+                screen.hideInspectText();
+                onDialogueTriggered("confirm_hang_tie");
+            }
+            // Nếu có ghế nhưng ko cầm cà vạt
+            else if (game.getFlagManager().get("chair_on_bed")) {
+                screen.showInspectText("Đứng trên này có thể với tới quạt trần, nhưng mình cần thứ gì đó dài và chắc chắn để buộc vào...");
+            }
+            return;
+        }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
@@ -254,13 +276,28 @@ public class RoomInteractionHandler implements InteractionCallback {
 
     private void handleToiletInteraction() {
         if (game.getFlagManager().get("toilet_clogged")) {
+            screen.hideInspectText();
             screen.showNotification("Bồn cầu đã bị tắc cứng.", Color.LIGHT_GRAY);
             return;
         }
-        if ("ca_vat_final".equals(screen.getInventoryUI().getSelectedItem())) {
+        if ("fabric_piece".equals(screen.getInventoryUI().getSelectedItem())) {
             screen.showToiletConfirmDialog(); // Chúng ta sẽ tạo hàm này trong GameScreen
         } else {
             screen.showInspectText("Hệ thống xả nước có vẻ vẫn hoạt động bình thường.");
+        }
+    }
+    private void handleBedInteraction(){
+        if (game.getFlagManager().get("bed_cut")) {
+            screen.hideInspectText();
+            screen.showNotification("Đệm giường đã bị cắt ra.", Color.LIGHT_GRAY);
+            return;
+        }
+
+        if ("glass_shard".equals(screen.getInventoryUI().getSelectedItem())) {
+            screen.hideInspectText();
+            screen.triggerDialogue("confirm_cut_bed");
+        } else {
+            screen.showInspectText("Chiếc giường cũ kỹ. Ga trải giường nhàu nát như có ai vừa nằm...");
         }
     }
 

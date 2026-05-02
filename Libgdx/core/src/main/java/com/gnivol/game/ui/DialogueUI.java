@@ -301,6 +301,14 @@ public class DialogueUI {
         String rawText = node.content;
         if (rawText != null) {
             rawText = rawText.replace("{player}", playerName);
+            String roomName = "Khu vực không xác định";
+            if (game != null && game.getSceneManager() != null
+                && game.getSceneManager().getCurrentScene() != null
+                && game.getSceneManager().getCurrentScene().getRoomData() != null) {
+
+                roomName = game.getSceneManager().getCurrentScene().getRoomData().roomName;
+            }
+            rawText = rawText.replace("{roomName}", roomName);
         }
 
         fullContentText = rawText;

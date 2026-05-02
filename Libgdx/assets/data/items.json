@@ -85,7 +85,16 @@
       "itemID": "fabric_piece",
       "itemName": "Mảnh vải",
       "description": "Một mảnh vải rách từ ga giường.",
-      "inspectText": "Vải mỏng nhưng dai. Có thể dùng để tắc thứ gì đó...",
+      "inspectText": "Vải mỏng nhưng dai. Có thể dùng để làm tắc thứ gì đó...",
+      "pickupSoundID": "click",
+      "rsChangeValue": 0,
+      "isCursed": false
+    },
+    {
+      "itemID": "manh_kinh_van_tay",
+      "itemName": "Vân tay",
+      "description": "Một mảnh kính có in vân tay của bác chủ trọ",
+      "inspectText": "Rất rõ nét. Có thể áp mảnh kính này lên các thiết bị an ninh nhận diện vân tay để vượt quyền truy cập.",
       "pickupSoundID": "click",
       "rsChangeValue": 0,
       "isCursed": false
