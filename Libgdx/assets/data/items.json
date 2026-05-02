@@ -4,25 +4,25 @@
       "itemID": "ca_vat_final",
       "itemName": "Cà vạt",
       "description": "Một chiếc cà vạt kẻ sọc.",
-      "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau.",
+      "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau... Trông nó rất chắc chắn, nếu vắt lên quạt trần thì...",
       "pickupSoundID": "click",
-      "rsChangeValue": -15,
-      "isCursed": false
+      "rsChangeValue": 15,
+      "isCursed": true
     },
     {
       "itemID": "chuoi_chia_khoa",
       "itemName": "Chìa khóa gãy",
       "description": "Một nửa chiếc chìa khóa bị gãy.",
-      "inspectText": "Phần đầu chìa đã gãy mất. Không thể dùng được nếu không nối lại.",
+      "inspectText": "Phần đầu chìa đã gãy găm vào ổ khóa. Phải làm sao để kết nối nó lại đây?",
       "pickupSoundID": "click",
       "rsChangeValue": 5,
-      "isCursed": false
+      "isCursed": true
     },
     {
       "itemID": "keo_502_final",
       "itemName": "Keo 502",
       "description": "Keo dính siêu chắc.",
-      "inspectText": "Lọ keo vẫn chưa bị khô. Có thể dùng để dán các vật liệu cứng.",
+      "inspectText": "Có thể dán chặt mọi vật liệu cứng lại với nhau. Thật may là nó chưa bị khô.",
       "pickupSoundID": "click",
       "rsChangeValue": 6,
       "isCursed": false
@@ -31,7 +31,7 @@
       "itemID": "chia_khoa_fixed_final",
       "itemName": "Chìa khóa (Đã sửa)",
       "description": "Chiếc chìa khóa đã được dán lại bằng keo 502.",
-      "inspectText": "Vết dán rất chắc chắn. Nhìn có vẻ đủ cứng để vặn ổ khóa.",
+      "inspectText": "Vết dán rất chắc chắn. Nhìn có vẻ đủ cứng để vặn ổ khóa chính rồi.",
       "pickupSoundID": "click",
       "rsChangeValue": 7,
       "isCursed": false
@@ -40,54 +40,72 @@
       "itemID": "dien_thoai_final",
       "itemName": "Điện thoại",
       "description": "Điện thoại thông minh cũ.",
-      "inspectText": "Màn hình nứt nẻ đen thui, nhưng tôi có cảm giác nó vừa rung nhẹ...",
+      "inspectText": "Màn hình nứt nẻ đen thui, nhưng tôi có cảm giác nó vừa rung nhẹ... Linh đã gọi bằng số nào?",
       "pickupSoundID": "click",
-      "rsChangeValue": 5,
-      "isCursed": false
+      "rsChangeValue": 10,
+      "isCursed": true
     },
     {
       "itemID": "chia_khoa_final",
       "itemName": "Chìa khóa đồng",
-      "description": "Một chiếc chìa khóa bằng đồng khác.",
-      "inspectText": "Nó trông không giống chìa khóa ngăn kéo, có lẽ dành cho một cánh cửa nào đó?",
+      "description": "Một chiếc chìa khóa bằng đồng thau.",
+      "inspectText": "Lạnh toát. Không biết nó mở cánh cửa nào trong cái nhà trọ quái quỷ này?",
       "pickupSoundID": "click",
-      "rsChangeValue": 8,
+      "rsChangeValue": 5,
       "isCursed": false
     },
     {
       "itemID": "hanger",
       "itemName": "Móc treo",
       "description": "Một chiếc móc treo quần áo bằng kim loại.",
-      "inspectText": "Móc treo cũ kỹ, hơi cong. Có thể uốn thành dụng cụ gì đó.",
-      "pickupSoundID": "click",
-      "rsChangeValue": 0,
-      "isCursed": false
-    },
-    {
-      "itemID": "bone",
-      "itemName": "Khúc xương",
-      "description": "Một khúc xương nhỏ, không rõ của ai.",
-      "inspectText": "Lạnh ngắt. Có vết cắn ở đầu xương... Đây là xương người hay xương động vật?",
-      "pickupSoundID": "click",
-      "rsChangeValue": 5,
-      "isCursed": false
-    },
-    {
-      "itemID": "glass_shard",
-      "itemName": "Mảnh kính",
-      "description": "Một mảnh kính vỡ sắc nhọn.",
-      "inspectText": "Cạnh rất sắc. Có thể dùng để cắt thứ gì đó... hoặc tự làm đau mình.",
+      "inspectText": "Móc treo cũ kỹ, hơi cong. Có thể uốn nó thành một cái móc dài để khều đồ vật.",
       "pickupSoundID": "click",
       "rsChangeValue": 3,
       "isCursed": false
     },
     {
+      "itemID": "bone",
+      "itemName": "Khúc xương",
+      "description": "Một khúc xương cứng ngắc.",
+      "inspectText": "Lạnh ngắt và rất cứng. Vết cắn ở đầu xương này... trông không giống động vật. Có thể dùng nó như một vật cứng để đập thứ gì đó.",
+      "pickupSoundID": "click",
+      "rsChangeValue": 12,
+      "isCursed": true
+    },
+    {
+      "itemID": "glass_shard",
+      "itemName": "Mảnh kính",
+      "description": "Một mảnh kính vỡ sắc nhọn.",
+      "inspectText": "Cạnh rất sắc bén. Đủ để rạch đứt những tấm vải dày như ga trải giường...",
+      "pickupSoundID": "click",
+      "rsChangeValue": 8,
+      "isCursed": true
+    },
+    {
       "itemID": "fabric_piece",
       "itemName": "Mảnh vải",
       "description": "Một mảnh vải rách từ ga giường.",
-      "inspectText": "Vải mỏng nhưng dai. Có thể dùng để tắc thứ gì đó...",
+      "inspectText": "Vải mỏng nhưng dai. Nếu vo tròn lại và ném xuống ống nước, chắc chắn sẽ gây ra một vụ tắc nghẽn tồi tệ.",
       "pickupSoundID": "click",
-      "rsChangeValue": 0,
+      "rsChangeValue": 4,
+      "isCursed": false
+    },
+    {
+      "itemID": "axe",
+      "itemName": "Rìu chữa cháy",
+      "description": "Một chiếc rìu cứu hỏa hạng nặng.",
+      "inspectText": "Nặng và sắc. Mùi rỉ sét xộc lên mũi. Sức mạnh này đủ để phá nát bất kỳ cánh cửa gỗ nào.",
+      "pickupSoundID": "click",
+      "rsChangeValue": 15,
+      "isCursed": true
+    },
+    {
+      "itemID": "binh_cuu_hoa",
+      "itemName": "Bình cứu hỏa",
+      "description": "Bình chữa cháy CO2.",
+      "inspectText": "Lớp bọt khí lạnh toát. Có thể dùng để xịt mù camera giám sát hoặc đóng băng một số loại khóa điện tử.",
+      "pickupSoundID": "click",
+      "rsChangeValue": 5,
       "isCursed": false
     }
   ]
