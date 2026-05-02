@@ -60,7 +60,6 @@ public class RoomInteractionHandler implements InteractionCallback {
             handleMainDoorInteraction();
             return;
         }
-
         // Logic chuyển cảnh thông thường qua targetScene trong JSON
         RoomData roomData = screen.getSceneManager().getCurrentScene().getRoomData();
         for (RoomData.RoomObject roomObj : roomData.getObjects()) {
@@ -212,7 +211,8 @@ public class RoomInteractionHandler implements InteractionCallback {
         }
         if ("chair".equals(id)) {
             if (game.getFlagManager().get("chair_on_bed")) {
-                screen.showInspectText("Chiếc ghế đã được đặt vững chãi trên giường.");
+                // Thêm rời lại ghế về vị trí cũ
+                onDialogueTriggered("confirm_move_chair_back");
             } else {
                 screen.hideInspectText();
                 onDialogueTriggered("confirm_move_chair");
@@ -251,6 +251,11 @@ public class RoomInteractionHandler implements InteractionCallback {
     private void handleMainDoorInteraction() {
         if (screen.getPuzzleManager().isPuzzleSolved("main_door_unlocked")) {
             screen.changeSceneWithFade("room_hallway");
+            if (game.getFlagManager().get("started_minigame_2") && !screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
+                screen.hideInspectText();
+                onDialogueTriggered("confirm_resume_minigame");
+                return;
+            }
         } else if (screen.getPuzzleManager().isPuzzleSolved("key_broke_on_door")) {
             if ("chia_khoa_fixed_final".equals(screen.getInventoryUI().getSelectedItem())) {
                 game.getInventoryManager().removeItem("chia_khoa_fixed_final");
