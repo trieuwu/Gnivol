@@ -126,16 +126,49 @@ public class InventoryUI {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 playSfx("open_bag");
-                boolean isBackpackVisible = !backpackTable.isVisible();
+                boolean isBackpackVisible = backpackTable.isVisible();
 
-                backpackTable.setVisible(isBackpackVisible);
-                quickbarTable.setVisible(!isBackpackVisible);
-                resetHighlights();
                 if (!isBackpackVisible) {
+                    // =================== MỞ BALO ===================
                     resetHighlights();
-                } else {
+                    quickbarTable.setVisible(false); // Ẩn ngay thanh dưới đi
+
+                    backpackTable.setVisible(true);
+                    backpackTable.setPosition(0, -150f); // Bắt đầu ở vị trí tụt xuống dưới 150px
+                    backpackTable.getColor().a = 0f; // Bắt đầu với trạng thái tàng hình (Alpha = 0)
+
+                    backpackTable.clearActions();
+                    backpackTable.addAction(Actions.parallel(
+                        // Bay lên vị trí 0 với tốc độ 0.35s, thêm hiệu ứng nảy (swingOut)
+                        Actions.moveTo(0, 0, 0.35f, com.badlogic.gdx.math.Interpolation.swingOut),
+                        // Cùng lúc đó hiện rõ dần lên
+                        Actions.fadeIn(0.25f)
+                    ));
 
                     updateButtonStates();
+                    refreshUI();
+                } else {
+                    // =================== ĐÓNG BALO ===================
+                    resetHighlights();
+
+                    backpackTable.clearActions();
+                    backpackTable.addAction(Actions.sequence(
+                        Actions.parallel(
+                            // Trượt tuột xuống dưới 150px
+                            Actions.moveTo(0, -150f, 0.25f, com.badlogic.gdx.math.Interpolation.pow2In),
+                            // Cùng lúc đó mờ dần
+                            Actions.fadeOut(0.25f)
+                        ),
+                        Actions.visible(false), // Ẩn hẳn bảng đi để tiết kiệm tài nguyên
+
+                        // Sau khi túi đã giấu xong, hiện lại thanh Quickbar ở dưới
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                quickbarTable.setVisible(true);
+                            }
+                        })
+                    ));
                 }
             }
         });
@@ -169,7 +202,8 @@ public class InventoryUI {
 
 
         backpackTable = new Table();
-        backpackTable.setFillParent(true);
+        backpackTable.setSize(1280, 720);
+        backpackTable.setPosition(0, 0);
         backpackTable.center();
 
         Texture bgTex = new Texture(Gdx.files.internal("images/UI/inventory_chart_ui.png"));
