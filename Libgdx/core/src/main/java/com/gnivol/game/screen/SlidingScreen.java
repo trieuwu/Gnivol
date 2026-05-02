@@ -98,7 +98,7 @@ public class SlidingScreen extends BaseScreen {
 
 
     private void loadAssets() {
-        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng1/anhnenminigame.jpg"));
+        texBackground = new Texture(Gdx.files.internal("images/mini_games/mng2/background.png"));
         texWall = new Texture(Gdx.files.internal("images/mini_games/mng2/wall1.png"));
         texMarble = new Texture(Gdx.files.internal("images/mini_games/mng2/box.png"));
         texHole = new Texture(Gdx.files.internal("images/mini_games/mng2/x.png"));
