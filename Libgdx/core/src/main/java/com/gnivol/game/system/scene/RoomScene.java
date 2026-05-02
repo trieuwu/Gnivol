@@ -259,6 +259,11 @@ public class RoomScene extends Scene {
         }
     }
 
+    /** Trả true khi đang trong 3s effect đập gương — input phải bị block ngoài. */
+    public boolean isMirrorBreaking() {
+        return isMirrorBreakingEffect;
+    }
+
     /**
      * Đổi trạng thái visual của object.
      * VD: setObjectState("wardrobe", "open") → swap sang altTexture "open"

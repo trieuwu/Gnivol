@@ -201,6 +201,10 @@ public class LaserScreen extends BaseScreen {
         }
         // --
         game.getInventoryManager().addItem("ca_vat_final");
+        if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
+        if (previousScreen instanceof GameScreen) {
+            ((GameScreen) previousScreen).showNotification("Bạn đã nhận được 1 cà vạt", com.badlogic.gdx.graphics.Color.YELLOW);
+        }
         if (game.getAudioManager() != null && previousBgmId != null) {
             game.getAudioManager().crossfadeBGM(previousBgmId, 0.5f);
         }
