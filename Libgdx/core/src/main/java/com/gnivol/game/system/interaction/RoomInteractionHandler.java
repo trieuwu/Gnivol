@@ -93,8 +93,12 @@ public class RoomInteractionHandler implements InteractionCallback {
                     com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
                         @Override
                         public void run() {
+                            // Khi bathroom_break_mirror.png hiện ra (t=3s) → mới phát SFX gương vỡ + verification + nhận item
+                            game.getAudioManager().playSFX("broken-glass-sound-effect-high-quality");
                             screen.getGnivolGame().getInventoryManager().addItem("glass_shard");
                             screen.getInventoryUI().refreshUI();
+                            game.getAudioManager().playSFX("verification");
+                            screen.showNotification("Bạn đã nhận được 1 mảnh kính", com.badlogic.gdx.graphics.Color.YELLOW);
                         }
                     }, 3.0f);
                 }
@@ -252,6 +256,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                 game.getInventoryManager().removeItem("chia_khoa_fixed_final");
                 screen.getInventoryUI().clearSelection();
                 screen.getPuzzleManager().markSolved("main_door_unlocked");
+                game.getAudioManager().playSFX("open_door");
                 screen.showNotification("Cạch! Cửa đã được mở khóa.", Color.GREEN);
                 screen.getInventoryUI().refreshUI();
                 if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("unlock_main_door");

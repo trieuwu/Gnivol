@@ -232,15 +232,22 @@ public class GameScreen extends BaseScreen {
                         }
                         return;
                     }
-                    // Rạch giường
+                    // Rạch giường — phát cut_fabric (3s) rồi nhận mảnh vải + verification
                     if ("action_cut_bed".equals(cutsceneId)) {
                         game.getFlagManager().set("bed_cut", true);
                         game.getInventoryManager().removeItem("glass_shard");
-                        game.getInventoryManager().addItem("fabric_piece");
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("cat_xoet");
-                        showNotification("Bạn đã nhận được 1 mảnh vải", Color.YELLOW);
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("cut_fabric");
+                        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                            @Override
+                            public void run() {
+                                game.getInventoryManager().addItem("fabric_piece");
+                                inventoryUI.refreshUI();
+                                if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
+                                showNotification("Bạn đã nhận được 1 mảnh vải", Color.YELLOW);
+                            }
+                        }, 3.0f);
 
                         if (game.getAutoSaveManager() != null) {
                             game.getAutoSaveManager().onSaveTrigger("event_bed_cut");
@@ -252,7 +259,7 @@ public class GameScreen extends BaseScreen {
                         game.getInventoryManager().addItem("manh_kinh_van_tay");
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("pickup_item");
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
                         showNotification("Bạn đã nhận được 1 mảnh kính chứa vân tay của chủ trọ", Color.YELLOW);
 
                         if (game.getAutoSaveManager() != null) {
@@ -544,6 +551,7 @@ public class GameScreen extends BaseScreen {
             if ("puzzle_drawer".equals(puzzleId)) {
                 game.getInventoryManager().addItem("keo_502_final");
                 inventoryUI.refreshUI();
+                if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
                 showNotification("Cạch! Ngăn kéo đã mở. Nhận được lọ keo 502!", Color.GREEN);
                 if (sceneManager.getCurrentScene() instanceof RoomScene) {
                     ((RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
@@ -724,6 +732,11 @@ public class GameScreen extends BaseScreen {
                     return true;
                 }
                 if (inventoryUI.isOpen()) return false;
+                // Block input khi đang đập gương (3s effect)
+                if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene
+                        && ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).isMirrorBreaking()) {
+                    return true;
+                }
                 return interactionSystem.handleClick(screenX, screenY, viewport);
             }
 

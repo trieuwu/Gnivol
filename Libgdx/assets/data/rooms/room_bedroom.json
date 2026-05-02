@@ -41,8 +41,8 @@
         "rsChange": 0,
         "overlayId": "fridge_interior",
         "altTextures": {
-          "open": "textures/objects/fridge_open.png",
-          "taken": "textures/objects/fridge_open_taken.png"
+          "open": "images/tulanh_mo.png",
+          "taken": "images/tulanh_mo.png"
         }
       }
     },
@@ -240,7 +240,10 @@
         "inspectText": "Một bức tranh chứa mã QR kỳ lạ... Có nên quét thử không?",
         "collectible": false,
         "hasGlitch": true,
-        "rsChange": 0
+        "rsChange": 0,
+        "altTextures": {
+          "open": "images/qrcode.png"
+        }
       }
     },
     {
