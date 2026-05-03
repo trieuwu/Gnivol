@@ -32,6 +32,7 @@ public class RoomScene extends Scene {
     private float mirrorEffectTimer = 0f;
     private float mirrorFlashTimer = 0f;
     private boolean showGhostFlash = false;
+    private boolean isBedCutting = false;
 
     private final Map<String, Texture> objectTextures;
 
@@ -264,10 +265,20 @@ public class RoomScene extends Scene {
         return isMirrorBreakingEffect;
     }
 
-    /**
-     * Đổi trạng thái visual của object.
-     * VD: setObjectState("wardrobe", "open") → swap sang altTexture "open"
-     */
+    public void startBedCutEvent() {
+        isBedCutting = true;
+        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+            @Override
+            public void run() {
+                isBedCutting = false; // Tự động mở khóa sau 3 giây
+            }
+        }, 3.0f);
+    }
+
+    public boolean isBedCutting() {
+        return isBedCutting;
+    }
+
     public void setObjectState(String objectId, String state) {
         objectStates.put(objectId, state);
         Gdx.app.log("RoomScene", objectId + " → state: " + state);

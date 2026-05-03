@@ -223,7 +223,6 @@ public class GameScreen extends BaseScreen {
                         inventoryUI.refreshUI();
 
                         changeSceneWithFade("room_toilet_clogged");
-                        showNotification("Ục ục... Bồn cầu đã tắc!", Color.GREEN);
 
                         if (game.getAutoSaveManager() != null) {
                             game.getAutoSaveManager().onSaveTrigger("event_toilet_clogged");
@@ -236,6 +235,11 @@ public class GameScreen extends BaseScreen {
                         game.getInventoryManager().removeItem("glass_shard");
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
+
+                        if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
+                            ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).startBedCutEvent();
+                        }
+
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("cut_fabric");
                         com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
                             @Override
@@ -271,7 +275,6 @@ public class GameScreen extends BaseScreen {
                         // thay phòng
                         changeSceneWithFade("new_blank_room_chair_on_bed");
 
-                        showNotification("Đã đặt ghế lên giường.", Color.LIGHT_GRAY);
                         if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_chair_moved");
                         return;
                     }
@@ -758,9 +761,11 @@ public class GameScreen extends BaseScreen {
                 }
                 if (inventoryUI.isOpen()) return false;
                 // Block input khi đang đập gương (3s effect)
-                if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene
-                        && ((com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene()).isMirrorBreaking()) {
-                    return true;
+                if (sceneManager.getCurrentScene() instanceof com.gnivol.game.system.scene.RoomScene) {
+                    com.gnivol.game.system.scene.RoomScene currentRoom = (com.gnivol.game.system.scene.RoomScene) sceneManager.getCurrentScene();
+                    if (currentRoom.isMirrorBreaking() || currentRoom.isBedCutting()) {
+                        return true; // Nuốt click, không cho làm gì!
+                    }
                 }
                 return interactionSystem.handleClick(screenX, screenY, viewport);
             }

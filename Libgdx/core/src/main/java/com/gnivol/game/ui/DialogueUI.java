@@ -250,17 +250,33 @@ public class DialogueUI {
 
     public void displayNode(DialogueNode node) {
         if (node == null) {
-            rootTable.setVisible(false);
-            if (choiceOverlayTable != null) choiceOverlayTable.setVisible(false);
-            if (onFinished != null) {
-                Runnable callback = onFinished;
-                onFinished = null;
-                callback.run();
-            }
+            rootTable.clearActions();
+            rootTable.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut(0.5f),
+
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        rootTable.setVisible(false);
+                        if (choiceOverlayTable != null) choiceOverlayTable.setVisible(false);
+                        if (onFinished != null) {
+                            Runnable callback = onFinished;
+                            onFinished = null;
+                            callback.run();
+                        }
+                    }
+                })
+            ));
             return;
         }
 
-        rootTable.setVisible(true);
+        if (!rootTable.isVisible()) {
+            rootTable.getColor().a = 0f; // Bắt đầu từ trong suốt
+            rootTable.setVisible(true);  // Bật hiển thị
+            rootTable.clearActions();    // Xóa các hiệu ứng cũ (tránh lỗi nếu click nhanh)
+            rootTable.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn(1f)); // Mờ dần lên trong 0.5s
+        }
+
         autoAdvanceTimer = 0f;
 
         // Play one-shot SFX khi vào node (VD: sike, scream2...)

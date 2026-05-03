@@ -7,12 +7,11 @@
       "id": "door_back_bedroom",
       "type": "door",
       "x": 0,
-      "y": 400,
-      "w": 150,
-      "h": 320,
+      "y": 300,
+      "w": 137,
+      "h": 326,
       "properties": {
         "targetScene": "room_bedroom",
-        "inspectText": "Chui ra ngoài. Nằm dưới này ngột ngạt quá.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -26,7 +25,6 @@
       "w": 200,
       "h": 130,
       "properties": {
-        "inspectText": "Một con gấu bông bị bỏ quên... Trông nụ cười của nó thật kỳ quái.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -45,7 +43,6 @@
       "offsetY": -100,
       "properties": {
         "itemId": "chia_khoa_final",
-        "inspectText": "Một chiếc chìa khóa bằng đồng rơi dưới gầm giường.",
         "collectible": true,
         "hasGlitch": false,
         "rsChange": 0

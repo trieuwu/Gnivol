@@ -58,7 +58,6 @@
       "offsetY": 0,
       "properties": {
         "dialogueId": "intro_phone_call",
-        "inspectText": "Bàn làm việc cũ. Sách vở bày bừa, đèn bàn vẫn sáng.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -75,7 +74,6 @@
       "offsetX": 0,
       "offsetY": -250,
       "properties": {
-        "inspectText": "Chiếc giường cũ kỹ. Ga trải giường nhàu nát như có ai vừa nằm...",
         "collectible": false,
         "hasGlitch": true,
         "rsChange": 0
@@ -94,7 +92,6 @@
       "offsetY": -30,
       "properties": {
         "itemId": "dien_thoai_final",
-        "inspectText": "Điện thoại bàn cũ. Dây bị đứt nhưng màn hình vẫn nhấp nháy...",
         "collectible": true,
         "hasGlitch": true,
         "rsChange": 5
@@ -108,7 +105,6 @@
       "w": 271,
       "h": 209,
       "properties": {
-        "inspectText": "Cửa sổ nhìn ra bên ngoài. Chỉ thấy sương mù dày đặc.",
         "collectible": false,
         "hasGlitch": true,
         "rsChange": -5
@@ -136,7 +132,6 @@
       "h": 585,
       "properties": {
         "targetScene": "room_bathroom",
-        "inspectText": "Cửa dẫn vào nhà tắm. Ánh sáng lờ mờ lọt qua khe cửa.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -151,7 +146,6 @@
       "h": 588,
       "properties": {
         "targetScene": "room_hallway",
-        "inspectText": "Mở cửa ra sảnh chung.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -166,7 +160,6 @@
       "h": 108,
       "properties": {
         "targetScene": "room_under_bed",
-        "inspectText": "Chui xuống gầm giường xem có gì không.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -181,7 +174,6 @@
       "h": 108,
       "properties": {
         "targetScene": "room_under_bed",
-        "inspectText": "Chui xuống gầm giường xem có gì không.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -195,7 +187,6 @@
       "w": 270,
       "h": 65,
       "properties": {
-        "inspectText": "Chiếc quạt trần cũ kỹ. Nó cứ cọt kẹt quay từng vòng chậm chạp.",
         "collectible": false,
         "hasGlitch": true,
         "rsChange": 0
@@ -209,7 +200,6 @@
       "w": 63,
       "h": 62,
       "properties": {
-        "inspectText": "Điều hòa nhiệt độ. Gió thổi ra lạnh toát sống lưng.",
         "collectible": false,
         "hasGlitch": true,
         "rsChange": 0
@@ -223,7 +213,6 @@
       "w": 69,
       "h": 82,
       "properties": {
-        "inspectText": "Điều hòa nhiệt độ. Gió thổi ra lạnh toát sống lưng.",
         "collectible": false,
         "hasGlitch": true,
         "rsChange": 0
@@ -258,7 +247,45 @@
       "offsetY": 0,
       "properties": {
         "dialogueId": "intro_phone_call",
-        "inspectText": "Bàn làm việc cũ. Sách vở bày bừa, đèn bàn vẫn sáng.",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "pictures",
+      "type": "furniture",
+      "x": 493,
+      "y": 383,
+      "w": 63,
+      "h": 157,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "books",
+      "type": "furniture",
+      "x": 470,
+      "y": 284,
+      "w": 133,
+      "h": 58,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "picture",
+      "type": "furniture",
+      "x": 114,
+      "y": 431,
+      "w": 86,
+      "h": 101,
+      "properties": {
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
