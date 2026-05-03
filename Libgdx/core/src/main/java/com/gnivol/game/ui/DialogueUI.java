@@ -72,6 +72,8 @@ public class DialogueUI {
     private float typeTimer = 0f;             // Đồng hồ đếm ngược để gõ chữ
     private int typeIndex = 0;                // Vị trí chữ đang gõ tới đâu
     private final float TYPE_SPEED = 0.05f;   // 0.05 giây hiện 1 chữ
+    /** Cheat: nếu true → text hiện ngay tức thời (skip typewriter). Toggle qua F2 trong GameScreen. */
+    public static boolean CHEAT_INSTANT_DIALOGUE = false;
     private boolean isTyping = false;         // Đang gõ hay đã gõ xong
     private final RSManager rsManager;
     private GnivolGame game;
@@ -332,6 +334,11 @@ public class DialogueUI {
         isTyping = true;
         typeTimer = 0f;
         clickDelayTimer = 0f;
+        // Cheat F2: skip typewriter — hiện full text ngay
+        if (CHEAT_INSTANT_DIALOGUE && fullContentText != null) {
+            typeIndex = fullContentText.length();
+            isTyping = false;
+        }
 
         updateContentLabel();
         choicesTable.clearChildren();
@@ -663,8 +670,9 @@ public class DialogueUI {
     public boolean canClick() {
         // Block click khi đang hiển thị overlay choice A/B (Thành's fix — PR #84)
         boolean choiceNotVisible = (choiceOverlayTable == null || !choiceOverlayTable.isVisible());
-        // Delay 0s — click ngay khi dialogue mở (theo yêu cầu Duy Anh)
-        boolean timeOk = clickDelayTimer >= 0f;
+        // Default 2s gate (chống skip nhanh). Cheat F2 → 0s.
+        float requiredDelay = CHEAT_INSTANT_DIALOGUE ? 0f : 2.0f;
+        boolean timeOk = clickDelayTimer >= requiredDelay;
         return timeOk && choiceNotVisible;
     }
 }
