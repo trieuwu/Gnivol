@@ -6,14 +6,14 @@
       { "type": "sfx", "id": "sfx_heartbeat_fast" },
       { "type": "flash", "color": "white", "duration": 0.1 },
 
-      { "type": "show_sprite", "sprite": "images/horror/removed_backgr.png", "duration": 3 },
+      { "type": "show_sprite", "sprite": "images/horror/removed_backgr.png", "duration": 3, "x": 340, "y": 160, "w": 600, "h": 400 },
 
       { "type": "flash", "color": "red", "duration": 0.1 },
       { "type": "sfx", "id": "sfx_low_rumble" },
-      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr2.png" },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr2.png", "x": 190, "y": 60, "w": 900, "h": 600 },
 
       { "type": "flash", "color": "red", "duration": 0.1 },
-      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr3.png" },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr3.png", "x": 0, "y": 0, "w": 1280, "h": 720 },
       { "type": "sfx", "id": "sfx_scare" },
       { "type": "shake", "intensity": 20, "duration": 0.6 },
 
@@ -191,6 +191,43 @@
 
       { "type": "sfx", "id": "sfx_flatline_heart" },
       { "type": "fade_out", "duration": 2.5},
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "final_ending",
+    "steps": [
+      { "type": "sfx", "id": "verification" },
+      { "type": "wait", "duration": 0.6 },
+      { "type": "dialogue", "id": "final_ending_door_unlocked" },
+
+      { "type": "change_bg", "sprite": "images/back_ground/tang_1/khoa_van_tay_open.png" },
+      { "type": "wait", "duration": 1.5 },
+      { "type": "change_bg", "sprite": "images/back_ground/tang_1/tang_1_glass_breaked.png" },
+      { "type": "wait", "duration": 1.5 },
+      { "type": "change_bg", "sprite": "images/back_ground/tang_1/tang_1_glitch_door.png" },
+      { "type": "wait", "duration": 1.5 },
+
+      { "type": "sfx", "id": "phone_ringing" },
+      { "type": "wait", "duration": 1.5 },
+      { "type": "dialogue", "id": "final_ending_thought_phone" },
+
+      { "type": "sfx", "id": "o anh chao vu nha em la vu a vu" },
+      { "type": "dialogue", "id": "final_ending_phone_call_1" },
+
+      { "type": "sfx", "id": "choi lam sao duoc vu" },
+      { "type": "dialogue", "id": "final_ending_phone_call_2" },
+
+      { "type": "dialogue", "id": "final_ending_system" },
+
+      { "type": "flash", "color": "white", "duration": 0.15 },
+      { "type": "swap_sprite", "id": "room_password_closeup", "sprite": "images/UI/to_be_continue.png" },
+      { "type": "wait", "duration": 4.0 },
+
+      { "type": "swap_sprite", "id": "room_password_closeup", "sprite": "images/UI/qr_donate.png" },
+      { "type": "wait", "duration": 6.0 },
+
+      { "type": "fade_out", "duration": 2.0 },
       { "type": "change_scene", "id": "return_to_menu" }
     ]
   }
