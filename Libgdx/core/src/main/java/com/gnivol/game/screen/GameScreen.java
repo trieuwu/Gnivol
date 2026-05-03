@@ -90,6 +90,9 @@ public class GameScreen extends BaseScreen {
     private Texture vignetteTexture;
     private boolean isInitialized = false;
 
+    /** Cheat/cutscene flag: ép glitch shader + camera shake liên tục ở intensity max, bypass RS check. */
+    public static boolean FORCE_MAX_GLITCH = false;
+
     public GnivolGame getGnivolGame() { return game; }
     public SceneManager getSceneManager() { return sceneManager; }
     public InventoryUI getInventoryUI() { return inventoryUI; }
@@ -425,6 +428,13 @@ public class GameScreen extends BaseScreen {
                     } catch (Exception e) {
                         Gdx.app.error("Cutscene", "Cannot load sprite: " + sprite, e);
                         cutsceneSprite = null;
+                    }
+                }
+
+                @Override
+                public void onChangeBackground(String path) {
+                    if (sceneManager.getCurrentScene() instanceof RoomScene) {
+                        ((RoomScene) sceneManager.getCurrentScene()).changeBackground(path);
                     }
                 }
 
@@ -952,8 +962,13 @@ public class GameScreen extends BaseScreen {
                 originalCameraPos.set(camera.position.x, camera.position.y);
             }
             float currentRS = game.getRsManager().getRS();
+            // 0. FORCE_MAX_GLITCH: ép glitch liên tục ở max intensity (cutscene/dialogue cần effect dữ tợn)
+            if (FORCE_MAX_GLITCH) {
+                isRsGlitching = true;
+                rsGlitchDurationTimer = 0f; // không bao giờ hết hạn 0.75s khi force
+            }
             // 1. Kiểm tra nếu RS nằm ngoài vùng an toàn (35 -> 65)
-            if (currentRS < 35f || currentRS > 65f) {
+            else if (currentRS < 35f || currentRS > 65f) {
                 rsCycleTimer += delta;
 
                 // Đủ 10 giây -> Kích hoạt cơn điên
@@ -970,21 +985,26 @@ public class GameScreen extends BaseScreen {
                 isRsGlitching = false;
             }
 
-            // 2. Xử lý Rung Camera kéo dài 0.75 giây
+            // 2. Xử lý Rung Camera kéo dài 0.75 giây (vô hạn khi FORCE_MAX_GLITCH)
             if (isRsGlitching) {
                 rsGlitchDurationTimer += delta;
                 shaderTime += delta;
 
                 // Tính toán độ bạo lực: Càng lệch khỏi mức 50, rung càng mạnh
-                float severity = (currentRS < 35f) ? (35f - currentRS) : (currentRS - 65f);
+                float severity;
+                if (FORCE_MAX_GLITCH) {
+                    severity = 35f; // max severity → max shake amount
+                } else {
+                    severity = (currentRS < 35f) ? (35f - currentRS) : (currentRS - 65f);
+                }
                 float shakeAmount = 2f + (severity * 0.15f);
 
                 camera.position.x = originalCameraPos.x + (float)(Math.random() - 0.5) * shakeAmount;
                 camera.position.y = originalCameraPos.y + (float)(Math.random() - 0.5) * shakeAmount;
                 camera.update();
 
-                // Dừng lại sau 0.75s
-                if (rsGlitchDurationTimer > 0.75f) {
+                // Dừng lại sau 0.75s (trừ khi FORCE_MAX_GLITCH bật)
+                if (!FORCE_MAX_GLITCH && rsGlitchDurationTimer > 0.75f) {
                     isRsGlitching = false;
                 }
             } else {
@@ -1015,9 +1035,14 @@ public class GameScreen extends BaseScreen {
         // 2. TRUYỀN BIẾN (UNIFORM) SAU KHI ĐÃ BEGIN
         if (isRsGlitching && glitchShader != null) {
             glitchShader.setUniformf("u_time", shaderTime);
-            // Tính toán cường độ nhiễu (0.0 đến 1.0)
-            float currentRS = game.getRsManager().getRS();
-            float intensity = (currentRS < 35f) ? (35f - currentRS) / 35f : (currentRS - 65f) / 35f;
+            // Tính toán cường độ nhiễu (0.0 đến 1.0). FORCE_MAX_GLITCH luôn = 1.0
+            float intensity;
+            if (FORCE_MAX_GLITCH) {
+                intensity = 1.0f;
+            } else {
+                float currentRS = game.getRsManager().getRS();
+                intensity = (currentRS < 35f) ? (35f - currentRS) / 35f : (currentRS - 65f) / 35f;
+            }
             glitchShader.setUniformf("u_intensity", intensity);
         }
         sceneManager.render(batch);
@@ -1224,7 +1249,9 @@ public class GameScreen extends BaseScreen {
         final String finalTarget = actualTarget;
 
         if (isStairsTransition(targetSceneId)) {
-            game.getAudioManager().playSFX("stairs");
+            // Cầu thang lên/xuống đều gấp đôi volume
+            float vol = Math.min(1.0f, game.getAudioManager().getSfxVolume() * 2.0f);
+            game.getAudioManager().playSFX("stairs", vol);
         } else if (isDoorTransition(targetSceneId)) {
             game.getAudioManager().playSFX("open_door");
         }
