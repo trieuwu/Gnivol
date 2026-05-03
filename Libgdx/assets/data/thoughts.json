@@ -298,5 +298,10 @@
     "LOW": "Mạch điện đã nối, nhưng nước chảy ra vẫn đỏ quạch như máu loãng!",
     "MID": "Hệ thống điện đã được sửa. Nước chảy ra bình thường rồi.",
     "HIGH": "Mọi thứ đã đi vào quỹ đạo. Dòng chảy năng lượng đang nằm gọn trong tay tôi."
+  },
+  "hint_drawer": {
+    "LOW": "Ba chữ số... Đầu mình đau quá! Những con số liên tục nhảy múa... Ngày thành lập PROPTIT... là ngày nào nhỉ?!",
+    "MID": "Hình như mật khẩu là ngày sinh nhật của câu lạc bộ PROPTIT thì phải...",
+    "HIGH": "Sinh nhật PROPTIT. Một dãy số quá quen thuộc và dễ đoán cho cái ổ khóa rẻ tiền này."
   }
 }
