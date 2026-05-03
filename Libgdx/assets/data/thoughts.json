@@ -273,5 +273,30 @@
     "LOW": "Không được nhìn nữa! Ánh mắt từ dưới đáy cống đó đang thôi miên tôi!",
     "MID": "Tốt nhất là lùi lại. Đứng gần cái bồn cầu này lâu sẽ ám mùi mất.",
     "HIGH": "Tôi đã thấy đủ. Góc nhìn này quá hạn hẹp đối với một kẻ đang săn mồi như tôi."
+  },
+  "chu_tro_dang_sua_bon_cau": {
+    "LOW": "Lão ta đang ở trong phòng mình... Lão đang làm gì trong đó?! Mình có nên chạy trốn không?",
+    "MID": "Bác chủ nhà đang hì hục sửa bồn cầu trong phòng tắm rồi. Tốt nhất là không nên làm phiền lão lúc này.",
+    "HIGH": "Con cá đã cắn câu. Cứ để lão ta bận rộn với mớ hỗn độn đó đi."
+  },
+  "bed_da_bi_cat": {
+    "LOW": "Lớp đệm rách nát như một cái xác bị mổ phanh... Những miếng mút xốp thòi ra trông giống hệt phần nội tạng đang rỉ máu...",
+    "MID": "Chiếc giường đã bị mình rạch nát. Thật là một mớ bùng nhùng, mảnh vải bên trong cũng đã lấy ra rồi.",
+    "HIGH": "Chỉ là một lớp vỏ bọc dối trá. Rạch nát nó ra để lấy thứ mình cần là một quyết định hoàn toàn hợp lý."
+  },
+  "mirror_da_vo": {
+    "LOW": "Tấm gương vỡ nát... Những mảnh vụn đang phản chiếu hàng chục khuôn mặt méo mó của tôi!",
+    "MID": "Chiếc gương đã bị tôi đập vỡ. Nhìn những mảnh kính sắc nhọn này thật nguy hiểm.",
+    "HIGH": "Sự thật đã bị đập nát. Giờ đây chỉ còn lại những ảo ảnh phân mảnh thú vị."
+  },
+  "drawer_da_mo": {
+    "LOW": "Bóng tối trong ngăn kéo trống rỗng dường như đang hút lấy linh hồn tôi...",
+    "MID": "Ngăn kéo đã mở, và chẳng còn gì bên trong nữa.",
+    "HIGH": "Bí mật đã được phơi bày. Phần thưởng xứng đáng cho một trí tuệ vượt trội."
+  },
+  "sink_da_sua": {
+    "LOW": "Mạch điện đã nối, nhưng nước chảy ra vẫn đỏ quạch như máu loãng!",
+    "MID": "Hệ thống điện đã được sửa. Nước chảy ra bình thường rồi.",
+    "HIGH": "Mọi thứ đã đi vào quỹ đạo. Dòng chảy năng lượng đang nằm gọn trong tay tôi."
   }
 }
