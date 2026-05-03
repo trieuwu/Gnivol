@@ -263,5 +263,15 @@
     "LOW": "Đừng đi hướng này! Cầu thang này đang vặn vẹo như một con rắn khổng lồ chực chờ nuốt chửng tôi!",
     "MID": "Một lối lên khác. Lan can bám đầy những vệt hoen ố xỉn màu không rõ nguồn gốc.",
     "HIGH": "Từng bậc thang như những phím đàn piano đẫm máu. Tôi tự hỏi tiếng thét của chúng sẽ tạo ra bản nhạc tuyệt vời nào?"
+  },
+  "back_to_bathroom_1": {
+    "LOW": "Lùi lại! Lùi lại ngay! Có thứ gì đó đang trồi lên từ ống cống!",
+    "MID": "Chỗ này bẩn quá, mình nên đứng xa cái bồn cầu này ra.",
+    "HIGH": "Thật thú vị khi quan sát sự thối rữa này, nhưng tôi cần nhìn bao quát toàn bộ căn phòng."
+  },
+  "back_to_bathroom_2": {
+    "LOW": "Không được nhìn nữa! Ánh mắt từ dưới đáy cống đó đang thôi miên tôi!",
+    "MID": "Tốt nhất là lùi lại. Đứng gần cái bồn cầu này lâu sẽ ám mùi mất.",
+    "HIGH": "Tôi đã thấy đủ. Góc nhìn này quá hạn hẹp đối với một kẻ đang săn mồi như tôi."
   }
 }
