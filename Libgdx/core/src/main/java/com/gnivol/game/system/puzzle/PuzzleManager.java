@@ -2,7 +2,10 @@ package com.gnivol.game.system.puzzle;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import com.gnivol.game.system.save.ISaveable;
 
@@ -10,6 +13,7 @@ public class PuzzleManager implements ISaveable {
 
     private final Set<String> solvedPuzzles;
     private final Set<String> collectedItems = new HashSet<>();
+    private final Map<String, Integer> puzzleFailCounts = new HashMap<>();
 
     public interface PuzzleCallback {
         void onShowPuzzleOverlay(String puzzleId);
@@ -19,6 +23,14 @@ public class PuzzleManager implements ISaveable {
 
     public PuzzleManager() {
         this.solvedPuzzles = new HashSet<>();
+    }
+
+    public int getFailCount(String puzzleId) {
+        return puzzleFailCounts.containsKey(puzzleId) ? puzzleFailCounts.get(puzzleId) : 0;
+    }
+
+    public void incrementFailCount(String puzzleId) {
+        puzzleFailCounts.put(puzzleId, getFailCount(puzzleId) + 1);
     }
 
     public void markItemCollected(String itemId) {
@@ -73,6 +85,12 @@ public class PuzzleManager implements ISaveable {
         json.writeValue("solvedPuzzles", solvedPuzzles.toArray());
         json.writeValue("collectedItems", collectedItems.toArray());
 
+        json.writeObjectStart("puzzleFailCounts");
+        for (Map.Entry<String, Integer> entry : puzzleFailCounts.entrySet()) {
+            json.writeValue(entry.getKey(), entry.getValue());
+        }
+        json.writeObjectEnd();
+
         json.writeObjectEnd();
     }
 
@@ -81,6 +99,7 @@ public class PuzzleManager implements ISaveable {
         JsonValue pzJson = jsonValue.get("puzzleManager");
         solvedPuzzles.clear();
         collectedItems.clear();
+        puzzleFailCounts.clear();
 
         if (pzJson != null) {
             if (pzJson.has("solvedPuzzles")) {
@@ -102,11 +121,20 @@ public class PuzzleManager implements ISaveable {
                     }
                 }
             }
+
+            if (pzJson.has("puzzleFailCounts")) {
+                JsonValue failsJson = pzJson.get("puzzleFailCounts");
+                for (JsonValue val = failsJson.child; val != null; val = val.next) {
+                    puzzleFailCounts.put(val.name, val.asInt());
+                }
+            }
+
         }
     }
 
     public void reset() {
         solvedPuzzles.clear();
         collectedItems.clear();
+        puzzleFailCounts.clear();
     }
 }

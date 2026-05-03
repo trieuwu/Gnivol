@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.gnivol.game.system.puzzle.PuzzleManager;
 import com.gnivol.game.system.rs.RSEvent;
 import com.gnivol.game.system.rs.RSEventType;
@@ -30,8 +29,6 @@ public class PuzzleDrawerUI {
     private final PuzzleManager puzzleManager;
     private final RSManager rsManager;
     private final InventoryUI inventoryUI;
-
-    private int failCount = 0;
 
     public interface PuzzleResultListener {
         void onPuzzleSolved(String puzzleId);
@@ -76,21 +73,18 @@ public class PuzzleDrawerUI {
         bgImage.setSize(assetWidth, assetHeight);
         rootGroup.addActor(bgImage);
 
-        // --- CÀI ĐẶT MÀU VÀ FONT CHO CHỮ ---
-        Color fontColor = Color.WHITE;
-
 
         // ================= TẠO 3 Ô SỐ VÀ ANIMATION =================
         digitLabels = new Label[3];
-        float[] digitX = {192f, 352f, 512f};
-        float digitY = 208f;
+        float[] digitX = {215f, 379f, 542f};
+        float digitY = 199f;
 
         final Label.LabelStyle textStyle = new Label.LabelStyle(skin.getFont("default-font"), new Color(0.05f, 0.05f, 0.05f, 1f));
 
         for (int i = 0; i < 3; i++) {
             final int index = i;
-            final float baseX = digitX[i] + 15;
-            final float baseY = digitY + 5;
+            final float baseX = digitX[i];
+            final float baseY = digitY;
 
             digitLabels[i] = new Label("0", textStyle);
             digitLabels[i].setFontScale(4.0f);
@@ -103,14 +97,11 @@ public class PuzzleDrawerUI {
             clickArea.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    // Lưu lại số cũ trước khi tăng
                     int oldDigit = digits[index];
 
-                    // Cập nhật số mới
                     digits[index] = (digits[index] + 1) % 10;
                     int newDigit = digits[index];
 
-                    // --- 1. ANIMATION CHO SỐ CŨ (Bay lên và mờ đi) ---
                     Label oldLabel = new Label(String.valueOf(oldDigit), textStyle);
                     oldLabel.setFontScale(4.0f);
                     oldLabel.setPosition(baseX, baseY);
@@ -118,31 +109,30 @@ public class PuzzleDrawerUI {
 
                     oldLabel.addAction(Actions.sequence(
                         Actions.parallel(
-                            Actions.moveBy(0, 35f, 0.15f), // Bay lên 35px trong 0.15 giây
-                            Actions.fadeOut(0.15f)         // Mờ dần
+                            Actions.moveBy(0, 35f, 0.15f),
+                            Actions.fadeOut(0.15f)
                         ),
-                        Actions.removeActor()              // Biến mất hoàn toàn thì tự xóa khỏi bộ nhớ
+                        Actions.removeActor()
                     ));
 
-                    // --- 2. ANIMATION CHO SỐ MỚI (Từ dưới chui lên) ---
                     digitLabels[index].setText(String.valueOf(newDigit));
-                    digitLabels[index].clearActions(); // Hủy các hiệu ứng cũ nếu người chơi click quá nhanh
-                    digitLabels[index].setPosition(baseX, baseY - 35f); // Bắt đầu ở vị trí thấp hơn 35px
-                    digitLabels[index].getColor().a = 0f; // Trong suốt lúc bắt đầu
+                    digitLabels[index].clearActions();
+                    digitLabels[index].setPosition(baseX, baseY - 35f);
+                    digitLabels[index].getColor().a = 0f;
 
                     digitLabels[index].addAction(Actions.parallel(
-                        Actions.moveTo(baseX, baseY, 0.15f), // Trượt về vị trí gốc
-                        Actions.fadeIn(0.15f)                // Rõ dần
+                        Actions.moveTo(baseX, baseY, 0.15f),
+                        Actions.fadeIn(0.15f)
                     ));
                 }
             });
             rootGroup.addActor(clickArea);
         }
 
-        // ================= NÚT SUBMIT =================
+        // ================= NÚT SUBMIT TÀNG HÌNH =================
         Image submitArea = new Image();
-        submitArea.setSize(180f, 60f);
-        submitArea.setPosition(182f, 48f);
+        submitArea.setSize(220f, 75f);
+        submitArea.setPosition(145f, 40f);
         submitArea.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -151,19 +141,10 @@ public class PuzzleDrawerUI {
         });
         rootGroup.addActor(submitArea);
 
-        Label submitLabel = new Label("SUBMIT", skin, "default");
-        submitLabel.setColor(fontColor);
-        submitLabel.setFontScale(1.4f);
-        submitLabel.setSize(180f, 60f);
-        submitLabel.setPosition(182f, 48f);
-        submitLabel.setAlignment(Align.center);
-        submitLabel.setTouchable(Touchable.disabled);
-        rootGroup.addActor(submitLabel);
-
-        // ================= NÚT CLOSE =================
+        // ================= NÚT CLOSE TÀNG HÌNH =================
         Image closeArea = new Image();
-        closeArea.setSize(180f, 60f);
-        closeArea.setPosition(423f, 48f);
+        closeArea.setSize(220f, 75f);
+        closeArea.setPosition(440f, 40f);
         closeArea.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -171,15 +152,6 @@ public class PuzzleDrawerUI {
             }
         });
         rootGroup.addActor(closeArea);
-
-        Label closeLabel = new Label("CLOSE", skin, "default");
-        closeLabel.setColor(fontColor);
-        closeLabel.setFontScale(1.4f);
-        closeLabel.setSize(180f, 60f);
-        closeLabel.setPosition(423f, 48f);
-        closeLabel.setAlignment(Align.center);
-        closeLabel.setTouchable(Touchable.disabled);
-        rootGroup.addActor(closeLabel);
 
         stage.addActor(rootGroup);
     }
@@ -197,13 +169,15 @@ public class PuzzleDrawerUI {
             inventoryUI.setVisible(false);
         }
 
+        float[] digitX = {215f, 379f, 542f};
+        float digitY = 199f;
+
         for (int i = 0; i < 3; i++) {
             digits[i] = 0;
             digitLabels[i].setText("0");
             digitLabels[i].clearActions();
             digitLabels[i].getColor().a = 1f;
-            // Trả số về vị trí gốc
-            digitLabels[i].setPosition(190f + i * 160f + 15, 208f + 5);
+            digitLabels[i].setPosition(digitX[i], digitY);
         }
 
         dimBackground.setVisible(true);
@@ -237,9 +211,10 @@ public class PuzzleDrawerUI {
                 listener.onPuzzleSolved("puzzle_drawer");
             }
         } else {
-            if(failCount < 2) {
+            // LẤY SỐ LẦN SAI TỪ HỆ THỐNG LƯU TRỮ
+            if(puzzleManager.getFailCount("puzzle_drawer") < 2) {
                 rsManager.processEvent(new RSEvent(RSEventType.PUZZLE_FAILED, -5, "puzzle_drawer"));
-                failCount++;
+                puzzleManager.incrementFailCount("puzzle_drawer"); // CẬP NHẬT SỐ LẦN SAI
             }
             rootGroup.addAction(Actions.sequence(
                 Actions.color(Color.RED, 0.1f),
