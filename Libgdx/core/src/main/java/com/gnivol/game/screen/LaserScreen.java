@@ -221,12 +221,6 @@ public class LaserScreen extends BaseScreen {
             game.getScreenFader().startFadeIn();
             LaserScreen.this.dispose();
 
-            if (previousScreen instanceof GameScreen) {
-                ((GameScreen) previousScreen).showNotification(
-                    "Minigame Solved! Nhận được Cà vạt.",
-                    Color.GREEN
-                );
-            }
         });
 
         if (game.getAutoSaveManager() != null) {

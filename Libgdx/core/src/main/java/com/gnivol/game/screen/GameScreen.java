@@ -232,7 +232,6 @@ public class GameScreen extends BaseScreen {
                     // Rạch giường — phát cut_fabric (3s) rồi nhận mảnh vải + verification
                     if ("action_cut_bed".equals(cutsceneId)) {
                         game.getFlagManager().set("bed_cut", true);
-                        game.getInventoryManager().removeItem("glass_shard");
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
 

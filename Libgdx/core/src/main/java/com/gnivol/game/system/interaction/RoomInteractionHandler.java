@@ -129,6 +129,13 @@ public class RoomInteractionHandler implements InteractionCallback {
                             screen.showNotification("Bạn đã nhận được 1 mảnh kính", com.badlogic.gdx.graphics.Color.YELLOW);
                         }
                     }, 3.0f);
+                } else {
+                    DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("mirror_da_vo", game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        screen.hideInspectText();
+                        screen.getDialogueEngine().loadDialogue(thoughtTree);
+                        screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                    }
                 }
             }
             return;
@@ -169,7 +176,12 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 4. Ngăn kéo (Puzzle)
         if ("drawer".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_drawer")) {
-
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("drawer_da_mo", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
             } else {
                 screen.getPuzzleManager().openPuzzle("puzzle_drawer");
             }
@@ -187,7 +199,12 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 6. Bồn rửa mặt (Minigame Laser)
         if ("sink".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
-
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("sink_da_sua", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
             } else {
                 screen.getPuzzleManager().openPuzzle("puzzle_laser");
             }
@@ -219,7 +236,12 @@ public class RoomInteractionHandler implements InteractionCallback {
                     onDialogueTriggered("chu_tro_clogged_door");
                 } else {
                     // Đã gọi rồi -> Bác chủ trọ đang đợi trong nhà tắm
-                    screen.showInspectText("Bác chủ nhà đang ở trong phòng tắm rồi.");
+                    DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("chu_tro_dang_sua_bon_cau", game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        screen.hideInspectText();
+                        screen.getDialogueEngine().loadDialogue(thoughtTree);
+                        screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                    }
                 }
                 return;
             }
@@ -348,8 +370,12 @@ public class RoomInteractionHandler implements InteractionCallback {
     }
     private void handleBedInteraction(){
         if (game.getFlagManager().get("bed_cut")) {
-            screen.hideInspectText();
-            screen.showNotification("Đệm giường đã bị cắt ra.", Color.LIGHT_GRAY);
+            DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("bed_da_bi_cat", game.getRsManager().getRS());
+            if (thoughtTree != null) {
+                screen.hideInspectText();
+                screen.getDialogueEngine().loadDialogue(thoughtTree);
+                screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+            }
             return;
         }
 

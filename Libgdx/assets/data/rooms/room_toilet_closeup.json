@@ -26,7 +26,6 @@
       "h": 120,
       "properties": {
         "targetScene": "room_bathroom",
-        "inspectText": "Lùi lại...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
