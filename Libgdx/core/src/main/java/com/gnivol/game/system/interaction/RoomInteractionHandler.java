@@ -183,6 +183,12 @@ public class RoomInteractionHandler implements InteractionCallback {
                     screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
                 }
             } else {
+                screen.hideInspectText();
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("hint_drawer", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
                 screen.getPuzzleManager().openPuzzle("puzzle_drawer");
             }
             return;
@@ -206,6 +212,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                     screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
                 }
             } else {
+                screen.hideInspectText();
                 screen.getPuzzleManager().openPuzzle("puzzle_laser");
             }
             return;

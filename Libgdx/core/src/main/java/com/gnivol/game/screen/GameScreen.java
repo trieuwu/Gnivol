@@ -183,7 +183,7 @@ public class GameScreen extends BaseScreen {
             this.puzzleManager = game.getPuzzleManager();
             defaultSkin = new com.badlogic.gdx.scenes.scene2d.ui.Skin(Gdx.files.internal("ui/uiskin.json"));
 
-            puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager());
+            puzzleDrawerUI = new com.gnivol.game.ui.PuzzleDrawerUI(defaultSkin, game.getStage(), puzzleManager, game.getRsManager(), inventoryUI);
 
             setupPuzzleListeners();
 
@@ -776,6 +776,9 @@ public class GameScreen extends BaseScreen {
                         return true; // Nuốt click, không cho làm gì!
                     }
                 }
+                if (puzzleDrawerUI != null && puzzleDrawerUI.isOpen()) {
+                    return true; // Báo cho hệ thống biết click đã bị nuốt, không truyền xuống phòng nữa!
+                }
                 return interactionSystem.handleClick(screenX, screenY, viewport);
             }
 
@@ -1014,7 +1017,7 @@ public class GameScreen extends BaseScreen {
         }
         if (dialogueUI != null) dialogueUI.update(delta);
         game.getStage().act(delta);
-        if (inventoryUI != null) inventoryUI.setVisible(!dialogueUI.isVisible());
+        if (inventoryUI != null) inventoryUI.setVisible(!dialogueUI.isVisible() && (puzzleDrawerUI == null || !puzzleDrawerUI.isOpen()));
         if (cutsceneManager != null) cutsceneManager.update(delta);
         if (game.getAudioManager() != null) game.getAudioManager().update(delta);
 
