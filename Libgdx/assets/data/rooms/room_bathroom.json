@@ -1,22 +1,8 @@
 {
   "roomId": "room_bathroom",
   "roomName": "Nhà tắm",
-  "background": "images/batroom_bottle.png",
+  "background": "images/back_ground/bathroom/bathroom_clear_mirror.png",
   "objects": [
-    {
-      "id": "keo_502_final",
-      "type": "item",
-      "x": 253,
-      "y": 405,
-      "w": 80,
-      "h": 80,
-      "properties": {
-        "itemId": "keo_502_final",
-        "collectible": true,
-        "inspectText": "Một tuýp keo 502. Có vẻ vẫn còn dùng được.",
-        "rsChange": 0
-      }
-    },
     {
       "id": "mirror",
       "type": "interactable",
@@ -25,10 +11,9 @@
       "w": 260,
       "h": 320,
       "properties": {
-        "inspectText": "Gương soi. Phản chiếu khuôn mặt mờ ảo... có gì đó không đúng.",
         "collectible": false,
         "hasGlitch": true,
-        "rsChange": -5
+        "rsChange": -10
       }
     },
     {
@@ -40,7 +25,6 @@
       "h": 720,
       "properties": {
         "targetScene": "room_bedroom",
-        "inspectText": "Cửa quay lại phòng ngủ.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -54,7 +38,6 @@
       "w": 200,
       "h": 100,
       "properties": {
-        "inspectText": "Bồn rửa mặt cáu bẩn. Bên dưới có một bảng điện tử bị hở mạch.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -62,16 +45,94 @@
     },
     {
       "id": "toilet",
-      "type": "interactable",
-      "x": 482,
-      "y": 0,
-      "w": 200,
-      "h": 220,
+      "type": "door",
+      "x": 527,
+      "y": 100,
+      "w": 156,
+      "h": 157,
       "properties": {
-        "inspectText": "Một chiếc bồn cầu cũ kỹ. Nước bên trong có màu đùng đục...",
+        "targetScene": "room_toilet_closeup",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
+      }
+    },
+    {
+      "id": "shelf_shampoo",
+      "type": "furniture",
+      "x": 255,
+      "y": 318,
+      "w": 85,
+      "h": 167,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "shower",
+      "type": "furniture",
+      "x": 365,
+      "y": 240,
+      "w": 79,
+      "h": 407,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -2
+      }
+    },
+    {
+      "id": "towel",
+      "type": "furniture",
+      "x": 503,
+      "y": 272,
+      "w": 110,
+      "h": 343,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -5
+      }
+    },
+    {
+      "id": "soap_dish",
+      "type": "furniture",
+      "x": 748,
+      "y": 306,
+      "w": 80,
+      "h": 51,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "toilet_paper",
+      "type": "furniture",
+      "x": 735,
+      "y": 178,
+      "w": 80,
+      "h": 51,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "toothbrush_cup",
+      "type": "furniture",
+      "x": 854,
+      "y": 306,
+      "w": 54,
+      "h": 104,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": -2
       }
     }
   ]

@@ -46,17 +46,11 @@ public class PuzzleManager implements ISaveable {
 
     public boolean submitAnswer(String puzzleId, String answer) {
         if ("puzzle_drawer".equals(puzzleId)) {
-            if ("912".equals(answer)) {
-                markSolved(puzzleId);
-                return true;
-            }
-        } else if ("qr_proptit".equals(puzzleId)) {
             if ("910".equals(answer)) {
                 markSolved(puzzleId);
                 return true;
             }
         }
-
         return false;
     }
 

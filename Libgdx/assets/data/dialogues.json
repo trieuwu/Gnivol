@@ -28,17 +28,25 @@
       {
         "id": "call_01",
         "speaker": "Linh",
-        "content": "Alo... Khụ khụ! Hnil đấy à...? Cậu nghe rõ tớ không...?",
+        "content": "Alo... Khụ khụ! {player} đấy à...? Cậu nghe rõ tớ không...?",
         "textEffects": false,
         "nextNodeId": "call_02",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
         "id": "call_02",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Tớ đây. Mới sáng sớm có chuyện gì thế? Cậu ốm à?",
         "textEffects": false,
         "nextNodeId": "call_03",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": []
       },
       {
@@ -47,14 +55,22 @@
         "content": "Không... Khụ khụ! Tớ... tớ có tin mừng này! Khụ khụ!",
         "textEffects": false,
         "nextNodeId": "call_04",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
         "id": "call_04",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "Tin mừng gì mà cậu ho như cuốc kêu thế? Uống ngụm nước rồi nói từ từ tớ xem nào.",
         "textEffects": false,
         "nextNodeId": "call_05",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": []
       },
       {
@@ -63,6 +79,10 @@
         "content": "Phản ứng chán thế... Khụ khụ! Tớ ho thế này là điềm tốt đấy. Khụ... Tớ sắp chết rồi!",
         "textEffects": false,
         "nextNodeId": "call_06",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
@@ -71,21 +91,29 @@
         "content": "Bác sĩ bảo ung thư giai đoạn cuối rồi. Khụ! Hai tháng nữa thôi... Cậu mau chúc mừng tớ đi! Nhanh lên!!!",
         "textEffects": false,
         "nextNodeId": "call_07",
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
         "id": "call_07",
-        "speaker": "Hnil",
+        "speaker": "{player}",
         "content": "(Giọng cô ấy bỗng vỡ òa trong niềm vui sướng kì dị... Cảm giác buồn nôn trào lên cổ họng mình.)",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "right",
+        "portrait2": "images/characters/Linh.char.png",
+        "portraitSide2": "left",
         "choices": [
           {
             "id": "choice_A",
             "content": "Cậu điên à Linh? Cái quái gì đang xảy ra thế?!",
             "nextNodeId": "call_end_A",
             "textEffects": false,
-            "rsChange": 35
+            "rsChange": 10
           },
           {
             "id": "choice_B",
@@ -102,6 +130,10 @@
         "content": "Khụ khụ... Cậu lúc nào cũng vậy. Chẳng bao giờ hiểu cho tớ... Tít... tít... tít...",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       },
       {
@@ -110,6 +142,10 @@
         "content": "Khụ... HAH... HAHAHA! Tớ biết mà! Tớ đợi cậu ở d... Tít... tít... tít...",
         "textEffects": false,
         "nextNodeId": null,
+        "portrait": "images/characters/Linh.char.png",
+        "portraitSide": "left",
+        "portrait2": "images/characters/NPC1.char.png",
+        "portraitSide2": "right",
         "choices": []
       }
     ]
@@ -120,7 +156,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Cạch... RẮC! Thôi xong! Chìa khóa cũ giòn quá, gãy làm đôi rồi!",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -128,7 +164,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Một nửa đang kẹt cứng trong ổ, mình chỉ còn cầm cái chuôi... Phải tìm cách gắn nó lại thật chắc mới vặn được.",
         "textEffects": false,
         "nextNodeId": null,
@@ -142,7 +178,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Nửa cái chìa vẫn đang kẹt trong ổ. Mình cần bôi thứ gì đó thật dính vào cái chuôi này để nối chúng lại.",
         "textEffects": false,
         "nextNodeId": null,
@@ -156,7 +192,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Cửa chính đã bị khóa trái. Mình không thể ra ngoài nếu không tìm thấy chìa khóa.",
         "textEffects": false,
         "nextNodeId": null,
@@ -170,7 +206,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Cửa khóa chặt rồi... Ục... Có mùi hôi thối nồng nặc bốc ra từ khe cửa.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -178,7 +214,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Mùi hương này... giống hệt như mùi thịt thối rữa. Mình cần một thứ gì đó đủ mạnh để phá nát cánh cửa này, một cái rìu chẳng hạn.",
         "textEffects": false,
         "nextNodeId": null,
@@ -192,7 +228,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Một chiếc máy quét vân tay ẩn dưới tay vịn cầu thang? Hệ thống an ninh ở đây thật đáng kinh ngạc.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -200,7 +236,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Thiết bị báo 'Truy cập bị từ chối'. Mình cần vân tay của một cư dân ở đây mới có thể xuống tầng dưới được.",
         "textEffects": false,
         "nextNodeId": null,
@@ -214,7 +250,7 @@
     "nodes": [
       {
         "id": "node_1",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Cái giường này... cảm giác lạnh lẽo đến rợn người.",
         "textEffects": false,
         "nextNodeId": "node_2",
@@ -222,7 +258,7 @@
       },
       {
         "id": "node_2",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Á!!! Có... có một bàn tay vừa quờ ra từ dưới gầm giường?!",
         "textEffects": true,
         "nextNodeId": "node_3",
@@ -230,13 +266,950 @@
       },
       {
         "id": "node_3",
-        "speaker": "Hnil",
+        "speaker": "Suy nghĩ",
         "content": "Biến mất rồi... Chết tiệt, tim mình như sắp nhảy ra ngoài vậy. Chuyện quái gì đang diễn ra thế này?",
         "textEffects": false,
         "nextNodeId": null,
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "ending_text_rs0",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Tỉnh táo hoàn toàn... Trò chơi bắt đầu sụp đổ...",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "ending_text_rs100",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Chìm vào hư vô... Bạn đang dần lún sâu vào trò chơi...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "mot_sach",
+    "startNodeId": "node_01",
+    "nodes": [
+      {
+        "id": "node_01",
+        "speaker": "{player}",
+        "content": "WTF? Cái quái…! Ôi ma!",
+        "textEffects": false,
+        "nextNodeId": "node_02",
+        "choices": []
+      },
+      {
+        "id": "node_02",
+        "speaker": "Mọt sách",
+        "content": "Ma là một thứ không có thật. Theo Wikipedia, ma là một quan niệm dân gian để chỉ hồn của người chết…",
+        "textEffects": false,
+        "nextNodeId": "node_03",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_03",
+        "speaker": "{player}",
+        "content": "Ra là người.",
+        "textEffects": false,
+        "nextNodeId": "node_04",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_04",
+        "speaker": "Mọt sách",
+        "content": "Sai. Ma không phải là người, cũng không liên quan gì đến người.",
+        "textEffects": false,
+        "nextNodeId": "node_05",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "onEnterSfx": "sike",
+        "choices": []
+      },
+      {
+        "id": "node_05",
+        "speaker": "{player}",
+        "content": "…?",
+        "textEffects": false,
+        "nextNodeId": "node_06",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_06",
+        "speaker": "Mọt sách",
+        "content": "Trong cuộc sống của anh, ma chỉ là quan niệm. Còn trong này, 'ma' là một thứ được tạo ra bằng LibGDX, một asset.",
+        "textEffects": false,
+        "nextNodeId": "node_07",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_07",
+        "speaker": "{player}",
+        "content": "há..?",
+        "textEffects": false,
+        "nextNodeId": "node_08",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_08",
+        "speaker": "Mọt sách",
+        "content": "Texture. Animation, được load bằng LibGDX. hahahahahaah",
+        "textEffects": false,
+        "nextNodeId": "node_09",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_09",
+        "speaker": "{player}",
+        "content": "Ông là ai vậy, nói cái gì thế?",
+        "textEffects": false,
+        "nextNodeId": "node_10",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_10",
+        "speaker": "Mọt sách",
+        "content": "Quan tâm làm gì hả 'tên người chơi'. Chọn đi: 'tên người chơi' muốn chết hay muốn sống?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {
+            "id": "choice_A",
+            "content": "Tôi muốn chết…",
+            "nextNodeId": "node_11_A",
+            "textEffects": false,
+            "rsChange": 15
+          },
+          {
+            "id": "choice_B",
+            "content": "Tôi muốn sống",
+            "nextNodeId": "node_11_B",
+            "textEffects": false,
+            "rsChange": -5
+          }
+        ]
+      },
+      {
+        "id": "node_11_A",
+        "speaker": "{player}",
+        "content": "Chết chứ, tất nhiên là chết rồi, ai mà chẳng muốn chết hahahha",
+        "textEffects": false,
+        "nextNodeId": "jumscare_motsach",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_11_B",
+        "speaker": "{player}",
+        "content": "Học ít thôi cu em, đầu óc có vấn đề à, ai chả muốn sống?",
+        "textEffects": false,
+        "nextNodeId": "node_12_B",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_12_B",
+        "speaker": "Mọt sách",
+        "content": "Trả lời sai rồi..., còn phải học hỏi nhiều lắm!",
+        "textEffects": false,
+        "nextNodeId": "node_13",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_13",
+        "speaker": "{player}",
+        "content": "Học ít thôi ông cháu.",
+        "textEffects": false,
+        "nextNodeId": "node_14",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_14",
+        "speaker": "Bọng bé bểu",
+        "content": "Anh Bệu Xin chào tất cả các tình yêu!!!!",
+        "textEffects": true,
+        "nextNodeId": "node_15",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_15",
+        "speaker": "{player}",
+        "content": "Lại cái gì nữa vậy?",
+        "textEffects": false,
+        "nextNodeId": "node_16",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_16",
+        "speaker": "Bọng bé bểu",
+        "content": "Rebrand tí thôi con vợ ơi. Nhân vật phải có tí personality chứ.",
+        "textEffects": false,
+        "nextNodeId": "node_17",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_17",
+        "speaker": "{player}",
+        "content": "Liên tha liên thiên. Giờ ông tránh đường được chưa? Để tôi đi chơi.",
+        "textEffects": false,
+        "nextNodeId": "node_18",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_18",
+        "speaker": "Bọng bé bểu",
+        "content": "Đi đâu mà vội mà vàng, mà vấp phải đá, mà quàng phải dâyyyy. Con vợ, có muốn có người trợ giúp con vợ phá đảo game không?",
+        "textEffects": false,
+        "nextNodeId": "node_19",
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_19",
+        "speaker": "{player}",
+        "content": "...? WTF",
+        "textEffects": false,
+        "nextNodeId": "node_20",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_20",
+        "speaker": "Bọng bé bểu",
+        "content": "Chơi game nhá con vợ.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "jumscare_motsach",
+        "speaker": "Mọt sách",
+        "content": "Chắc chứ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {
+            "id": "choice_A_1_3",
+            "content": "Chắc chứ, đời này, ai rồi cũng chết.",
+            "nextNodeId": "node_11_A_3",
+            "textEffects": false,
+            "cutsceneId" : "cutscene_mot_sach_kill",
+            "rsChange": 0
+          },
+          {
+            "id": "choice_B_1_3",
+            "content": "Ngươi... không giống những kẻ khác à?",
+            "nextNodeId": "node_11_B_3",
+            "textEffects": false,
+            "rsChange": 0
+          }
+        ]
+      },
+      {
+        "id": "node_11_B_3",
+        "speaker": "{player}",
+        "content": "Ngươi còn... tỉnh táo đúng không?",
+        "textEffects": false,
+        "nextNodeId": "node_11_B_4",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_11_B_4",
+        "speaker": "Mọt sách",
+        "content": "Tỉnh táo? Táo dai! HAHAHAHAHA!",
+        "textEffects": true,
+        "nextNodeId": "node_14",
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": [],
+        "cutsceneId": "cutscene_beu_jumpscare"
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_1",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_1", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_1",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày có xéo mau không?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0, "cutsceneId": "cutscene_death_super_doctor"},
+          {"id": "B_1_4", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": null, "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày sẽ phải trả giá vì dám nói dối tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_2",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_2", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_2",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày lại muốn tìm tao để làm gì?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0, "cutsceneId": "cutscene_death_super_doctor"},
+          {"id": "B_1_4", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": null, "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày sẽ phải trả giá vì dám nói dối tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_visit_3",
+    "startNodeId": "intro_call",
+    "nodes": [
+      {
+        "id": "intro_call",
+        "speaker": "Suy nghĩ",
+        "content": "Bây giờ là ban đêm rồi mình có nên gọi chủ nhà không nhỉ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {"id": "yes", "content": "Có", "nextNodeId": "angry_3", "textEffects": false, "rsChange": 0},
+          {"id": "no", "content": "Không", "nextNodeId": "skip", "textEffects": false, "rsChange": 0}
+        ]
+      },
+      {
+        "id": "skip",
+        "speaker": "Suy nghĩ",
+        "content": "Thôi, không cần làm phiền.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      },
+      {
+        "id": "angry_3",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày có xéo mau không? Đến lần thứ 3 rồi đấy!",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {"id": "A_1_4", "content": "Cháu có việc mà", "nextNodeId": "death_super_doctor", "textEffects": false, "rsChange": 0, "cutsceneId": "cutscene_death_super_doctor"},
+          {"id": "B_1_4_final", "content": "Cháu trêu ạ, cháu xin lỗi bác", "nextNodeId": "death_xien", "textEffects": false, "rsChange": 0, "cutsceneId": "cutscene_death_xien"}
+        ]
+      },
+      {
+        "id": "death_super_doctor",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày sẽ phải trả giá vì dám nói dối tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "death_xien",
+        "speaker": "Bác chủ trọ",
+        "content": "Quá tam ba bận, mày phải trả giá vì đã làm phiền tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_clogged_door",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "{player}",
+        "content": "Bác chủ nhà ơi...",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày có cút không thì bảo?",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": true,
+        "nextNodeId": "node_3",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "{player}",
+        "content": "Bồn cầu phòng cháu bị hỏng rồi, nó bị tắc cái gì ấy?",
+        "textEffects": false,
+        "nextNodeId": "node_4",
+        "choices": []
+      },
+      {
+        "id": "node_4",
+        "speaker": "Bác chủ trọ",
+        "content": "Lại hỏng nữa, mày chỉ có làm khổ tao thôi!",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_5",
+        "choices": []
+      },
+      {
+        "id": "node_5",
+        "speaker": "Bác chủ trọ",
+        "content": "Tốt nhất là đừng trêu tao!",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "chu_tro_in_bathroom",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày ăn vải à hay gì, sao tao thấy có mảnh vải?",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "{player}",
+        "content": "Cháu không biết ạ. Sáng nay cháu dậy cháu đi vệ sinh xong nó tắc liền như vậy ạ!",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_3",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày đừng có láo toét, quá vô lí!",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": true,
+        "nextNodeId": "node_4",
+        "choices": []
+      },
+      {
+        "id": "node_4",
+        "speaker": "{player}",
+        "content": "Cháu thề đó.",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_5",
+        "choices": []
+      },
+      {
+        "id": "node_5",
+        "speaker": "Bác chủ trọ",
+        "content": "Phiền phức ghê. Lần nữa tao đuổi bỏ nhé. Mà mày làm gì mà vương vãi kính vỡ ở đây?",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_6",
+        "choices": []
+      },
+      {
+        "id": "node_6",
+        "speaker": "{player}",
+        "content": "Cháu không biết, sáng cháu thấy có ma... Cái nó tự vỡ.",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_7",
+        "choices": []
+      },
+      {
+        "id": "node_7",
+        "speaker": "Bác chủ trọ",
+        "content": "Bưu chính mới mở cả ngành biên kịch à cháu?",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_8",
+        "choices": []
+      },
+      {
+        "id": "node_8",
+        "speaker": "{player}",
+        "content": "Dạ không ạ, mà sao thế bác?",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_9",
+        "choices": []
+      },
+      {
+        "id": "node_9",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày vẽ truyện tài quá, tao tưởng bưu chính mở ngành biên kịch.",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_10",
+        "choices": []
+      },
+      {
+        "id": "node_10",
+        "speaker": "{player}",
+        "content": "Thật mà bác.",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "textEffects": false,
+        "nextNodeId": "node_11",
+        "choices": []
+      },
+      {
+        "id": "node_11",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày đừng có mà liên thiên! Tao trẻ con với mày à?! Vương vãi kính ở đây...",
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "textEffects": true,
+        "nextNodeId": "node_12",
+        "choices": []
+      },
+      {
+        "id": "node_12",
+        "speaker": "Suy nghĩ",
+        "content": "Bác chủ trọ lầm bầm chửi rủa rồi đóng sầm cửa lại, để lộ ra một mảnh kính vỡ sắc lẹm nằm dưới khe cửa.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "onEnterCutscene": "action_pickup_van_tay"
+      }
+    ]
+  },
+  {
+    "dialogueId": "dialogue_death_super_doctor",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Bạn đã bị chủ trọ giết... Vì chưa tìm được nguyên do để trò chuyện với chủ trọ!",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "dialogue_death_xien",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Bạn đã bị chủ trọ giết... Vì đã làm ảnh hưởng đến việc nghỉ ngơi của chủ trọ!",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "dialogue_cutscene_mot_sach_kill",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Bạn đã chết... Hắn giả vờ điên ... Hắn hoàn toàn hiểu bạn là người chơi!",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "death_super_doctor",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bác chủ trọ",
+        "content": "Mày sẽ phải trả giá vì dám nói dối tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "death_xien",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bác chủ trọ",
+        "content": "Quá tam ba bận, mày phải trả giá vì đã làm phiền tao...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/chu_tro.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "mot_sach_kill",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_11_A_3",
+        "speaker": "Mọt sách",
+        "content": "Được, để tao thành toàn cho mày.",
+        "textEffects": true,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid1_final.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "system_welcome_back",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Bạn tưởng tắt game là thoát được sao? Bọn chúng vẫn đang đợi bạn ở {roomName} ...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_clog_toilet",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Một mảnh vải đủ để làm nghẹt cứng hệ thống thoát nước... Đây sẽ là một lý do hoàn hảo để dụ bác chủ trọ mò lên đây.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Có",
+            "nextNodeId": null,
+            "cutsceneId": "action_clog_toilet"
+          },
+          {
+            "id": "no",
+            "content": "Không",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_cut_bed",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Trên đệm có một vết khâu rất mới và cộm lên... Dùng mảnh gương rạch nó ra thử xem?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Rạch nát nó ra",
+            "nextNodeId": null,
+            "cutsceneId": "action_cut_bed"
+          },
+          {
+            "id": "no",
+            "content": "Bỏ đi",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_move_chair",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Cái quạt trần cao quá... Có nên bê chiếc ghế này đặt lên giường để với tới không?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Bê lên",
+            "nextNodeId": null,
+            "cutsceneId": "action_move_chair"
+          },
+          {
+            "id": "no",
+            "content": "Thôi",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_hang_tie",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Chiều cao này vừa đủ rồi. Dùng chiếc cà vạt này vắt qua cánh quạt thử xem sao?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Treo lên",
+            "nextNodeId": null,
+            "cutsceneId": "action_hang_tie"
+          },
+          {
+            "id": "no",
+            "content": "Dừng lại",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_suicide",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Mọi thứ đã sẵn sàng. Một bước chân nữa thôi là mọi đau khổ sẽ kết thúc... Mình có thực sự muốn làm điều này?",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Kết thúc tất cả",
+            "nextNodeId": null,
+            "cutsceneId": "cutscene_suicide_ending"
+          },
+          {
+            "id": "no",
+            "content": "Không, mình muốn sống!",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "tu_tu",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Bạn đã treo cổ tự vẫn để giải thoát đau đớn...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_move_chair_back",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Có nên đưa chiếc ghế này trở lại vị trí cũ không?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Bê xuống",
+            "nextNodeId": null,
+            "cutsceneId": "action_move_chair_back"
+          },
+          {
+            "id": "no",
+            "content": "Cứ để đó",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_resume_minigame",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bọng bé bẩu",
+        "content": "Mày chưa vượt qua được minigame của tao, muốn tiếp tục chứ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Tiếp tục chơi",
+            "nextNodeId": null,
+            "cutsceneId": "action_resume_minigame_2"
+          },
+          {
+            "id": "no",
+            "content": "Về phòng nghỉ ngơi",
+            "nextNodeId": null,
+            "cutsceneId": "action_return_bedroom_force"
+          }
+        ]
+      }
+    ]
   }
-
 ]

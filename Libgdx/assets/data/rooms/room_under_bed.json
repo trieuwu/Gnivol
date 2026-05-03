@@ -1,18 +1,17 @@
 {
   "roomId": "room_under_bed",
   "roomName": "Gầm giường",
-  "background": "images/final_under_bed.png",
+  "background": "images/back_ground/room/final_under_bed.png",
   "objects": [
     {
       "id": "door_back_bedroom",
       "type": "door",
       "x": 0,
-      "y": 400,
-      "w": 150,
-      "h": 320,
+      "y": 300,
+      "w": 137,
+      "h": 326,
       "properties": {
         "targetScene": "room_bedroom",
-        "inspectText": "Chui ra ngoài. Nằm dưới này ngột ngạt quá.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -21,13 +20,30 @@
     {
       "id": "plush_toy",
       "type": "interactable",
-      "x": 520,
-      "y": 210,
-      "w": 220,
-      "h": 180,
+      "x": 506,
+      "y": 216,
+      "w": 200,
+      "h": 130,
       "properties": {
-        "inspectText": "Một con gấu bông bị bỏ quên... Trông nụ cười của nó thật kỳ quái.",
         "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "key_under_bed",
+      "type": "interactable",
+      "texture": "images/item/chia_khoa_final.png",
+      "x": 337,
+      "y": 238,
+      "w": 50,
+      "h": 50,
+      "scale": 0.03,
+      "offsetX": -280,
+      "offsetY": -100,
+      "properties": {
+        "itemId": "chia_khoa_final",
+        "collectible": true,
         "hasGlitch": false,
         "rsChange": 0
       }

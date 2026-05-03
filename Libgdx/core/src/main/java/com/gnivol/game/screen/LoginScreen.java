@@ -98,6 +98,23 @@ public class LoginScreen extends BaseScreen {
         nameInput.setPosition(100, 400);
         nameInput.setSize(350, 45);
         nameInput.setVisible(false);
+        nameInput.setTextFieldFilter(new TextField.TextFieldFilter() {
+            @Override
+            public boolean acceptChar(TextField textField, char c) {
+                return (c >= 'a' && c <= 'z') ||
+                    (c >= 'A' && c <= 'Z') ||
+                    (c >= '0' && c <= '9') ||
+                    c == ' ';
+            }
+        });
+
+        com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("GnivolSettings");
+        String savedName = prefs.getString("playerName", "");
+        if (!savedName.isEmpty()) {
+            nameInput.setText(savedName);
+            nameInput.setCursorPosition(savedName.length());
+        }
+
         stage.addActor(nameInput);
 
         // 4. Label Báo Lỗi (Validate rỗng)
@@ -120,13 +137,28 @@ public class LoginScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 String playerName = nameInput.getText().trim();
+
                 if (playerName.isEmpty()) {
                     errorLabel.setVisible(true);
                 } else {
+                    com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("GnivolSettings");
+                    prefs.putString("playerName", playerName);
+                    prefs.flush();
                     errorLabel.setVisible(false);
                     game.getGameState().setPlayerName(playerName);
                     Gdx.app.log("Login", "Welcome baby: " + playerName);
-                    game.setScreen(new MainMenuScreen(game));
+                    if (game.getScreenFader() != null && !game.getScreenFader().isFading()) {
+                        game.getScreenFader().startFade(() -> {
+                            Gdx.app.postRunnable(() -> {
+                                game.setScreen(new MainMenuScreen(game));
+                                LoginScreen.this.dispose();
+                            });
+                        });
+                    } else {
+
+                        game.setScreen(new MainMenuScreen(game));
+                    }
+
                 }
             }
         });
@@ -190,6 +222,10 @@ public class LoginScreen extends BaseScreen {
 
         shapeRenderer.end();
         Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+        if (game.getScreenFader() != null) {
+            game.getScreenFader().update(delta);
+            game.getScreenFader().render(); 
+        }
     }
 
     @Override

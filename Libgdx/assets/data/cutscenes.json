@@ -2,10 +2,196 @@
   {
     "id": "hand_under_bed",
     "steps": [
-      {"type": "flash", "color": "white", "duration": 0.1},
-      {"type": "wait", "duration": 0.2},
+      { "type": "wait", "duration": 0.2 },
+      { "type": "sfx", "id": "sfx_heartbeat_fast" },
+      { "type": "flash", "color": "white", "duration": 0.1 },
+
+      { "type": "show_sprite", "sprite": "images/horror/removed_backgr.png", "duration": 3 },
+
+      { "type": "flash", "color": "red", "duration": 0.1 },
+      { "type": "sfx", "id": "sfx_low_rumble" },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr2.png" },
+
+      { "type": "flash", "color": "red", "duration": 0.1 },
+      { "type": "swap_sprite", "id": "face_target", "sprite": "images/horror/removed_backgr3.png" },
+      { "type": "sfx", "id": "sfx_scare" },
+      { "type": "shake", "intensity": 20, "duration": 0.6 },
+
+      { "type": "flash", "color": "white", "duration": 0.2 },
+      { "type": "rs_change", "value": 8 }
+    ]
+  },
+  {
+    "id": "plush_toy_hand",
+    "steps": [
+      {"type": "video", "src": "video/plush_toy_cutscene.webm", "x": 0, "y": 0, "w": 1280, "h": 720},
+      {"type": "wait", "duration": 0.3},
+      {"type": "sfx", "id": "sfx_scare"},
+      {"type": "flash", "color": "red", "duration": 0.15},
+      {"type": "show_sprite", "sprite": "images/hand.png", "x": 400, "y": 50, "w": 250, "h": 350, "duration": 1.5},
+      {"type": "wait", "duration": 0.8},
+      {"type": "flash", "color": "red", "duration": 0.1},
+      {"type": "swap_sprite", "sprite": "images/creepy_hand.png", "x": 380, "y": 30, "w": 280, "h": 400},
+      {"type": "shake", "intensity": 5.0, "duration": 0.5},
+      {"type": "wait", "duration": 1.0},
+      {"type": "flash", "color": "white", "duration": 0.3},
       {"type": "dialogue", "id": "bed_jumpscare"},
-      {"type": "rs_change", "value": 8}
+      {"type": "rs_change", "value": 10}
+    ]
+  },
+  {
+    "id": "door_neighbor",
+    "steps": [
+      { "type": "sfx", "id": "sfx_power_out" },
+      { "type": "flash", "color": "white", "duration": 0.15 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/2.png" },
+      { "type": "sfx", "id": "sfx_low_rumble" },
+      { "type": "wait", "duration": 1.8 },
+
+      { "type": "flash", "color": "white", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/3.png" },
+      { "type": "sfx", "id": "sfx_creepy_whisper" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "flash", "color": "white", "duration": 0.05 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/4.png" },
+      { "type": "sfx", "id": "sfx_deafening_scream" },
+      { "type": "shake", "intensity": 25, "duration": 0.8 },
+      { "type": "wait", "duration": 2.5 },
+
+      { "type": "flash", "color": "white", "duration": 0.3 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/horror/jumpscare_outside/1.png" },
+      { "type": "sfx", "id": "sfx_heavy_breathing_panic" },
+      { "type": "rs_change", "value": 20 },
+
+      { "type": "dialogue", "id": "mot_sach" },
+      { "type": "flash", "color": "white", "duration": 0.3 },
+      { "type": "open_minigame", "id": "puzzle_sliding_marble" }
+    ]
+  },
+  {
+    "id": "cutscene_rs_0",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "ending_text_rs0" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_peaceful_wind" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_rs_100",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "ending_text_rs100" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "mirror_video_jumpscare",
+    "steps": [
+      { "type": "video", "src": "video/hai_huoc_no1.webm", "x": 0, "y": 0, "w": 1280, "h": 720 },
+      { "type": "flash", "color": "white", "duration": 0.2 }
+    ]
+  },
+  {
+    "id": "cutscene_death_super_doctor",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "death_super_doctor" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_death_super_doctor" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_death_xien",
+    "steps": [
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "death_xien" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_death_xien" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_mot_sach_kill",
+    "steps": [
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "dialogue_cutscene_mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "bg_room_hallway", "sprite": "images/UI/you_die.png" },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.2 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 0.5 },
+      { "type": "change_scene", "id": "return_to_menu" }
+    ]
+  },
+  {
+    "id": "cutscene_suicide_ending",
+    "steps": [
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "mot_sach_kill" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "dialogue", "id": "tu_tu" },
+
+      { "type": "flash", "color": "red", "duration": 0.15 },
+      { "type": "shake", "intensity": 2.0, "duration": 0.5 },
+      { "type": "swap_sprite", "id": "room_bedroom", "sprite": "images/UI/you_die.png" },
+      { "type": "fade_in", "duration": 1.5 },
+      { "type": "sfx", "id": "sfx_died" },
+      { "type": "wait", "duration": 2.5 },
+
+      { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "fade_out", "duration": 2.5},
+      { "type": "change_scene", "id": "return_to_menu" }
     ]
   }
 ]

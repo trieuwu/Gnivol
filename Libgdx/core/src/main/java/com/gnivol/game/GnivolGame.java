@@ -2,7 +2,9 @@ package com.gnivol.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.ashley.core.Engine;
@@ -56,6 +58,12 @@ public class GnivolGame extends Game {
         gameState = new com.gnivol.game.model.GameState();
 
         sceneManager = new SceneManager(puzzleManager);
+        sceneManager.setAudioManager(audioManager);
+        // Map sceneId → bgmId để SceneManager auto-crossfade khi đổi phòng
+        sceneManager.setSceneBGM("room_bedroom", "bedroom_bgm");
+        sceneManager.setSceneBGM("room_hallway", "outside");
+        sceneManager.setSceneBGM("room_tang_1", "outside");
+        sceneManager.setSceneBGM("room_chu_nha", "outside");
         playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager, puzzleManager);
 
         gameSnapshot = new com.gnivol.game.system.save.GameSnapshot();
@@ -66,13 +74,36 @@ public class GnivolGame extends Game {
         gameSnapshot.register(puzzleManager);
         gameSnapshot.register(flagManager);
 
+        try {
+            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("images/cursor.png"));
+            Cursor customCursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
+            Gdx.graphics.setCursor(customCursor);
+            cursorPixmap.dispose();
+            Gdx.app.log("Game", "Custom cursor loaded successfully.");
+        } catch (Exception e) {
+            Gdx.app.error("Game", "Không thể tải con trỏ chuột: " + e.getMessage());
+        }
+        // --------------------------------------
+
         setScreen(new LoginScreen(this));
+
+
     }
 
     @Override
     public void render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F11)) {
+            boolean isFullScreen = Gdx.graphics.isFullscreen();
+
+            if (isFullScreen) {
+                Gdx.graphics.setWindowedMode(1280, 720);
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            }
+        }
 
         super.render();
     }
@@ -102,6 +133,7 @@ public class GnivolGame extends Game {
         if (rsManager != null) rsManager.reset();
         if (flagManager != null) flagManager.reset();
         if (gameState != null) gameState.setCurrentRS(35);
+        if (autoSaveManager != null) autoSaveManager.setGameOver(false);
 
         isLoadedGame = false;
         Gdx.app.log("Game", "Cleared");
@@ -118,6 +150,7 @@ public class GnivolGame extends Game {
             com.badlogic.gdx.utils.JsonReader reader = new com.badlogic.gdx.utils.JsonReader();
             com.badlogic.gdx.utils.JsonValue root = reader.parse(jsonStr);
 
+            if (autoSaveManager != null) autoSaveManager.setGameOver(false);
             if (inventoryManager != null) inventoryManager.clearInventory();
             if (puzzleManager != null) puzzleManager.reset();
             if (sceneManager != null) sceneManager.reset();

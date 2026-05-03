@@ -35,6 +35,7 @@ public class LaserLogic {
                 grid[rx][ry] = 1;
             }
 
+
             for(int i = 0; i < laserCount; i++) {
                 int rx = rand.nextInt(N);
                 int ry = rand.nextInt(N);
@@ -46,10 +47,14 @@ public class LaserLogic {
                 }
             }
 
+            if (isTileDangerous(0, 0, 0)) {
+                continue;
+            }
+
             int steps = botPlayBFS();
             int manhattan = (N - 1) * 2;
 
-            if (steps != -1 && steps <= manhattan + 5) {
+            if (steps != -1 && steps >= manhattan + 18) {
                 mapIsValid = true;
             }
         }

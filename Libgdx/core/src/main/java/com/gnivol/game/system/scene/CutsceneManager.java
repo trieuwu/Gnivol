@@ -27,8 +27,10 @@ public class CutsceneManager {
         public float duration;
         public String sprite;
         public String id;
+        public String src;
         public float intensity;
         public float value;
+        public float x = -1, y = -1, w = -1, h = -1;
     }
 
     public static class CutsceneData {
@@ -40,13 +42,16 @@ public class CutsceneManager {
 
     public interface CutsceneListener {
         void onFlash(String color, float duration);
-        void onShowSprite(String sprite, float duration);
+        void onShowSprite(String sprite, float duration, float x, float y, float w, float h);
         void onShake(float intensity, float duration);
         void onFadeOut(float duration);
         void onFadeIn(float duration);
-        void onSwapSprite(String target, String newSprite);
+        void onSwapSprite(String target, String newSprite, float x, float y, float w, float h);
         void onDialogue(String dialogueId);
+        void onPlayVideo(String src, float x, float y, float w, float h);
+        void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
+        void onOpenMinigame(String minigameId);
     }
 
     // --- Fields ---
@@ -58,12 +63,11 @@ public class CutsceneManager {
     private float stepDuration;
     private boolean playing;
     private boolean waitingForDialogue;
+    private boolean waitingForVideo;
 
     private RSManager rsManager;
     private AudioManager audioManager;
     private CutsceneListener listener;
-
-    // --- API ---
 
     public void loadCutscenes(String jsonPath) {
         try {
@@ -83,8 +87,13 @@ public class CutsceneManager {
                         step.duration = stepVal.getFloat("duration", 0f);
                         step.sprite = stepVal.getString("sprite", null);
                         step.id = stepVal.getString("id", null);
+                        step.src = stepVal.getString("src", null);
                         step.intensity = stepVal.getFloat("intensity", 0f);
                         step.value = stepVal.getFloat("value", 0f);
+                        step.x = stepVal.getFloat("x", -1f);
+                        step.y = stepVal.getFloat("y", -1f);
+                        step.w = stepVal.getFloat("w", -1f);
+                        step.h = stepVal.getFloat("h", -1f);
                         data.steps.add(step);
                     }
                 }
@@ -109,12 +118,13 @@ public class CutsceneManager {
         stepDuration = 0f;
         playing = true;
         waitingForDialogue = false;
+        waitingForVideo = false;
         executeCurrentStep();
     }
 
     public void update(float delta) {
         if (!playing || currentCutscene == null) return;
-        if (waitingForDialogue) return;
+        if (waitingForDialogue || waitingForVideo) return;
 
         stepTimer += delta;
         if (stepTimer >= stepDuration) {
@@ -144,6 +154,16 @@ public class CutsceneManager {
     public void onDialogueFinished() {
         if (waitingForDialogue) {
             waitingForDialogue = false;
+            advanceStep();
+        }
+    }
+
+    /**
+     * Call this when a video triggered by cutscene finishes playing.
+     */
+    public void onVideoFinished() {
+        if (waitingForVideo) {
+            waitingForVideo = false;
             advanceStep();
         }
     }
@@ -178,7 +198,7 @@ public class CutsceneManager {
         } else if ("show_sprite".equals(type)) {
             stepDuration = step.duration;
             if (listener != null) {
-                listener.onShowSprite(step.sprite, step.duration);
+                listener.onShowSprite(step.sprite, step.duration, step.x, step.y, step.w, step.h);
             }
         } else if ("sfx".equals(type)) {
             stepDuration = 0f;
@@ -216,10 +236,30 @@ public class CutsceneManager {
             if (listener != null) {
                 listener.onDialogue(step.id);
             }
+            return;
+        } else if ("change_scene".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onChangeScene(step.id);
+            }
+            advanceStep();
+            return;
         } else if ("swap_sprite".equals(type)) {
             stepDuration = 0f;
             if (listener != null) {
-                listener.onSwapSprite(step.id, step.sprite);
+                listener.onSwapSprite(step.id, step.sprite, step.x, step.y, step.w, step.h);
+            }
+            advanceStep();
+            return;
+        } else if ("video".equals(type)) {
+            waitingForVideo = true;
+            if (listener != null) {
+                listener.onPlayVideo(step.src, step.x, step.y, step.w, step.h);
+            }
+        } else if ("open_minigame".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onOpenMinigame(step.id);
             }
             advanceStep();
             return;

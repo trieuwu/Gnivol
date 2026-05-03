@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -27,25 +29,61 @@ public class DialogueUI {
     private Label speakerLabel;
     private Label contentLabel;
     private Table choicesTable;
+    private Table choiceOverlayTable;
+    private Label activeTypingLabel;
 
-    // --- THÊM 3 BIẾN NÀY CHO KHUNG SUY NGHĨ ---
-    private Table thoughtTable;
-    private Label thoughtLabel;
-    private Label activeTypingLabel; // Con trỏ quyết định gõ chữ vào khung nào
+    // Character portrait — vẽ bằng SpriteBatch với toạ độ tuyệt đối
+    private Texture portraitTex1;   // main portrait
+    private Texture portraitTex2;   // sub portrait
+    private float[] portraitRect1 = new float[4]; // {x, y, w, h} main
+    private float[] portraitRect2 = new float[4]; // {x, y, w, h} sub
+    private boolean hasPortrait1 = false;
+    private boolean hasPortrait2 = false;
+    private boolean isMainPortrait1 = true; // true = portrait1 sáng, portrait2 tối
 
+    // Màu tối cho portrait phụ (sub) — làm mờ nhân vật không đang nói
+    private static final Color DIM_COLOR = new Color(0.35f, 0.35f, 0.35f, 1f);
+    private static final Color BRIGHT_COLOR = new Color(1f, 1f, 1f, 1f);
+
+    // Vị trí mặc định portrait (khi JSON không chỉ định toạ độ)
+    private static final float DEFAULT_LEFT_X = 50f;
+    private static final float DEFAULT_RIGHT_X = 870f;
+    private static final float DEFAULT_CENTER_X = 460f;
+    private static final float DEFAULT_Y = 100f;
+    private static final float DEFAULT_W = 360f;
+    private static final float DEFAULT_H = 480f;
+
+    // Debug portrait
+    private boolean debugPortrait = false;
+    private ShapeRenderer debugShapeRenderer;
+    private BitmapFont debugFont;
+    private int draggingPortrait = 0; // 0=none, 1=portrait1, 2=portrait2
+    private boolean draggingResize = false; // shift=resize
+    private float dragOffsetX, dragOffsetY;
+    private DialogueNode currentNodeRef; // giữ ref để export toạ độ
+
+    private boolean isCurrentThought = false;
     private DialogueEngine engine;
     private Label.LabelStyle labelStyle;
     private TextButton.TextButtonStyle btnStyle;
 
+    private float clickDelayTimer = 0f;
     private String fullContentText = "";      // Chứa toàn bộ nội dung câu thoại
     private float typeTimer = 0f;             // Đồng hồ đếm ngược để gõ chữ
     private int typeIndex = 0;                // Vị trí chữ đang gõ tới đâu
     private final float TYPE_SPEED = 0.05f;   // 0.05 giây hiện 1 chữ
+    /** Cheat: nếu true → text hiện ngay tức thời (skip typewriter). Toggle qua F2 trong GameScreen. */
+    public static boolean CHEAT_INSTANT_DIALOGUE = false;
     private boolean isTyping = false;         // Đang gõ hay đã gõ xong
     private final RSManager rsManager;
     private GnivolGame game;
     // Callback khi dialogue kết thúc — GameScreen dùng để chain dialogue tiếp
     private Runnable onFinished;
+
+    // --- THÊM 2 BIẾN NÀY ĐỂ ĐẾM 1 GIÂY ---
+    private float glitchTimer = 0f;
+    private boolean isGlitchedState = false;
+    private float autoAdvanceTimer = 0f;
 
     public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
         this.game = game;
@@ -53,16 +91,28 @@ public class DialogueUI {
         this.rsManager = rsManager;
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        Pixmap btnPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        btnPix.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
-        btnPix.fill();
-        TextureRegionDrawable btnBg = new TextureRegionDrawable(new TextureRegion(new Texture(btnPix)));
-        btnPix.dispose();
+        // Nền nút bình thường: Màu đen sẫm, độ mờ 85% (Trùng với độ mờ lõi khung chat)
+        Pixmap btnPixNormal = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        btnPixNormal.setColor(new Color(0.05f, 0.05f, 0.05f, 0.85f));
+        btnPixNormal.fill();
+        TextureRegionDrawable btnNormal = new TextureRegionDrawable(new TextureRegion(new Texture(btnPixNormal)));
+        btnPixNormal.dispose();
+
+        // Nền nút khi trỏ chuột / click vào: Sáng lên một chút thành xám
+        Pixmap btnPixDown = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        btnPixDown.setColor(new Color(0.2f, 0.2f, 0.2f, 0.9f));
+        btnPixDown.fill();
+        TextureRegionDrawable btnDown = new TextureRegionDrawable(new TextureRegion(new Texture(btnPixDown)));
+        btnPixDown.dispose();
 
         btnStyle = new TextButton.TextButtonStyle();
         btnStyle.font = font;
-        btnStyle.fontColor = Color.WHITE;
-        btnStyle.up = btnBg;
+        btnStyle.fontColor = Color.WHITE; // Chữ bình thường màu trắng
+        btnStyle.overFontColor = Color.valueOf("#F3C300"); // Trỏ chuột vào: Chữ vàng Gold (Tone sur tone với tên nhân vật)
+        btnStyle.downFontColor = Color.valueOf("#F3C300"); // Click vào: Chữ vàng Gold
+        btnStyle.up = btnNormal;
+        btnStyle.down = btnDown;
+        btnStyle.over = btnDown;
 
         // 2. Tạo nền đen mờ 80% cho khung hội thoại
         int texWidth = 512; // Chiều ngang để tính toán dải màu (càng to càng mượt)
@@ -105,6 +155,8 @@ public class DialogueUI {
         dialogBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (!canClick()) return;
+                if (choiceOverlayTable != null && choiceOverlayTable.isVisible()) return;
                 if (isTyping) {
                     // Đang gõ thì click để hiện full text luôn
                     typeIndex = fullContentText.length();
@@ -143,11 +195,27 @@ public class DialogueUI {
         dialogBox.add(separatorLine).width(600).height(2).center().padBottom(15).row();
         dialogBox.add(contentLabel).width(800).minHeight(50).center().row();
 
+        // Portrait giờ được vẽ bằng SpriteBatch, không nằm trong Table nữa
+        debugShapeRenderer = new ShapeRenderer();
+
         rootTable.add(choicesTable).padBottom(10).row();
         rootTable.add(dialogBox).width(900);
 
         rootTable.setVisible(false);
+        // Tạo ảnh nền kính mờ đen 70%
+        Pixmap dimPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        dimPix.setColor(new Color(0f, 0f, 0f, 0.7f));
+        dimPix.fill();
+        TextureRegionDrawable dimBg = new TextureRegionDrawable(new TextureRegion(new Texture(dimPix)));
+        dimPix.dispose();
+
+        choiceOverlayTable = new Table();
+        choiceOverlayTable.setFillParent(true);
+        choiceOverlayTable.setBackground(dimBg); // Gắn kính mờ
+        choiceOverlayTable.setTouchable(Touchable.enabled); // Chặn click xuyên qua nền
+        choiceOverlayTable.setVisible(false);
         stage.addActor(rootTable);
+        stage.addActor(choiceOverlayTable);
     }
 
     public void setOnFinished(Runnable onFinished) {
@@ -159,14 +227,15 @@ public class DialogueUI {
     private float originalThoughtX, originalThoughtY;
 
     // --- Hàm tạo hiệu ứng rung lắc (Shake Action) ---
-    private void applyShakeEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
-        target.clearActions(); // Xóa các rung lắc cũ
+    private void applyRSEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
+        target.clearActions(); // Xóa sạch hiệu ứng cũ
+        target.getColor().a = 1f;
 
-        if (rs < 35f || rs > 65f) {
-            // Tính cường độ rung dựa trên độ lệch (càng xa 50 rung càng mạnh)
-            float intensity = (Math.abs(rs - 50f) - 15f) / 35f;
-            float amount = 4f * intensity; // Tối đa rung 4 pixel
-            float duration = 0.03f; // Tốc độ giựt (càng nhỏ càng nhanh)
+        // CHỈ RUNG LẮC KHI RS > 65
+        if (rs > 65f) {
+            float intensity = (rs - 65f) / 35f;
+            float amount = 2f + (3f * intensity);
+            float duration = 0.04f;
 
             target.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.forever(
                 com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
@@ -178,62 +247,294 @@ public class DialogueUI {
                 )
             ));
         }
+        // NẾU RS <= 65 THÌ KHÔNG LÀM GÌ CẢ (ĐỨNG YÊN)
     }
 
     public void displayNode(DialogueNode node) {
         if (node == null) {
-            rootTable.setVisible(false);
-            if (onFinished != null) {
-                Runnable callback = onFinished;
-                onFinished = null;
-                callback.run();
-            }
+            rootTable.clearActions();
+            rootTable.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut(0.5f),
+
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        rootTable.setVisible(false);
+                        if (choiceOverlayTable != null) choiceOverlayTable.setVisible(false);
+                        if (onFinished != null) {
+                            Runnable callback = onFinished;
+                            onFinished = null;
+                            callback.run();
+                        }
+                    }
+                })
+            ));
             return;
         }
 
-        rootTable.setVisible(true);
+        if (!rootTable.isVisible()) {
+            rootTable.getColor().a = 0f; // Bắt đầu từ trong suốt
+            rootTable.setVisible(true);  // Bật hiển thị
+            rootTable.clearActions();    // Xóa các hiệu ứng cũ (tránh lỗi nếu click nhanh)
+            rootTable.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn(1f)); // Mờ dần lên trong 0.5s
+        }
 
-        boolean isThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
+        autoAdvanceTimer = 0f;
 
-        // Xử lý Inner Thoughts (Suy nghĩ trong đầu)
-        if (isThought) {
-            speakerLabel.setText("");
-            contentLabel.setColor(0.7f, 0.7f, 0.7f, 1f); // Màu xám nhạt
-        } else {
-            speakerLabel.setText(node.speaker);
-            contentLabel.setColor(Color.WHITE);
-            // Tone shift nếu RS > 65
-            if (rsManager != null && rsManager.getRS() > 65f) {
-                contentLabel.setColor(1f, 0.4f, 0.4f, 1f); // Đỏ rùng rợn
+        // Play one-shot SFX khi vào node (VD: sike, scream2...)
+        if (node.onEnterSfx != null && game != null && game.getAudioManager() != null) {
+            game.getAudioManager().playSFX(node.onEnterSfx);
+        }
+
+        isCurrentThought = "Suy nghĩ".equals(node.speaker) || node.speaker == null || node.speaker.isEmpty();
+        float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+
+        // Update character portrait
+        updatePortrait(node);
+
+        String playerName = "Player";
+        if (game != null && game.getGameState() != null) {
+            String savedName = game.getGameState().getPlayerName();
+            if (savedName != null && !savedName.trim().isEmpty()) {
+                playerName = savedName;
             }
         }
 
-        // Replace {player} placeholder
-        String rawText = node.content;
-        if (game != null && game.getGameState() != null) {
-            String playerName = game.getGameState().getPlayerName();
-            rawText = rawText.replace("{player}", playerName);
-        }
-
-        // Glitch text nếu có RSManager và không phải suy nghĩ
-        if (rsManager != null && !isThought) {
-            fullContentText = GlitchTextRenderer.applyGlitch(rawText, rsManager.getRS());
+        if (isCurrentThought) {
+            speakerLabel.setText("Suy Nghĩ");
         } else {
-            fullContentText = rawText;
+            String finalSpeaker = node.speaker;
+            if (finalSpeaker != null) {
+                finalSpeaker = finalSpeaker.replace("{player}", playerName);
+            }
+            speakerLabel.setText(finalSpeaker);
         }
 
+        if (currentRS > 65f) contentLabel.setColor(1f, 0.4f, 0.4f, 1f);
+        else contentLabel.setColor(Color.WHITE);
+
+        activeTypingLabel = contentLabel; // Luôn luôn gõ vào contentLabel
+        applyRSEffect(contentLabel, currentRS);
+
+        String rawText = node.content;
+        if (rawText != null) {
+            rawText = rawText.replace("{player}", playerName);
+            String roomName = "Khu vực không xác định";
+            if (game != null && game.getSceneManager() != null
+                && game.getSceneManager().getCurrentScene() != null
+                && game.getSceneManager().getCurrentScene().getRoomData() != null) {
+
+                roomName = game.getSceneManager().getCurrentScene().getRoomData().roomName;
+            }
+            rawText = rawText.replace("{roomName}", roomName);
+        }
+
+        fullContentText = rawText;
         typeIndex = 0;
         isTyping = true;
         typeTimer = 0f;
+        clickDelayTimer = 0f;
+        // Cheat F2: skip typewriter — hiện full text ngay
+        if (CHEAT_INSTANT_DIALOGUE && fullContentText != null) {
+            typeIndex = fullContentText.length();
+            isTyping = false;
+        }
 
-        updateContentLabel(); // Hiện khung thoại trống trơn trước
-        choicesTable.clearChildren(); // Giấu hết nút bấm đi, bao giờ gõ xong mới hiện
+        updateContentLabel();
+        choicesTable.clearChildren();
     }
 
-    // Hàm này sẽ được GameScreen gọi liên tục 60 lần/giây
-    public void update(float delta) {
+    private void updatePortrait(DialogueNode node) {
+        // Giữ ref cho debug export
+        currentNodeRef = node;
+
+        // Reset
+        hasPortrait1 = false;
+        hasPortrait2 = false;
+        if (portraitTex1 != null) { portraitTex1.dispose(); portraitTex1 = null; }
+        if (portraitTex2 != null) { portraitTex2.dispose(); portraitTex2 = null; }
+
+        if (isCurrentThought || node.portrait == null) return;
+
+        String side = node.portraitSide != null ? node.portraitSide : "center";
+
+        // --- Portrait 1 (main) ---
+        try {
+            portraitTex1 = new Texture(Gdx.files.internal(node.portrait));
+            hasPortrait1 = true;
+
+            // Toạ độ: ưu tiên JSON, fallback mặc định theo side
+            float defX = "right".equals(side) ? DEFAULT_RIGHT_X : ("left".equals(side) ? DEFAULT_LEFT_X : DEFAULT_CENTER_X);
+            portraitRect1[0] = node.portraitX >= 0 ? node.portraitX : defX;
+            portraitRect1[1] = node.portraitY >= 0 ? node.portraitY : DEFAULT_Y;
+            portraitRect1[2] = node.portraitW > 0 ? node.portraitW : DEFAULT_W;
+            portraitRect1[3] = node.portraitH > 0 ? node.portraitH : DEFAULT_H;
+        } catch (Exception e) {
+            Gdx.app.error("DialogueUI", "Cannot load portrait: " + node.portrait, e);
+            hasPortrait1 = false;
+        }
+
+        // --- Portrait 2 (sub) ---
+        if (node.portrait2 != null) {
+            try {
+                portraitTex2 = new Texture(Gdx.files.internal(node.portrait2));
+                hasPortrait2 = true;
+
+                String side2 = node.portraitSide2 != null ? node.portraitSide2 : "right";
+                float defX2 = "right".equals(side2) ? DEFAULT_RIGHT_X : DEFAULT_LEFT_X;
+                portraitRect2[0] = node.portrait2X >= 0 ? node.portrait2X : defX2;
+                portraitRect2[1] = node.portrait2Y >= 0 ? node.portrait2Y : DEFAULT_Y;
+                portraitRect2[2] = node.portrait2W > 0 ? node.portrait2W : DEFAULT_W;
+                portraitRect2[3] = node.portrait2H > 0 ? node.portrait2H : DEFAULT_H;
+            } catch (Exception e) {
+                Gdx.app.error("DialogueUI", "Cannot load portrait2: " + node.portrait2, e);
+                hasPortrait2 = false;
+            }
+        }
+
+        isMainPortrait1 = true; // portrait1 luôn là main (người đang nói)
+    }
+
+    /** Vẽ portrait — gọi từ GameScreen TRƯỚC khi stage.draw() */
+    public void renderPortraits(SpriteBatch batch) {
         if (!rootTable.isVisible()) return;
 
+        // Vẽ sub trước (phía sau), main sau (phía trước)
+        if (hasPortrait2 && portraitTex2 != null) {
+            batch.setColor(DIM_COLOR);
+            batch.draw(portraitTex2, portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]);
+        }
+        if (hasPortrait1 && portraitTex1 != null) {
+            batch.setColor(BRIGHT_COLOR);
+            batch.draw(portraitTex1, portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]);
+        }
+        batch.setColor(Color.WHITE); // reset
+    }
+
+    /** Vẽ debug overlay cho portrait — gọi sau renderPortraits */
+    public void renderPortraitDebug(ShapeRenderer shapeRenderer, BitmapFont font, SpriteBatch batch) {
+        if (!debugPortrait || !rootTable.isVisible()) return;
+
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip Y
+
+        // Vẽ khung debug
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        if (hasPortrait1) {
+            shapeRenderer.setColor(Color.GREEN);
+            shapeRenderer.rect(portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]);
+        }
+        if (hasPortrait2) {
+            shapeRenderer.setColor(Color.YELLOW);
+            shapeRenderer.rect(portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]);
+        }
+        // Crosshair chuột
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.line(mouseX - 10, mouseY, mouseX + 10, mouseY);
+        shapeRenderer.line(mouseX, mouseY - 10, mouseX, mouseY + 10);
+        shapeRenderer.end();
+
+        // Vẽ text thông tin toạ độ
+        batch.begin();
+        if (hasPortrait1) {
+            font.setColor(Color.GREEN);
+            font.draw(batch, String.format("P1: x=%.0f y=%.0f w=%.0f h=%.0f",
+                portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]),
+                portraitRect1[0], portraitRect1[1] + portraitRect1[3] + 15);
+        }
+        if (hasPortrait2) {
+            font.setColor(Color.YELLOW);
+            font.draw(batch, String.format("P2: x=%.0f y=%.0f w=%.0f h=%.0f",
+                portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]),
+                portraitRect2[0], portraitRect2[1] + portraitRect2[3] + 15);
+        }
+        font.setColor(Color.WHITE);
+        font.draw(batch, "F3: Toggle portrait debug | Drag: move | Shift+Drag: resize | F4: Export", 10, Gdx.graphics.getHeight() - 10);
+        batch.end();
+    }
+
+    /** Xử lý click debug portrait — return true nếu bắt đầu drag */
+    public boolean handlePortraitDebugClick(float screenX, float screenY) {
+        if (!debugPortrait || !rootTable.isVisible()) return false;
+
+        float worldX = screenX;
+        float worldY = Gdx.graphics.getHeight() - screenY;
+        draggingResize = Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.SHIFT_LEFT)
+                      || Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.SHIFT_RIGHT);
+
+        // Kiểm tra portrait1 trước (main, ở trên)
+        if (hasPortrait1 && worldX >= portraitRect1[0] && worldX <= portraitRect1[0] + portraitRect1[2]
+            && worldY >= portraitRect1[1] && worldY <= portraitRect1[1] + portraitRect1[3]) {
+            draggingPortrait = 1;
+            dragOffsetX = worldX - portraitRect1[0];
+            dragOffsetY = worldY - portraitRect1[1];
+            return true;
+        }
+        // Kiểm tra portrait2
+        if (hasPortrait2 && worldX >= portraitRect2[0] && worldX <= portraitRect2[0] + portraitRect2[2]
+            && worldY >= portraitRect2[1] && worldY <= portraitRect2[1] + portraitRect2[3]) {
+            draggingPortrait = 2;
+            dragOffsetX = worldX - portraitRect2[0];
+            dragOffsetY = worldY - portraitRect2[1];
+            return true;
+        }
+        return false;
+    }
+
+    /** Xử lý kéo portrait debug */
+    public void handlePortraitDebugDrag(float screenX, float screenY) {
+        if (draggingPortrait == 0) return;
+
+        float worldX = screenX;
+        float worldY = Gdx.graphics.getHeight() - screenY;
+        float[] rect = (draggingPortrait == 1) ? portraitRect1 : portraitRect2;
+
+        if (draggingResize) {
+            rect[2] = Math.max(50, worldX - rect[0]);
+            rect[3] = Math.max(50, worldY - rect[1]);
+        } else {
+            rect[0] = worldX - dragOffsetX;
+            rect[1] = worldY - dragOffsetY;
+        }
+    }
+
+    /** Kết thúc drag */
+    public void finishPortraitDebugDrag() {
+        if (draggingPortrait != 0) {
+            float[] rect = (draggingPortrait == 1) ? portraitRect1 : portraitRect2;
+            Gdx.app.log("DialogueUI", String.format("Portrait%d => x=%.0f, y=%.0f, w=%.0f, h=%.0f",
+                draggingPortrait, rect[0], rect[1], rect[2], rect[3]));
+            draggingPortrait = 0;
+        }
+    }
+
+    /** Export toạ độ portrait dưới dạng JSON — bấm F4 */
+    public void exportPortraitCoordinates() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== PORTRAIT COORDINATES (copy vào dialogues.json) ===\n");
+        if (hasPortrait1) {
+            sb.append(String.format("\"portraitX\": %.0f, \"portraitY\": %.0f, \"portraitW\": %.0f, \"portraitH\": %.0f",
+                portraitRect1[0], portraitRect1[1], portraitRect1[2], portraitRect1[3]));
+            sb.append("\n");
+        }
+        if (hasPortrait2) {
+            sb.append(String.format("\"portrait2X\": %.0f, \"portrait2Y\": %.0f, \"portrait2W\": %.0f, \"portrait2H\": %.0f",
+                portraitRect2[0], portraitRect2[1], portraitRect2[2], portraitRect2[3]));
+            sb.append("\n");
+        }
+        sb.append("=====================================================");
+        Gdx.app.log("DialogueUI", sb.toString());
+    }
+
+    public boolean isDebugPortrait() { return debugPortrait; }
+    public void toggleDebugPortrait() { debugPortrait = !debugPortrait; }
+    public boolean isDraggingPortrait() { return draggingPortrait != 0; }
+
+    public void update(float delta) {
+        if (!rootTable.isVisible()) return;
+        if (clickDelayTimer < 2.0f) {
+            clickDelayTimer += delta;
+        }
         if (isTyping) {
             typeTimer += delta;
             // Cứ qua 0.05 giây thì nhích thêm 1 ký tự
@@ -244,15 +545,69 @@ public class DialogueUI {
                     // Gõ xong rồi
                     typeIndex = fullContentText.length();
                     isTyping = false;
-                    showChoices(); // Gõ xong mới ném nút A/B ra
+                    showChoices();
+                    autoAdvanceTimer = 0f;// Gõ xong mới ném nút A/B ra
                 }
                 updateContentLabel();
+            }
+        } else {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+            if (currentRS <= 0f || currentRS >= 100f) {
+                DialogueNode node = engine.getCurrentNode();
+                if (node != null && !node.hasChoice()) {
+                    autoAdvanceTimer += delta;
+                    if (autoAdvanceTimer >= 3.0f) {
+                        autoAdvanceTimer = 0f;
+                        engine.advance();
+                        displayNode(engine.getCurrentNode());
+                    }
+                }
+            }
+        }
+        // 2. LOGIC ĐỒNG HỒ 1 GIÂY (Chỉ áp dụng khi RS < 35 và không phải là Suy nghĩ)
+        if (activeTypingLabel != null) {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+
+            if (currentRS < 35f) {
+                glitchTimer += delta;
+                if (glitchTimer >= 1.0f) { // Cứ đủ 1.0 giây
+                    glitchTimer = 0f;
+                    isGlitchedState = !isGlitchedState; // Đảo qua đảo lại (Bình thường <-> Lỗi)
+                    updateContentLabel(); // Cập nhật lại giao diện chữ
+                }
+            } else {
+                // Nếu RS phục hồi về mức > 35 thì tắt trạng thái lỗi đi
+                if (isGlitchedState) {
+                    isGlitchedState = false;
+                    updateContentLabel();
+                }
             }
         }
     }
 
     private void updateContentLabel() {
-        contentLabel.setText(fullContentText.substring(0, typeIndex));
+        if (activeTypingLabel != null) {
+            float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+            String currentText = fullContentText.substring(0, typeIndex);
+
+            // --- 1. QUYẾT ĐỊNH HIỆN CHỮ GÌ ---
+            if (currentRS < 35f && isGlitchedState) {
+                // Rơi vào 1 giây bị lỗi -> Băm nát chữ
+                activeTypingLabel.setText(GlitchTextRenderer.applyGlitch(currentText, currentRS));
+            } else {
+                // Bình thường (RS > 35, hoặc đang trong 1 giây không lỗi) -> Chữ rõ ràng
+                activeTypingLabel.setText(currentText);
+            }
+
+            // --- 2. QUYẾT ĐỊNH MÀU SẮC ---
+            if (currentRS > 65f) {
+                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // RS > 65: Màu đỏ
+            } else if (currentRS < 35f && isGlitchedState) {
+                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f);
+            } else {
+                activeTypingLabel.setColor(Color.WHITE); // RS 35-65 hoặc 1 giây bình thường: Màu Trắng
+            }
+        }
     }
 
     private void showChoices() {
@@ -260,39 +615,64 @@ public class DialogueUI {
         if (node == null) return;
 
         choicesTable.clearChildren();
+        choiceOverlayTable.clearChildren();
 
         if (node.hasChoice()) {
+            choiceOverlayTable.setVisible(true); // Bật kính mờ lên
             for (int i = 0; i < node.choices.size(); i++) {
                 final int index = i;
                 Choice choice = node.choices.get(i);
+
+                String playerName = "Player";
+                if (game != null && game.getGameState() != null) {
+                    String savedName = game.getGameState().getPlayerName();
+                    if (savedName != null && !savedName.trim().isEmpty()) {
+                        playerName = savedName;
+                    }
+                }
 
                 String choiceText = choice.content;
                 if (game != null && game.getGameState() != null) {
                     choiceText = choiceText.replace("{player}", game.getGameState().getPlayerName());
                 }
 
-                TextButton btn = new TextButton(choice.content, btnStyle);
-                if (choice.rsChange < 0) {
-                    btn.setColor(1f, 0.5f, 0.5f, 1f);
-                }
+                TextButton btn = new TextButton(choiceText, btnStyle);
+                btn.getLabel().setWrap(true);
+                btn.getLabel().setAlignment(Align.center); // Chữ căn giữa
 
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
+                        choiceOverlayTable.setVisible(false);
                         engine.selectChoice(index);
                         displayNode(engine.getCurrentNode());
                     }
                 });
-                choicesTable.add(btn).width(600).pad(5).row();
+                choiceOverlayTable.add(btn).width(700).minHeight(80).pad(20).row();
             }
-        } else {
-            Label hintLabel = new Label("▼ Click để tiếp tục", labelStyle);
-            hintLabel.setColor(0.6f, 0.6f, 0.6f, 1f);
-            choicesTable.add(hintLabel).align(Align.right).padRight(20);
         }
     }
 
     public boolean isVisible() {
         return rootTable.isVisible();
+    }
+    public boolean isTyping() {
+        return isTyping;
+    }
+    public void finishTyping() {
+        if (isTyping) {
+            typeIndex = fullContentText.length();
+            isTyping = false;
+            updateContentLabel();
+            showChoices();
+        }
+    }
+    public boolean canClick() {
+        // Block click khi đang hiển thị overlay choice A/B (Thành's fix — PR #84)
+        boolean choiceNotVisible = (choiceOverlayTable == null || !choiceOverlayTable.isVisible());
+        // Default 2s gate (chống skip nhanh). Cheat F2 → 0s.
+        float requiredDelay = CHEAT_INSTANT_DIALOGUE ? 0f : 2.0f;
+        boolean timeOk = clickDelayTimer >= requiredDelay;
+        return timeOk && choiceNotVisible;
     }
 }

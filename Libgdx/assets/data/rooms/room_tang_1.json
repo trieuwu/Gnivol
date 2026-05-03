@@ -1,0 +1,63 @@
+{
+  "roomId": "room_tang_1",
+  "roomName": "Tầng 1",
+  "background": "images/back_ground/tang_1/tang_1.png",
+  "objects": [
+    {
+      "id": "stairs_up_hallway1",
+      "type": "door",
+      "x": 873,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_hallway",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up_hallway2",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_hallway",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "fire_hose_box",
+      "type": "door",
+      "x": 980,
+      "y": 250,
+      "w": 200,
+      "h": 350,
+      "properties": {
+        "targetScene": "room_chua_chay_closeup",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "main_exit_door",
+      "type": "door",
+      "x": 435,
+      "y": 203,
+      "w": 421,
+      "h": 501,
+      "properties": {
+        "targetScene": "room_password_closeup",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    }
+  ]
+}

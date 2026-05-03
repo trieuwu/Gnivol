@@ -60,4 +60,9 @@ public class GameState implements ISaveable {
 
     public void setPlayerName(String playerName) { this.playerName = playerName; }
     public void setCurrentRS(int currentRS) { this.currentRS = currentRS; }
+    public void reset() {
+        this.currentRS = 35f;
+        this.currentRoom = "room_bedroom";
+        this.finishedDialogues.clear();
+    }
 }
