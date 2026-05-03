@@ -60,11 +60,40 @@ public class RoomInteractionHandler implements InteractionCallback {
             handleMainDoorInteraction();
             return;
         }
+
+
         // Logic chuyển cảnh thông thường qua targetScene trong JSON
         RoomData roomData = screen.getSceneManager().getCurrentScene().getRoomData();
         for (RoomData.RoomObject roomObj : roomData.getObjects()) {
             if (roomObj.id.equals(obj.getId()) && roomObj.properties != null && roomObj.properties.targetScene != null) {
                 screen.changeSceneWithFade(roomObj.properties.targetScene);
+
+                boolean isFirstTimeHallway = obj.getId().equals("door_left_hallway")
+                    && !game.getFlagManager().get("first_time_hallway");
+
+                // --- THÊM DÒNG NÀY ĐỂ KIỂM TRA MINIGAME ---
+                boolean isPendingMinigame = game.getFlagManager().get("started_minigame_2")
+                    && !screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble");
+
+                // --- SỬA LẠI ĐIỀU KIỆN HIỆN THOUGHT: Chỉ hiện nếu KHÔNG bị vướng sự kiện nào! ---
+                if (!isFirstTimeHallway && !isPendingMinigame) {
+                    DialogueTree thoughtTree = new ThoughtManager().getThoughtTree(obj.getId(), game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                            @Override
+                            public void run() {
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        screen.hideInspectText();
+                                        screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                        screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                    }
+                                });
+                            }
+                        }, 0.3f);
+                    }
+                }
                 return;
             }
         }
@@ -132,13 +161,15 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 3. Giường (chỉ hiện inspect text)
         if ("bed".equals(id)) {
             handleBedInteraction();
-            return;
+            if ("glass_shard".equals(screen.getInventoryUI().getSelectedItem()) || game.getFlagManager().get("bed_cut")) {
+                return;
+            }
         }
 
         // 4. Ngăn kéo (Puzzle)
         if ("drawer".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_drawer")) {
-                screen.showNotification("Ngăn kéo đã trống rỗng.", Color.LIGHT_GRAY);
+
             } else {
                 screen.getPuzzleManager().openPuzzle("puzzle_drawer");
             }
@@ -148,13 +179,15 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 5. Bồn cầu (Sự kiện tắc bồn cầu)
         if ("toilet".equals(id)) {
             handleToiletInteraction();
-            return;
+            if ("fabric_piece".equals(screen.getInventoryUI().getSelectedItem()) || game.getFlagManager().get("toilet_clogged")) {
+                return;
+            }
         }
 
         // 6. Bồn rửa mặt (Minigame Laser)
         if ("sink".equals(id)) {
             if (screen.getPuzzleManager().isPuzzleSolved("puzzle_laser")) {
-                screen.showNotification("Mạch điện đã nối xong. Nước chảy bình thường.", Color.LIGHT_GRAY);
+
             } else {
                 screen.getPuzzleManager().openPuzzle("puzzle_laser");
             }
@@ -225,17 +258,15 @@ public class RoomInteractionHandler implements InteractionCallback {
                 // Đã treo cà vạt -> Hỏi tự tử
                 screen.hideInspectText();
                 onDialogueTriggered("confirm_suicide");
+                return;
             }
             // Nếu ghế đã trên giường VÀ tay đang cầm cà vạt
             else if (game.getFlagManager().get("chair_on_bed") && "ca_vat_final".equals(screen.getInventoryUI().getSelectedItem())) {
                 screen.hideInspectText();
                 onDialogueTriggered("confirm_hang_tie");
+                return;
             }
             // Nếu có ghế nhưng ko cầm cà vạt
-            else if (game.getFlagManager().get("chair_on_bed")) {
-                screen.showInspectText("Đứng trên này có thể với tới quạt trần, nhưng mình cần thứ gì đó dài và chắc chắn để buộc vào...");
-            }
-            return;
         }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
@@ -258,8 +289,24 @@ public class RoomInteractionHandler implements InteractionCallback {
                     public void run() {
                         onDialogueTriggered("confirm_resume_minigame");
                     }
-                }, 0.6f);
+                }, 0.3f);
                 return;
+            }
+            DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("door_left_hallway", game.getRsManager().getRS());
+            if (thoughtTree != null) {
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                screen.hideInspectText();
+                                screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                            }
+                        });
+                    }
+                }, 0.3f); // Hiện lên sau khi chuyển cảnh
             }
         } else if (screen.getPuzzleManager().isPuzzleSolved("key_broke_on_door")) {
             if ("chia_khoa_fixed_final".equals(screen.getInventoryUI().getSelectedItem())) {
@@ -292,13 +339,11 @@ public class RoomInteractionHandler implements InteractionCallback {
     private void handleToiletInteraction() {
         if (game.getFlagManager().get("toilet_clogged")) {
             screen.hideInspectText();
-            screen.showNotification("Bồn cầu đã bị tắc cứng.", Color.LIGHT_GRAY);
             return;
         }
         if ("fabric_piece".equals(screen.getInventoryUI().getSelectedItem())) {
-            screen.showToiletConfirmDialog(); // Chúng ta sẽ tạo hàm này trong GameScreen
-        } else {
-            screen.showInspectText("Hệ thống xả nước có vẻ vẫn hoạt động bình thường.");
+            screen.showToiletConfirmDialog();
+            return;
         }
     }
     private void handleBedInteraction(){
@@ -311,8 +356,7 @@ public class RoomInteractionHandler implements InteractionCallback {
         if ("glass_shard".equals(screen.getInventoryUI().getSelectedItem())) {
             screen.hideInspectText();
             screen.triggerDialogue("confirm_cut_bed");
-        } else {
-            screen.showInspectText("Chiếc giường cũ kỹ. Ga trải giường nhàu nát như có ai vừa nằm...");
+            return;
         }
     }
 

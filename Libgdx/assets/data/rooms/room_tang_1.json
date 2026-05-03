@@ -12,7 +12,6 @@
       "h": 120,
       "properties": {
         "targetScene": "room_hallway",
-        "inspectText": "Đi lên sảnh hành lang.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -27,7 +26,6 @@
       "h": 120,
       "properties": {
         "targetScene": "room_hallway",
-        "inspectText": "Đi lên sảnh hành lang.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -42,7 +40,6 @@
       "h": 350,
       "properties": {
         "targetScene": "room_chua_chay_closeup",
-        "inspectText": "Nhìn gần vào hộp chữa cháy...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -56,7 +53,7 @@
       "w": 421,
       "h": 501,
       "properties": {
-        "inspectText": "Cửa này khóa rồi, chúng ta cần vân tay của bác chủ trọ mới mở được",
+        "targetScene": "room_password_closeup",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0

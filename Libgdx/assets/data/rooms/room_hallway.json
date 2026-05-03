@@ -12,7 +12,6 @@
       "h": 112,
       "properties": {
         "targetScene": "room_bedroom",
-        "inspectText": "Quay lại phòng của tôi. Cảm giác ngoài này không an toàn chút nào.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -26,7 +25,6 @@
       "w": 160,
       "h": 370,
       "properties": {
-        "inspectText": "Cửa phòng đối diện. Những vết tay kia... là máu hay sơn vậy?",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -41,7 +39,6 @@
       "h": 601,
       "properties": {
         "targetScene": "room_chu_nha",
-        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -56,7 +53,6 @@
       "h": 548,
       "properties": {
         "targetScene": "room_chu_nha",
-        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -71,7 +67,6 @@
       "h": 465,
       "properties": {
         "targetScene": "room_chu_nha",
-        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -86,7 +81,6 @@
       "h": 207,
       "properties": {
         "targetScene": "room_chu_nha",
-        "inspectText": "Cầu thang dẫn lên tầng trên. Hình như là phòng của bà chủ nhà...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -101,7 +95,6 @@
       "h": 393,
       "properties": {
         "targetScene": "room_tang_1",
-        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -116,7 +109,6 @@
       "h": 307,
       "properties": {
         "targetScene": "room_tang_1",
-        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -131,7 +123,6 @@
       "h": 239,
       "properties": {
         "targetScene": "room_tang_1",
-        "inspectText": "Cầu thang dẫn xuống tầng 1. Tối quá, chẳng thấy gì cả.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -145,23 +136,8 @@
       "w": 170,
       "h": 350,
       "properties": {
-        "inspectText": "Một bức tranh kỳ quái. Ánh mắt nó như đang nhìn chằm chằm vào tôi...",
         "collectible": false,
         "hasGlitch": true,
-        "rsChange": 0
-      }
-    },
-    {
-      "id": "doorbell",
-      "type": "interactable",
-      "x": 803,
-      "y": 378,
-      "w": 40,
-      "h": 60,
-      "properties": {
-        "inspectText": "Nút chuông cửa đã bám đầy bụi.",
-        "collectible": false,
-        "hasGlitch": false,
         "rsChange": 0
       }
     }

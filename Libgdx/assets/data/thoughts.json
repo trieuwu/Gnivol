@@ -138,5 +138,130 @@
     "LOW": "Không thể ra ngoài! Làn sương ngoài kia sẽ nuốt chửng tôi! Bọn chúng đang há miệng chờ sẵn!",
     "MID": "Cửa chính bị khóa chặt bằng mã vân tay. Chắc chắn phải qua mặt bác chủ nhà mới ra được.",
     "HIGH": "Lối thoát duy nhất à? Không, tôi chưa hề muốn rời đi. Trò chơi máu me ở đây vẫn còn dang dở."
+  },
+  "password_scanner": {
+    "LOW": "Ánh sáng đỏ từ máy quét chói lóa như một con mắt quỷ... Nó đang đòi máu, không phải vân tay hay mật mã!",
+    "MID": "Hệ thống an ninh kép. Muốn ra ngoài thì cần có vân tay của bác chủ trọ.",
+    "HIGH": "Thật nực cười. Một cỗ máy điện tử ngu ngốc cản đường. Có lẽ tôi nên đi tìm lão chủ trọ mượn tạm vài ngón tay..."
+  },
+  "door_back_bedroom": {
+    "LOW": "Không! Tôi không muốn quay lại căn phòng đó! Có thứ gì đó đang đợi tôi dưới gầm giường!",
+    "MID": "Cửa phòng ngủ của tôi. Có nên quay lại nghỉ ngơi một chút không?",
+    "HIGH": "Căn phòng đó chật chội và ngột ngạt. Nhưng nó là một nơi trú ẩn tạm thời không tồi."
+  },
+  "picture": {
+    "LOW": "Khuôn mặt trong ảnh vừa mỉm cười với tôi! Đôi mắt nó đang dõi theo từng cử động của tôi!",
+    "MID": "Một bức ảnh cũ kỹ, bụi bám đầy. Người trong ảnh trông thật xa lạ.",
+    "HIGH": "Những nụ cười giả tạo được lưu giữ vĩnh viễn. Một thứ đồ trang trí vô dụng."
+  },
+  "room_under_bed": {
+    "LOW": "Bóng tối dưới này đặc quánh... Bàn tay lạnh lẽo đó sắp tóm lấy chân tôi rồi!",
+    "MID": "Gầm giường ẩm thấp và đầy bụi. Chẳng có gì thú vị ngoài vài con nhện.",
+    "HIGH": "Không gian lý tưởng để quan sát kẻ khác từ bên dưới. Một góc khuất hoàn hảo."
+  },
+  "pictures": {
+    "LOW": "Tất cả bọn họ trong ảnh đều không có mắt! Bọn họ đang khóc ra máu!",
+    "MID": "Những bức ảnh treo tường. Cảnh vật mờ nhạt, có lẽ là do chụp từ rất lâu rồi.",
+    "HIGH": "Những kỷ niệm bị lãng quên. Sớm muộn gì cũng mục nát theo thời gian, giống như con người vậy."
+  },
+  "books": {
+    "LOW": "Những dòng chữ đang trườn bò ra khỏi trang giấy! Chúng đang kể về cái chết của tôi!",
+    "MID": "Vài cuốn sách ố vàng. Có lẽ là sách học cũ, tôi chẳng buồn đọc tên sách.",
+    "HIGH": "Tri thức là sức mạnh. Nhưng đôi khi sự thiếu hiểu biết lại giúp con người ta sống dai hơn."
+  },
+  "door_bathroom": {
+    "LOW": "Tiếng nước nhỏ giọt kia... nghe như ai đó đang băm vằm thịt xương bên trong! Đừng mở!",
+    "MID": "Cửa nhà tắm. Không biết hệ thống nước còn hoạt động không.",
+    "HIGH": "Nhà tắm. Nơi tuyệt vời nhất để rửa sạch những vết bẩn... bất kể nó là loại bẩn gì."
+  },
+  "door_left_hallway": {
+    "LOW": "Bóng tối ngoài hành lang đang thò những xúc tu vào qua khe cửa! Chúng muốn kéo tôi ra ngoài!",
+    "MID": "Cửa chính dẫn ra hành lang chung. Có lẽ mình nên ra ngoài xem sao.",
+    "HIGH": "Cánh cửa ngăn cách tôi với những con mồi. Thật vướng víu."
+  },
+  "go_under_bed1": {
+    "LOW": "Đừng chui xuống! Sẽ không có đường quay lên đâu! Lối đó dẫn thẳng xuống địa ngục!",
+    "MID": "Khoảng trống dưới giường. Có nên ngó thử xem có rớt đồ gì dưới đó không?",
+    "HIGH": "Tôi có nên thử thu mình lại và nằm bất động dưới đó không? Cảm giác như một cái quan tài nhỏ bé."
+  },
+  "go_under_bed2": {
+    "LOW": "Dưới đó có người đang thở... Tiếng khò khè ngay sát tai tôi!",
+    "MID": "Lại là gầm giường. Ở đây hơi ẩm thấp.",
+    "HIGH": "Chỉ là bóng tối. Bóng tối là bạn của tôi."
+  },
+  "door_bedroom": {
+    "LOW": "Cánh cửa đang tự mở ra! Ai đó đang vặn tay nắm từ bên ngoài!",
+    "MID": "Lối vào phòng ngủ. Cần đóng cửa cẩn thận khi ngủ.",
+    "HIGH": "Khóa hay không khóa cũng vậy thôi. Kẻ muốn vào thì sẽ luôn tìm được cách."
+  },
+  "stairs_down_hallway2": {
+    "LOW": "Những bậc thang này dẫn thẳng xuống vực thẳm... Tôi có thể nghe thấy tiếng nhai xương dưới đó!",
+    "MID": "Cầu thang dẫn xuống tầng dưới. Tối om, cẩn thận bước hụt.",
+    "HIGH": "Mỗi bậc thang đi xuống là một bước gần hơn với sự thật tàn khốc của tòa nhà này."
+  },
+  "stairs_down_hallway1": {
+    "LOW": "Có ai đó đang đứng ngược đầu ở bậc thang cuối cùng và nhìn tôi chằm chằm!",
+    "MID": "Lối xuống cầu thang. Hy vọng đèn cảm ứng vẫn còn hoạt động.",
+    "HIGH": "Từ trên cao nhìn xuống, mọi thứ trông thật nhỏ bé và yếu ớt."
+  },
+  "back_to_tang_1a": {
+    "LOW": "Chạy đi! Đừng quay đầu lại! Làn sương đó sắp tràn vào đây rồi!",
+    "MID": "Lối quay lại hành lang chính của tầng 1.",
+    "HIGH": "Tôi không thích đi lùi. Nhưng đôi khi phải lùi một bước để kết liễu con mồi."
+  },
+  "back_to_tang_1b": {
+    "LOW": "Không còn đường lui nữa... Bức tường phía sau đang chảy máu!",
+    "MID": "Cũng là lối về tầng 1 thôi.",
+    "HIGH": "Tôi đã quá quen với cấu trúc của tòa nhà này. Nó như một bàn cờ của riêng tôi."
+  },
+  "toilet_tac": {
+    "LOW": "Nước đang trào ngược lên! Có thứ gì đó đen ngòm đang cố chui ra khỏi lỗ cống! Nó đang với lấy tôi!",
+    "MID": "Bồn cầu đã bị tắc cứng bởi mảnh vải. Nước dơnh bẩn tràn lênh láng. Mùi hôi thối thật kinh tởm.",
+    "HIGH": "Một cái bẫy hoàn hảo. Bồn cầu tắc, mùi hôi thối nồng nặc... Lão chủ nhà già nua đó chắc chắn sẽ phải mò lên đây dọn dẹp."
+  },
+  "stairs_up1": {
+    "LOW": "Có bàn tay đẫm máu đang vẫy gọi tôi từ trên gác... Đừng lên đó!",
+    "MID": "Bậc thang lên tầng trên. Trông hơi tối tăm.",
+    "HIGH": "Tiếng bước chân nặng nề trên đó... Lão già ấy đang chờ tôi sao?"
+  },
+  "stairs_up2": {
+    "LOW": "Đèn cầu thang cứ chớp tắt liên tục... Mỗi lần chớp lại thấy một bóng người tiến lại gần hơn!",
+    "MID": "Lan can dính đầy bụi và mạng nhện. Chẳng ai dọn dẹp khu vực này cả.",
+    "HIGH": "Tôi sẽ bước lên đó thật nhẹ nhàng, như một bóng ma để dọa lại lão ta."
+  },
+  "stairs_up3": {
+    "LOW": "Máu đang chảy ròng ròng theo từng bậc thang xuống đây! Chạy ngay đi!",
+    "MID": "Đường lên phòng chủ trọ. Mình có thực sự cần lên đó không?",
+    "HIGH": "Khu vực quyền lực của lão già. Sớm muộn gì tôi cũng sẽ chiếm lấy nó."
+  },
+  "stairs_up4": {
+    "LOW": "Một cái miệng khổng lồ đang há rộng ở đầu cầu thang! Nó sẽ nhai nát đầu tôi!",
+    "MID": "Càng lên cao không khí càng lạnh lẽo.",
+    "HIGH": "Có một thứ sức mạnh hắc ám đang vẫy gọi. Và tôi sẵn sàng đón nhận nó."
+  },
+  "stairs_down1": {
+    "LOW": "Dưới đó không phải là tầng 1... Đó là một cái lò mổ ngập ngụa xác chết!",
+    "MID": "Đường xuống tầng 1. Có lẽ lối thoát nằm ở hướng này.",
+    "HIGH": "Bóng tối dưới kia thật êm ái. Nó là nơi che giấu những tội ác hoàn hảo nhất."
+  },
+  "stairs_down2": {
+    "LOW": "Những tiếng gào thét đau đớn vang vọng từ dưới vực thẳm này... Cứu tôi với!",
+    "MID": "Hành lang vắng tanh. Không một bóng người qua lại.",
+    "HIGH": "Xuống dưới đó, tôi sẽ là kẻ săn mồi trong bóng đêm."
+  },
+  "stairs_down3": {
+    "LOW": "Có thứ gì đó đang bò lổm ngổm bò lên dọc theo bức tường kìa! Chạy!",
+    "MID": "Chỉ là một cái cầu thang bình thường dẫn xuống lối ra.",
+    "HIGH": "Thoát ra ngoài ư? Không, tôi muốn chứng kiến tận cùng của sự điên rồ này."
+  },
+  "stairs_up_hallway1": {
+    "LOW": "Phía trên đó đen đặc... Cảm giác như có hàng chục con mắt rực đỏ đang từ trên nhìn chằm chằm xuống tôi!",
+    "MID": "Bậc thang dẫn lên sảnh hành lang. Khá ẩm thấp và nồng nặc mùi bụi bặm.",
+    "HIGH": "Càng lên cao, không khí càng mang đậm mùi của sự mục nát. Một mùi hương thật quyến rũ làm sao."
+  },
+  "stairs_up_hallway2": {
+    "LOW": "Đừng đi hướng này! Cầu thang này đang vặn vẹo như một con rắn khổng lồ chực chờ nuốt chửng tôi!",
+    "MID": "Một lối lên khác. Lan can bám đầy những vệt hoen ố xỉn màu không rõ nguồn gốc.",
+    "HIGH": "Từng bậc thang như những phím đàn piano đẫm máu. Tôi tự hỏi tiếng thét của chúng sẽ tạo ra bản nhạc tuyệt vời nào?"
   }
 }

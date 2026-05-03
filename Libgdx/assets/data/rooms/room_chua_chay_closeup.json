@@ -4,7 +4,7 @@
   "background": "images/back_ground/tang_1/chua_chay.png",
   "objects": [
     {
-      "id": "back_to_tang_1",
+      "id": "back_to_tang_1a",
       "type": "door",
       "x": 0,
       "y": 0,
@@ -12,14 +12,13 @@
       "h": 120,
       "properties": {
         "targetScene": "room_tang_1",
-        "inspectText": "Lùi lại...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
       }
     },
     {
-      "id": "back_to_tang_1",
+      "id": "back_to_tang_1b",
       "type": "door",
       "x": 873,
       "y": 0,
@@ -27,7 +26,6 @@
       "h": 120,
       "properties": {
         "targetScene": "room_tang_1",
-        "inspectText": "Lùi lại...",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -41,7 +39,6 @@
       "w": 310,
       "h": 410,
       "properties": {
-        "inspectText": "Một hộp chữa cháy khóa chặt. Bên trong có một cây rìu cứu hỏa sắc lẹm.",
         "collectible": false,
         "hasGlitch": false,
         "rsChange": 0
@@ -55,7 +52,7 @@
       "w": 371,
       "h": 201,
       "properties": {
-        "inspectText": "Đống phế liệu bám đầy mạng nhện. Vài tờ giấy cũ, chai lọ rỗng và đống giẻ rách.",
+
         "collectible": false,
         "hasGlitch": true,
         "rsChange": 0
