@@ -225,6 +225,8 @@ public class GameScreen extends BaseScreen {
 
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
+
+                        changeSceneWithFade("room_toilet_clogged");
                         showNotification("Ục ục... Bồn cầu đã tắc!", Color.GREEN);
 
                         if (game.getAutoSaveManager() != null) {
@@ -289,6 +291,34 @@ public class GameScreen extends BaseScreen {
 
                         showNotification("Đã treo cà vạt lên quạt trần.", Color.LIGHT_GRAY);
                         if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_tie_hung");
+                        return;
+                    }
+                    // Di chuyển ghế về chỗ cũ
+                    if("action_move_chair_back".equals(cutsceneId)){
+                        game.getFlagManager().set("chair_on_bed", false);
+                        changeSceneWithFade("room_bedroom");
+                        showNotification("Đã đưa ghế về vị trí cũ.", Color.LIGHT_GRAY);
+                        if (game.getAutoSaveManager() != null) {
+                            game.getAutoSaveManager().onSaveTrigger("event_chair_moved_back");
+                        }
+                        return;
+                    }
+                    // quay về phòng khi chưa giải đc minigame
+                    if ("action_return_bedroom_force".equals(cutsceneId)) {
+                        changeSceneWithFade("room_bedroom");
+                        return;
+                    }
+                    // đồng ý chơi game tiếp khi chưa giải đc game
+                    if ("action_resume_minigame_2".equals(cutsceneId)) {
+                        if (screenFader.isFading()) return;
+                        if (inventoryUI != null) inventoryUI.setVisible(false);
+
+                        // Chuyển sang màn hình Loading của Minigame
+                        screenFader.startFade(() -> {
+                            Gdx.app.postRunnable(() -> {
+                                game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, com.gnivol.game.screen.LoadingScreen.LoadingTarget.SLIDING_MINIGAME, GameScreen.this));
+                            });
+                        });
                         return;
                     }
                     cutsceneManager.play(cutsceneId);
@@ -516,6 +546,7 @@ public class GameScreen extends BaseScreen {
                     if ("puzzle_laser".equals(minigameId)) {
                         targetType = LoadingScreen.LoadingTarget.LASER_MINIGAME;
                     } else if ("puzzle_sliding_marble".equals(minigameId)) {
+                        game.getFlagManager().set("started_minigame_2", true);
                         targetType = LoadingScreen.LoadingTarget.SLIDING_MINIGAME;
                     }
 
@@ -575,6 +606,7 @@ public class GameScreen extends BaseScreen {
                 });
             }
             else if ("puzzle_sliding_marble".equals(puzzleId)) {
+                game.getFlagManager().set("started_minigame_2", true);
                 if (screenFader.isFading()) return;
                 if (inventoryUI != null) inventoryUI.setVisible(false);
                 screenFader.startFade(() -> {
@@ -1170,6 +1202,11 @@ public class GameScreen extends BaseScreen {
                 actualTarget = "the_end"; // Đã treo cà vạt
             } else if (game.getFlagManager().get("chair_on_bed")) {
                 actualTarget = "new_blank_room_chair_on_bed"; // Mới bê ghế
+            }
+        }
+        if ("room_toilet_closeup".equals(actualTarget)) {
+            if (game.getFlagManager().get("toilet_clogged")) {
+                actualTarget = "room_toilet_clogged"; // Nếu đã tắc thì load phòng tắc
             }
         }
         final String finalTarget = actualTarget;

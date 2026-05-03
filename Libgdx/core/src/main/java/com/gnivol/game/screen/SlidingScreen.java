@@ -261,6 +261,12 @@ public class SlidingScreen extends BaseScreen {
         game.getScreenFader().startFade(() -> {
             game.setScreen(previousScreen);
             game.getScreenFader().startFadeIn();
+            if (previousScreen instanceof com.gnivol.game.screen.GameScreen) {
+                com.gnivol.game.screen.GameScreen gameScreen = (com.gnivol.game.screen.GameScreen) previousScreen;
+                if (!gameScreen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
+                    gameScreen.triggerDialogue("confirm_resume_minigame");
+                }
+            }
             this.dispose();
         });
     }
