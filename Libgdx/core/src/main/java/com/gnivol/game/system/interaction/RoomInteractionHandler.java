@@ -215,7 +215,9 @@ public class RoomInteractionHandler implements InteractionCallback {
             if (!game.getFlagManager().get("plush_toy_scare")) {
                 game.getFlagManager().set("plush_toy_scare");
                 screen.hideInspectText();
-                game.getAudioManager().playSFX("scream2");
+                // Gấp đôi volume scream2 cho hiệu ứng giật mình
+                float vol = Math.min(1.0f, game.getAudioManager().getSfxVolume() * 2.0f);
+                game.getAudioManager().playSFX("scream2", vol);
                 screen.getCutsceneManager().play("hand_under_bed");
                 return;
             }
@@ -290,6 +292,21 @@ public class RoomInteractionHandler implements InteractionCallback {
             }
             // Nếu có ghế nhưng ko cầm cà vạt
         }
+
+        // Password scanner ở cổng chính (room_password_closeup): có vân tay → trigger final_ending
+        if ("password_scanner".equals(id)) {
+            if ("manh_kinh_van_tay".equals(screen.getInventoryUI().getSelectedItem())) {
+                game.getInventoryManager().removeItem("manh_kinh_van_tay");
+                screen.getInventoryUI().clearSelection();
+                screen.getInventoryUI().refreshUI();
+                screen.hideInspectText();
+                screen.getCutsceneManager().play("final_ending");
+            } else {
+                screen.showInspectText("Cần mảnh kính chứa vân tay để mở khóa.");
+            }
+            return;
+        }
+
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }

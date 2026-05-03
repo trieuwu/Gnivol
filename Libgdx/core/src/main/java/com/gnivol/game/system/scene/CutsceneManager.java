@@ -47,6 +47,7 @@ public class CutsceneManager {
         void onFadeOut(float duration);
         void onFadeIn(float duration);
         void onSwapSprite(String target, String newSprite, float x, float y, float w, float h);
+        void onChangeBackground(String path);
         void onDialogue(String dialogueId);
         void onPlayVideo(String src, float x, float y, float w, float h);
         void onChangeScene(String sceneId);
@@ -248,6 +249,13 @@ public class CutsceneManager {
             stepDuration = 0f;
             if (listener != null) {
                 listener.onSwapSprite(step.id, step.sprite, step.x, step.y, step.w, step.h);
+            }
+            advanceStep();
+            return;
+        } else if ("change_bg".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onChangeBackground(step.sprite);
             }
             advanceStep();
             return;

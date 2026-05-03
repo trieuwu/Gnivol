@@ -1211,5 +1211,165 @@
         ]
       }
     ]
+  },
+  {
+    "dialogueId": "final_ending_door_unlocked",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Tít tít... Đã xác nhận vân tay. Cánh cửa đã được mở.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "final_ending_thought_phone",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "{player}",
+        "content": "Cái gì thế nhỉ?",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "{player}",
+        "content": "Đang sợ vãi đái mà ai gọi vậy nhỉ?",
+        "textEffects": false,
+        "nextNodeId": "node_3",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "Điện thoại",
+        "content": "Bệnh Viện đa khoa 306",
+        "textEffects": false,
+        "nextNodeId": "node_4",
+        "choices": []
+      },
+      {
+        "id": "node_4",
+        "speaker": "{player}",
+        "content": "Bệnh viện?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "final_ending_phone_call_1",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bệnh viện",
+        "content": "Alo Vũ à em?",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "Bệnh viện",
+        "content": "Vũ ơi...",
+        "textEffects": false,
+        "nextNodeId": "node_3",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "Bệnh viện",
+        "content": "Bệnh Viện mà Vũ?",
+        "textEffects": false,
+        "nextNodeId": "node_4",
+        "choices": []
+      },
+      {
+        "id": "node_4",
+        "speaker": "Bệnh viện",
+        "content": "Nói gì đi iem...",
+        "textEffects": false,
+        "nextNodeId": "node_5",
+        "choices": []
+      },
+      {
+        "id": "node_5",
+        "speaker": "{player}",
+        "content": "Nhầm số rồi chị ơi, em không phải Vũ.",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "final_ending_phone_call_2",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bệnh viện",
+        "content": "Em ơi chối làm sao được Vũ, nói thật Linh cho chị hết thông tin của em rồi nhớ. Chị đọc cả địa chỉ nhà cả tên cả lớp của Vũ luôn nhớ...",
+        "textEffects": false,
+        "nextNodeId": "node_2",
+        "choices": []
+      },
+      {
+        "id": "node_2",
+        "speaker": "{player}",
+        "content": "Nhầm số rồi chị ơi...",
+        "textEffects": false,
+        "nextNodeId": "node_3",
+        "portrait": "images/characters/NPC1.char.png",
+        "portraitSide": "center",
+        "choices": []
+      },
+      {
+        "id": "node_3",
+        "speaker": "Bệnh viện",
+        "content": "Thôi nghiêm túc đi em.",
+        "textEffects": false,
+        "nextNodeId": "node_4",
+        "choices": []
+      },
+      {
+        "id": "node_4",
+        "speaker": "Bệnh viện",
+        "content": "Linh mất rồi.",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "final_ending_system",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Hệ thống",
+        "content": "Phát hiện biến số không ổn định, thực tại bắt đầu sụp đổ...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
   }
 ]

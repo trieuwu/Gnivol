@@ -230,10 +230,11 @@ public class DialogueUI {
     private void applyRSEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
         target.clearActions(); // Xóa sạch hiệu ứng cũ
         target.getColor().a = 1f;
+        boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
 
-        // CHỈ RUNG LẮC KHI RS > 65
-        if (rs > 65f) {
-            float intensity = (rs - 65f) / 35f;
+        // RUNG LẮC KHI RS > 65 hoặc node có textEffects (force max)
+        if (forceMax || rs > 65f) {
+            float intensity = forceMax ? 1.0f : (rs - 65f) / 35f;
             float amount = 2f + (3f * intensity);
             float duration = 0.04f;
 
@@ -252,6 +253,9 @@ public class DialogueUI {
 
     public void displayNode(DialogueNode node) {
         if (node == null) {
+            // Dialogue kết thúc → reset FORCE_MAX_GLITCH để tắt shader/shake
+            com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = false;
+            currentNodeRef = null;
             rootTable.clearActions();
             rootTable.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
                 com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut(0.5f),
@@ -280,6 +284,9 @@ public class DialogueUI {
         }
 
         autoAdvanceTimer = 0f;
+        currentNodeRef = node;
+        // Sync FORCE_MAX_GLITCH với textEffects flag của node hiện tại
+        com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = node.textEffects;
 
         // Play one-shot SFX khi vào node (VD: sike, scream2...)
         if (node.onEnterSfx != null && game != null && game.getAudioManager() != null) {
@@ -564,11 +571,16 @@ public class DialogueUI {
                 }
             }
         }
-        // 2. LOGIC ĐỒNG HỒ 1 GIÂY (Chỉ áp dụng khi RS < 35 và không phải là Suy nghĩ)
+        // 2. LOGIC ĐỒNG HỒ 1 GIÂY (RS < 35 hoặc node textEffects = liên tục)
         if (activeTypingLabel != null) {
             float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
+            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
 
-            if (currentRS < 35f) {
+            if (forceMax) {
+                // Force: glitch state ON liên tục, refresh label mỗi frame để text đổi nát liên tục
+                isGlitchedState = true;
+                updateContentLabel();
+            } else if (currentRS < 35f) {
                 glitchTimer += delta;
                 if (glitchTimer >= 1.0f) { // Cứ đủ 1.0 giây
                     glitchTimer = 0f;
@@ -590,18 +602,20 @@ public class DialogueUI {
             float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
             String currentText = fullContentText.substring(0, typeIndex);
 
+            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
             // --- 1. QUYẾT ĐỊNH HIỆN CHỮ GÌ ---
-            if (currentRS < 35f && isGlitchedState) {
-                // Rơi vào 1 giây bị lỗi -> Băm nát chữ
-                activeTypingLabel.setText(GlitchTextRenderer.applyGlitch(currentText, currentRS));
+            if (forceMax || (currentRS < 35f && isGlitchedState)) {
+                // Force-glitch hoặc RS thấp đang trong frame lỗi -> Băm nát chữ với intensity max
+                float glitchRs = forceMax ? 0f : currentRS;
+                activeTypingLabel.setText(GlitchTextRenderer.applyGlitch(currentText, glitchRs));
             } else {
-                // Bình thường (RS > 35, hoặc đang trong 1 giây không lỗi) -> Chữ rõ ràng
+                // Bình thường -> Chữ rõ ràng
                 activeTypingLabel.setText(currentText);
             }
 
             // --- 2. QUYẾT ĐỊNH MÀU SẮC ---
-            if (currentRS > 65f) {
-                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // RS > 65: Màu đỏ
+            if (forceMax || currentRS > 65f) {
+                activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f); // Force/RS > 65: Màu đỏ
             } else if (currentRS < 35f && isGlitchedState) {
                 activeTypingLabel.setColor(1f, 0.4f, 0.4f, 1f);
             } else {
