@@ -196,7 +196,7 @@ public class MainMenuScreen extends BaseScreen {
             stage.addActor(table);
 
             try {
-                helpTex = new Texture(Gdx.files.internal("images/UI/thinking_final.png"));
+                helpTex = new Texture(Gdx.files.internal("images/UI/question_mark.png"));
                 com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable helpDrawable = new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(new com.badlogic.gdx.graphics.g2d.TextureRegion(helpTex));
                 com.badlogic.gdx.scenes.scene2d.ui.ImageButton helpBtn = new com.badlogic.gdx.scenes.scene2d.ui.ImageButton(helpDrawable);
 
