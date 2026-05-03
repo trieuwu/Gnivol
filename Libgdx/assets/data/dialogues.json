@@ -1156,5 +1156,60 @@
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "confirm_move_chair_back",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Có nên đưa chiếc ghế này trở lại vị trí cũ không?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Bê xuống",
+            "nextNodeId": null,
+            "cutsceneId": "action_move_chair_back"
+          },
+          {
+            "id": "no",
+            "content": "Cứ để đó",
+            "nextNodeId": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "dialogueId": "confirm_resume_minigame",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Bọng bé bẩu",
+        "content": "Mày chưa vượt qua được minigame của tao, muốn tiếp tục chứ?",
+        "textEffects": false,
+        "nextNodeId": null,
+        "portrait": "images/characters/nerdy_kid2_final.char.png",
+        "portraitSide": "center",
+        "choices": [
+          {
+            "id": "yes",
+            "content": "Tiếp tục chơi",
+            "nextNodeId": null,
+            "cutsceneId": "action_resume_minigame_2"
+          },
+          {
+            "id": "no",
+            "content": "Về phòng nghỉ ngơi",
+            "nextNodeId": null,
+            "cutsceneId": "action_return_bedroom_force"
+          }
+        ]
+      }
+    ]
   }
 ]
