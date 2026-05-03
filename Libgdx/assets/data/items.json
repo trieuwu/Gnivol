@@ -107,6 +107,15 @@
       "pickupSoundID": "click",
       "rsChangeValue": 5,
       "isCursed": false
+    },
+    {
+      "itemID": "manh_kinh_van_tay",
+      "itemName": "Kính vân tay",
+      "description": "Một mảnh kính vỡ in hằn dấu vân tay của bác chủ trọ.",
+      "inspectText": "Dấu vân tay rất nguyên vẹn và rõ nét. Chắc chắn nó sẽ đánh lừa được hệ thống máy quét an ninh ở khu vực cầu thang.",
+      "pickupSoundID": "click",
+      "rsChangeValue": 5,
+      "isCursed": false
     }
   ]
 }

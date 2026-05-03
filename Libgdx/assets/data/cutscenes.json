@@ -185,11 +185,12 @@
       { "type": "flash", "color": "red", "duration": 0.15 },
       { "type": "shake", "intensity": 2.0, "duration": 0.5 },
       { "type": "swap_sprite", "id": "room_bedroom", "sprite": "images/UI/you_die.png" },
+      { "type": "fade_in", "duration": 1.5 },
       { "type": "sfx", "id": "sfx_died" },
-      { "type": "wait", "duration": 2.2 },
+      { "type": "wait", "duration": 2.5 },
 
       { "type": "sfx", "id": "sfx_flatline_heart" },
-      { "type": "fade_out", "duration": 0.5 },
+      { "type": "fade_out", "duration": 2},
       { "type": "change_scene", "id": "return_to_menu" }
     ]
   }

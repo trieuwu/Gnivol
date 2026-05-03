@@ -12,21 +12,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.gnivol.game.component.BoundsComponent;
 import com.gnivol.game.Constants;
 import com.gnivol.game.GnivolGame;
-import com.gnivol.game.entity.GameObject;
 import com.gnivol.game.input.InputHandler;
 import com.gnivol.game.model.RoomData;
 import com.gnivol.game.model.dialogue.DialogueTree;
 import com.gnivol.game.system.FontManager;
 import com.gnivol.game.system.dialogue.DialogueEngine;
-import com.gnivol.game.system.dialogue.ThoughtManager;
-import com.gnivol.game.system.interaction.InteractionCallback;
+
 import com.gnivol.game.system.interaction.PlayerInteractionSystem;
 import com.gnivol.game.system.interaction.RoomInteractionHandler;
 import com.gnivol.game.system.rs.RSListener;
@@ -327,14 +323,6 @@ public class GameScreen extends BaseScreen {
 
             dialogueUI = new DialogueUI(game, game.getStage(), fm.fontVietnamese, dialogueEngine, game.getRsManager());
             loadDialogueDatabase();
-//            dialogueUI.setOnFinished(() -> {
-//                if (cutsceneManager.isPlaying()) {
-//                    cutsceneManager.onDialogueFinished();
-//                }
-//                if (game.getAutoSaveManager() != null) {
-//                    game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
-//                }
-//            });
 
             Label.LabelStyle labelStyle = new Label.LabelStyle(fm.fontVietnamese, Color.WHITE);
             inspectLabel = new Label("", labelStyle);
@@ -522,8 +510,10 @@ public class GameScreen extends BaseScreen {
                 @Override
                 public void onCutsceneFinished(String cutsceneId) {
                     if (cutsceneSprite != null) {
-                        cutsceneSprite.dispose();
-                        cutsceneSprite = null;
+                        if (!isGameOver) {
+                            cutsceneSprite.dispose();
+                            cutsceneSprite = null;
+                        }
                     }
                     if (videoPlayer != null) {
                         videoPlayer.dispose();
@@ -572,9 +562,12 @@ public class GameScreen extends BaseScreen {
         }
         // Hiển thị Dialogue hệ thống chào mừng quay lại
         if (game.isLoadedGame) {
-            triggerDialogue("system_welcome_back");
+            if (game.getGameState().isDialogueFinished("intro_phone_call")) {
+                triggerDialogue("system_welcome_back");
+            }
             game.isLoadedGame = false;
         }
+
     }
     private void setupPuzzleListeners() {
         // Chỉ còn lắng nghe kết quả từ ngăn kéo (drawer)
@@ -864,7 +857,11 @@ public class GameScreen extends BaseScreen {
             }
             playIntroSequence();
         } else {
-            triggerFirstTimeSceneEvents(room);
+            if (!game.getGameState().isDialogueFinished("intro_phone_call")) {
+                playIntroSequence();
+            } else {
+                triggerFirstTimeSceneEvents(room);
+            }
         }
     }
 
@@ -1173,7 +1170,9 @@ public class GameScreen extends BaseScreen {
         "room_chu_nha",
         "room_tang_1",
         "room_toilet_closeup",
-        "room_chua_chay_closeup"
+        "room_chua_chay_closeup",
+        "new_blank_room_chair_on_bed"
+
     ));
 
     private boolean isDoorTransition(String targetSceneId) {
@@ -1230,6 +1229,8 @@ public class GameScreen extends BaseScreen {
             game.getFlagManager().set("first_time_hallway", true);
             cutsceneManager.play("door_neighbor");
         }
+
+
         if (targetSceneId != null && targetSceneId.contains("bathroom")) {
             // Kiểm tra xem đã gọi chủ trọ chưa và chưa bị chửi
             if (game.getFlagManager().get("chu_tro_fixed_toilet") && !game.getFlagManager().get("chu_tro_bathroom_talked")) {
@@ -1253,7 +1254,18 @@ public class GameScreen extends BaseScreen {
                 if (game.getAutoSaveManager() != null) {
                     game.getAutoSaveManager().onSaveTrigger("dialogue_ended");
                 }
+                if ("system_welcome_back".equals(dialogueId)) {
+                    String currentRoom = game.getGameState().getCurrentRoom();
+                    if ("room_hallway".equals(currentRoom)) {
+                        boolean startedMinigame = game.getFlagManager().get("started_minigame_2");
+                        boolean solvedMinigame = puzzleManager.isPuzzleSolved("puzzle_sliding_marble");
+                        if (startedMinigame && !solvedMinigame) {
+                            triggerDialogue("confirm_resume_minigame");
+                        }
+                    }
+                }
             });
+
             dialogueEngine.loadDialogue(tree);
             dialogueUI.displayNode(dialogueEngine.getCurrentNode());
         }

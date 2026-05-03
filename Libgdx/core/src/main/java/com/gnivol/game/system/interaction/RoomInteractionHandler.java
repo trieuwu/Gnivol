@@ -253,7 +253,12 @@ public class RoomInteractionHandler implements InteractionCallback {
             screen.changeSceneWithFade("room_hallway");
             if (game.getFlagManager().get("started_minigame_2") && !screen.getPuzzleManager().isPuzzleSolved("puzzle_sliding_marble")) {
                 screen.hideInspectText();
-                onDialogueTriggered("confirm_resume_minigame");
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        onDialogueTriggered("confirm_resume_minigame");
+                    }
+                }, 0.6f);
                 return;
             }
         } else if (screen.getPuzzleManager().isPuzzleSolved("key_broke_on_door")) {
