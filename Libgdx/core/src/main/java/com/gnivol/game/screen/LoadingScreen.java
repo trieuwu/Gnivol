@@ -30,11 +30,14 @@ public class LoadingScreen extends BaseScreen {
     private LaserScreen preLoadedLaser;
 
     private final String[] HINTS = {
-        "Đôi khi, bóng tối lại là nơi an toàn nhất.",
-        "Một số cánh cửa tốt nhất là không bao giờ nên mở.",
-        "Kẻ trong gương có thực sự là bạn không?",
-        "Đừng tin vào những gì bạn nghe thấy khi ở một mình.",
+        "Thiên thượng thiên hạ, Duy Anh độc tôn",
+        "Một số cánh cửa tốt nhất là không bao giờ nên mở. Với bạn thì là cửa sổ tâm hồn",
+        "2822 8686 8866 MB, please...",
+        "Mẹo qua minigame: Mẹo m bé",
         "Đã đi mọi phương trời nhưng người chỉ nhớ về Phương Anh."
+        "Chúc Thành 8.0+ ielts nhé :))) Vua Ren lít"
+        "byvn.net/jVT0"
+        "Có 4 ending và 1 true ending"
     };
 
     public LoadingScreen(GnivolGame game, LoadingTarget target, GameScreen previousGameScreen) {
