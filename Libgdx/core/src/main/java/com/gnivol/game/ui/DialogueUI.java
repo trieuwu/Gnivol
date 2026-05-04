@@ -254,6 +254,9 @@ public class DialogueUI {
     public void displayNode(DialogueNode node) {
         if (node == null) {
             // Dialogue kết thúc → reset FORCE_MAX_GLITCH để tắt shader/shake
+            if (com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH) {
+                com.badlogic.gdx.Gdx.app.log("GLITCH", "FORCE_MAX_GLITCH = false (dialogue ended)");
+            }
             com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = false;
             currentNodeRef = null;
             rootTable.clearActions();
@@ -286,7 +289,11 @@ public class DialogueUI {
         autoAdvanceTimer = 0f;
         currentNodeRef = node;
         // Sync FORCE_MAX_GLITCH với textEffects flag của node hiện tại
+        boolean prevForce = com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH;
         com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = node.textEffects;
+        if (prevForce != node.textEffects) {
+            com.badlogic.gdx.Gdx.app.log("GLITCH", "FORCE_MAX_GLITCH = " + node.textEffects + " (node=" + node.id + ", speaker=" + node.speaker + ")");
+        }
 
         // Play one-shot SFX khi vào node (VD: sike, scream2...)
         if (node.onEnterSfx != null && game != null && game.getAudioManager() != null) {

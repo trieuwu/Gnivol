@@ -127,6 +127,8 @@ public class GnivolGame extends Game {
     }
 
     public void resetGameState() {
+        // Safety: reset FORCE_MAX_GLITCH để tránh kẹt qua game session
+        com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = false;
         if (inventoryManager != null) inventoryManager.clearInventory();
         if (puzzleManager != null) puzzleManager.reset();
         if (sceneManager != null) sceneManager.reset();

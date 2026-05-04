@@ -59,11 +59,7 @@ public class RoomScene extends Scene {
         if (roomData.getBackground() != null) {
             backgroundTexture = new Texture(Gdx.files.internal(roomData.getBackground()));
         }
-        if (sceneId.equals("room_bedroom")) {
-            jumpscareTexture = new Texture(Gdx.files.internal("images/back_ground/room/new_blank_room_1.png"));
-            currentJumpscareInterval = com.badlogic.gdx.math.MathUtils.random(10f, 20f);
-        }
-        else if(sceneId.equals("room_bathroom")) {
+        if (sceneId.equals("room_bathroom")) {
             ghostMirrorTex = new Texture(Gdx.files.internal("images/back_ground/bathroom/bathroom_ghost_mirror.png"));
             brokenMirrorTex = new Texture(Gdx.files.internal("images/back_ground/bathroom/bathroom_break_mirror.png"));
 
@@ -190,10 +186,7 @@ public class RoomScene extends Scene {
                 isJumpscareActive = false;
                 jumpscareTimer = 0f;
 
-                if (sceneId.equals("room_bedroom")) {
-                    currentJumpscareInterval = com.badlogic.gdx.math.MathUtils.random(10f, 20f);
-                }
-                else if (sceneId.equals("room_bathroom")) {
+                if (sceneId.equals("room_bathroom")) {
                     com.gnivol.game.GnivolGame game = (com.gnivol.game.GnivolGame) Gdx.app.getApplicationListener();
                     isMirrorAlreadyBroken = game.getInventoryManager().hasItem("glass_shard");
                     currentJumpscareInterval = com.badlogic.gdx.math.MathUtils.random(3f, 10f);
