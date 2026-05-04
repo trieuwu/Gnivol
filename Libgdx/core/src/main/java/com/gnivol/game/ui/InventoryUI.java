@@ -467,11 +467,33 @@ public class InventoryUI {
                 inventoryManager.addItem(result);
 
                 String itemName = result;
-                com.badlogic.gdx.utils.JsonValue itemData = itemDatabase.get(result);
-                if (itemData != null && itemData.getString("itemName", null) != null) {
-                    itemName = itemData.getString("itemName");
+                try {
+                    com.gnivol.game.model.ItemData data = com.gnivol.game.data.ItemDatabase.getInstance().getItemData(result);
+                    if (data != null && data.itemName != null) {
+                        itemName = data.itemName;
+                    }
+                } catch (Exception e) {
+                    // Ignore
                 }
-                showNotification("Created: " + itemName, Color.GREEN);
+
+                // --- THÊM HỆ THỐNG THOUGHT CHO CHẾ TẠO ---
+                com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("che_tao_" + result, rsManager.getRS());
+
+                // Lấy màn hình hiện tại thông qua hệ thống Gdx toàn cục thay vì dùng biến game
+                com.badlogic.gdx.Screen currentScreen = ((com.badlogic.gdx.Game) com.badlogic.gdx.Gdx.app.getApplicationListener()).getScreen();
+
+                if (thoughtTree != null && currentScreen instanceof com.gnivol.game.screen.GameScreen) {
+                    // Gọi hàm hiển thị hội thoại từ GameScreen
+                    com.gnivol.game.screen.GameScreen gameScreen = (com.gnivol.game.screen.GameScreen) currentScreen;
+                    gameScreen.hideInspectText();
+                    gameScreen.getDialogueEngine().loadDialogue(thoughtTree);
+                    gameScreen.getDialogueUI().displayNode(gameScreen.getDialogueEngine().getCurrentNode());
+                } else {
+                    // Nếu chưa có suy nghĩ, hiện thông báo cũ
+                    if (currentScreen instanceof com.gnivol.game.screen.GameScreen) {
+                        ((com.gnivol.game.screen.GameScreen) currentScreen).showNotification("Đã chế tạo: " + itemName, com.badlogic.gdx.graphics.Color.GREEN);
+                    }
+                }
 
                 refreshUI();
                 resetHighlights();

@@ -692,7 +692,7 @@ public class DialogueUI {
         // Block click khi đang hiển thị overlay choice A/B (Thành's fix — PR #84)
         boolean choiceNotVisible = (choiceOverlayTable == null || !choiceOverlayTable.isVisible());
         // Default 2s gate (chống skip nhanh). Cheat F2 → 0s.
-        float requiredDelay = CHEAT_INSTANT_DIALOGUE ? 0f : 2.0f;
+        float requiredDelay = CHEAT_INSTANT_DIALOGUE ? 0f : 1.0f;
         boolean timeOk = clickDelayTimer >= requiredDelay;
         return timeOk && choiceNotVisible;
     }

@@ -303,5 +303,75 @@
     "LOW": "Ba chữ số... Đầu mình đau quá! Những con số liên tục nhảy múa... Ngày thành lập PROPTIT... là ngày nào nhỉ?!",
     "MID": "Hình như mật khẩu là ngày sinh nhật của câu lạc bộ PROPTIT thì phải...",
     "HIGH": "Sinh nhật PROPTIT. Một dãy số quá quen thuộc và dễ đoán cho cái ổ khóa rẻ tiền này."
+  },
+  "scanner_thieu_van_tay": {
+    "LOW": "Máy quét vân tay... Nó muốn ghi lại dấu vết của mình! Không thể dùng tay không được, mình cần tìm vân tay của kẻ khác để đánh lừa nó!",
+    "MID": "Một chiếc máy quét vân tay sinh trắc học. Mình không thể mở khóa nó nếu không có đúng mẫu vân tay được cấp quyền.",
+    "HIGH": "Bảo mật vân tay cơ bản. Chỉ cần tìm đúng mảnh vật chứng mang mẫu vân tay phù hợp là có thể dễ dàng qua mặt hệ thống này."
+  },
+  "cua_chinh_da_mo_khoa": {
+    "LOW": "Cạch! Mở được rồi... Nhưng sự tĩnh lặng bên ngoài kia còn đáng sợ hơn cả căn phòng này. Liệu mình có nên bước ra không?",
+    "MID": "Tiếng chốt khóa vừa mở. Mình có thể rời khỏi đây rồi.",
+    "HIGH": "Cuối cùng thì cánh cửa cũng phải nhượng bộ. Không có rào cản nào có thể giữ chân mình được nữa."
+  },
+  "nhan_manh_vai": {
+    "LOW": "Một miếng vải xé ra từ đệm... Cảm giác cầm nó trên tay thật nhám nhúa, giống như đang chạm vào da của một cái xác khô vậy.",
+    "MID": "Mình đã lấy được một mảnh vải khá dai. Chắc chắn nó sẽ có ích cho việc gì đó.",
+    "HIGH": "Mảnh vải này có kết cấu hoàn hảo. Thu thập vật liệu luôn là bước đầu tiên để làm chủ tình thế."
+  },
+  "nhan_manh_kinh": {
+    "LOW": "Mảnh kính này sắc quá... Chỉ cần lỡ tay một chút là sẽ đứt lìa mạch máu. Mình phải cẩn thận.",
+    "MID": "Một mảnh kính sắc nhọn. Có lẽ nó dùng để cắt được thứ gì đó.",
+    "HIGH": "Thật thú vị... Cảm giác sắc bén của mảnh vỡ này. Một công cụ hoàn hảo để giải phẫu những bí mật đang bị che giấu."
+  },
+  "nhan_van_tay": {
+    "LOW": "Lấy được rồi! Dấu vân tay của lão ta in hằn rõ nét trên mặt kính. Mình đang nắm trong tay thứ có thể quyết định số phận của cả hai...",
+    "MID": "Mảnh kính đã dính dấu vân tay. Giờ thì mình đã có chìa khóa để vượt qua hệ thống bảo mật kia.",
+    "HIGH": "Kẻ nào cũng để lại dấu vết. Việc của mình chỉ đơn giản là thu thập và lợi dụng điểm yếu đó thôi."
+  },
+  "nhan_keo_502": {
+    "LOW": "Cạch... Một lọ keo 502 giấu trong ngăn kéo. Thứ dung dịch độc hại này có thể dính chặt lớp da người lại với nhau... Mình phải cẩn thận khi dùng nó.",
+    "MID": "Ngăn kéo đã mở. Bên trong chỉ có một lọ keo 502. Có lẽ mình sẽ cần dùng nó để ghép dính thứ gì đó đã bị vỡ.",
+    "HIGH": "Phần thưởng cho trí tuệ là một lọ keo siêu dính. Khả năng liên kết các mảnh vỡ. Một công cụ tuyệt vời để thiết lập lại trật tự."
+  },
+  "treo_ca_vat": {
+    "LOW": "Nút thắt đã xong... Mọi thứ đã sẵn sàng. Đến lúc kết thúc vòng lặp mệt mỏi này rồi.",
+    "MID": "Chiếc cà vạt đã được treo lên quạt trần. Chắc chắn và vững chãi.",
+    "HIGH": "Một sự sắp đặt hoàn hảo. Ranh giới giữa sự giải thoát và vực thẳm chưa bao giờ mỏng manh đến thế."
+  },
+  "dua_ghe_ve_cho_cu": {
+    "LOW": "Ghế đã trở về chỗ cũ... Vị trí của nó vốn là ở đây. Mình không nên làm xáo trộn mọi thứ thêm nữa, nếu không chuyện tồi tệ sẽ xảy ra mất...",
+    "MID": "Mình đã kê lại chiếc ghế về chỗ cũ rồi. Căn phòng lại trông như lúc ban đầu.",
+    "HIGH": "Trả lại hiện trạng ban đầu. Xóa bỏ mọi dấu vết của những hành động thừa thãi. Mọi thứ cần phải nằm đúng vị trí của nó."
+  },
+  "ke_ghe_len_giuong": {
+    "LOW": "Ghế đã được đặt lên giường... Vị trí này... Đủ cao để với tới chiếc quạt trần kia. Mình đang làm cái quái gì thế này?",
+    "MID": "Kê ghế lên nệm có chút chông chênh, nhưng thế này là đủ cao rồi.",
+    "HIGH": "Một bệ phóng hoàn hảo. Mọi thứ đã sẵn sàng cho bước tiếp theo. Không có đường lui nữa."
+  },
+  "nhan_dien_thoai_final": {
+    "LOW": "Chiếc điện thoại... Màn hình nứt vỡ nhưng vẫn còn lên nguồn! Liệu mình có thể gọi cứu viện để thoát khỏi nơi quái quỷ này không?",
+    "MID": "Tìm thấy điện thoại rồi. Hy vọng là vẫn còn đủ sóng và pin để thực hiện một cuộc gọi ra bên ngoài.",
+    "HIGH": "Thiết bị liên lạc đã nằm trong tay. Quá trình cô lập rốt cuộc cũng bị phá vỡ. Đến lúc kết nối lại với thế giới bên ngoài rồi."
+  },
+  "nhan_bone": {
+    "LOW": "Một... một khúc xương? Trời ơi, đây là xương người sao?! Kẻ tàn độc nào đã gây ra chuyện này... Mình phải nhanh chóng rời khỏi đây!",
+    "MID": "Mình vừa nhặt lên một khúc xương. Cảm giác ớn lạnh chạy dọc sống lưng. Nơi này ẩn chứa những bí mật vượt sức tưởng tượng.",
+    "HIGH": "Phần còn sót lại của một sinh mệnh. Khúc xương này chính là nhân chứng thầm lặng nhất cho những tội ác đã bị chôn vùi trong căn phòng này."
+  },
+  "nhan_chia_khoa_final": {
+    "LOW": "Một chiếc chìa khóa bằng đồng thau giấu sâu dưới gầm giường... Nó lạnh toát. Kẻ nào đã cố tình giấu nó ở một nơi tối tăm và bụi bặm thế này chứ?",
+    "MID": "Mình tìm thấy một chiếc chìa khóa đồng dưới gầm giường. Khá cũ kỹ. Chắc hẳn nó dùng để mở một thứ gì đó quan trọng trong phòng.",
+    "HIGH": "Chìa khóa đồng giấu dưới gầm giường. Hành vi cất giấu vụng về này chứng tỏ kẻ đó đang trong trạng thái hoảng loạn hoặc rất vội vã."
+  },
+  "nhan_ca_vat_final": {
+    "LOW": "Một chiếc cà vạt... Chất vải của nó rất dai và chắc chắn. Không hiểu sao khi cầm nó lên, cổ họng mình lại có cảm giác nghẹn đắng lại.",
+    "MID": "Phần thưởng cho câu đố này lại là một chiếc cà vạt. Mình có thể dùng nó như một sợi dây thừng.",
+    "HIGH": "Chiếc cà vạt. Biểu tượng của sự trói buộc, hay là công cụ cho một sự giải thoát cuối cùng? Câu trả lời đã quá rõ ràng."
+  },
+  "che_tao_chia_khoa_fixed_final": {
+    "LOW": "Khớp rồi! Hai mảnh vỡ đã gắn chặt lại với nhau bằng keo. Hy vọng nó đủ chắc chắn để không bị gãy lại khi cắm vào ổ khóa.",
+    "MID": "Mình đã dán hai mảnh chìa khóa lại thành công. Trông có vẻ dùng được rồi.",
+    "HIGH": "Sự phục hồi hoàn hảo. Những mảnh vỡ tưởng chừng vô dụng khi được liên kết đúng cách lại trở thành chìa khóa mở ra cánh cửa thoát hiểm."
   }
 }

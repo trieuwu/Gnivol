@@ -208,8 +208,15 @@ public class LaserScreen extends BaseScreen {
         // --
         game.getInventoryManager().addItem("ca_vat_final");
         if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
-        if (previousScreen instanceof GameScreen) {
-            ((GameScreen) previousScreen).showNotification("Bạn đã nhận được 1 cà vạt", com.badlogic.gdx.graphics.Color.YELLOW);
+        if (previousScreen instanceof com.gnivol.game.screen.GameScreen) {
+            com.gnivol.game.screen.GameScreen screen = (com.gnivol.game.screen.GameScreen) previousScreen;
+            com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("nhan_ca_vat_final", game.getRsManager().getRS());
+
+            if (thoughtTree != null) {
+                screen.hideInspectText();
+                screen.getDialogueEngine().loadDialogue(thoughtTree);
+                screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+            }
         }
         if (game.getAudioManager() != null && previousBgmId != null) {
             game.getAudioManager().crossfadeBGM(previousBgmId, 0.5f);

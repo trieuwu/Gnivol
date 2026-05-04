@@ -39,7 +39,8 @@ public class LoadingScreen extends BaseScreen {
         "byvn.net/jVT0",
         "Có 4 ending và 1 true ending",
         "Tài trợ bởi Claude",
-        "1907 6122 5710 14 Techcombank hjhjhj"
+        "1907 6122 5710 14 Techcombank hjhjhj",
+        "0906279876 MB, gimme bobux pls"
     };
 
     public LoadingScreen(GnivolGame game, LoadingTarget target, GameScreen previousGameScreen) {

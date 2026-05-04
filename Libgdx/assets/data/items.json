@@ -6,7 +6,7 @@
       "description": "Một chiếc cà vạt kẻ sọc.",
       "inspectText": "Vải khá cũ, có một vết ố mờ ở mặt sau... Trông nó rất chắc chắn, nếu vắt lên quạt trần thì...",
       "pickupSoundID": "click",
-      "rsChangeValue": 15,
+      "rsChangeValue": 20,
       "isCursed": true
     },
     {

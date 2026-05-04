@@ -249,7 +249,12 @@ public class GameScreen extends BaseScreen {
                                 game.getInventoryManager().addItem("fabric_piece");
                                 inventoryUI.refreshUI();
                                 if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
-                                showNotification("Bạn đã nhận được 1 mảnh vải", Color.YELLOW);
+                                com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("nhan_manh_vai", game.getRsManager().getRS());
+                                if (thoughtTree != null) {
+                                    hideInspectText();
+                                    dialogueEngine.loadDialogue(thoughtTree);
+                                    dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                }
                             }
                         }, 3.0f);
 
@@ -264,7 +269,27 @@ public class GameScreen extends BaseScreen {
                         inventoryUI.clearSelection();
                         inventoryUI.refreshUI();
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
-                        showNotification("Bạn đã nhận được 1 mảnh kính chứa vân tay của chủ trọ", Color.YELLOW);
+
+                        com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("nhan_van_tay", game.getRsManager().getRS());
+
+                        if (thoughtTree != null) {
+                            // --- GIẢI PHÁP: CHỜ 0.3S ĐỂ KHUNG THOẠI CŨ ĐÓNG HẲN ---
+                            com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                @Override
+                                public void run() {
+                                    com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Đảm bảo ẩn mọi text cũ trước khi nạp suy nghĩ mới
+                                            hideInspectText();
+                                            dialogueEngine.loadDialogue(thoughtTree);
+                                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                        }
+                                    });
+                                }
+                            }, 0.5f); // Delay một chút để tránh xung đột UI
+                            // --------------------------------------------------
+                        }
 
                         if (game.getAutoSaveManager() != null) {
                             game.getAutoSaveManager().onSaveTrigger("event_pickup_van_tay");
@@ -276,6 +301,23 @@ public class GameScreen extends BaseScreen {
                         game.getFlagManager().set("chair_on_bed", true);
                         // thay phòng
                         changeSceneWithFade("new_blank_room_chair_on_bed");
+
+                        com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("ke_ghe_len_giuong", game.getRsManager().getRS());
+                        if (thoughtTree != null) {
+                            com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                @Override
+                                public void run() {
+                                    Gdx.app.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            hideInspectText();
+                                            dialogueEngine.loadDialogue(thoughtTree);
+                                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                        }
+                                    });
+                                }
+                            }, 0.7f); // Hẹn giờ 0.7s chờ chuyển cảnh xong
+                        }
 
                         if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_chair_moved");
                         return;
@@ -290,7 +332,23 @@ public class GameScreen extends BaseScreen {
                         // thay phòng
                         changeSceneWithFade("the_end");
 
-                        showNotification("Đã treo cà vạt lên quạt trần.", Color.LIGHT_GRAY);
+                        com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("treo_ca_vat", game.getRsManager().getRS());
+                        if (thoughtTree != null) {
+                            com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                @Override
+                                public void run() {
+                                    Gdx.app.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            hideInspectText();
+                                            dialogueEngine.loadDialogue(thoughtTree);
+                                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                        }
+                                    });
+                                }
+                            }, 0.7f);
+                            // --------------------------------------------------
+                        }
                         if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_tie_hung");
                         return;
                     }
@@ -298,7 +356,24 @@ public class GameScreen extends BaseScreen {
                     if("action_move_chair_back".equals(cutsceneId)){
                         game.getFlagManager().set("chair_on_bed", false);
                         changeSceneWithFade("room_bedroom");
-                        showNotification("Đã đưa ghế về vị trí cũ.", Color.LIGHT_GRAY);
+
+                        com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("dua_ghe_ve_cho_cu", game.getRsManager().getRS());
+                        if (thoughtTree != null) {
+                            com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                @Override
+                                public void run() {
+                                    Gdx.app.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            hideInspectText();
+                                            dialogueEngine.loadDialogue(thoughtTree);
+                                            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                                        }
+                                    });
+                                }
+                            }, 0.7f);
+                            // --------------------------------------------------
+                        }
                         if (game.getAutoSaveManager() != null) {
                             game.getAutoSaveManager().onSaveTrigger("event_chair_moved_back");
                         }
@@ -378,16 +453,6 @@ public class GameScreen extends BaseScreen {
             rsUI.updateRS(game.getRsManager().getRS());
 
             setupInteractionSystem();
-
-            if (firstShow) {
-                handleFirstShow();
-                firstShow = false;
-            }
-
-            // Phát nhạc game (crossfade từ menu)
-            if (game.getAudioManager() != null) {
-                game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
-            }
 
             cutsceneManager = new com.gnivol.game.system.scene.CutsceneManager();
             cutsceneManager.setRSManager(game.getRsManager());
@@ -566,6 +631,15 @@ public class GameScreen extends BaseScreen {
                     }
                 }
             });
+            if (firstShow) {
+                handleFirstShow();
+                firstShow = false;
+            }
+
+            // Phát nhạc game (crossfade từ menu)
+            if (game.getAudioManager() != null) {
+                game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
+            }
             isInitialized = true;
         }
         setupInputProcessors();
@@ -588,7 +662,12 @@ public class GameScreen extends BaseScreen {
                 game.getInventoryManager().addItem("keo_502_final");
                 inventoryUI.refreshUI();
                 if (game.getAudioManager() != null) game.getAudioManager().playSFX("verification");
-                showNotification("Cạch! Ngăn kéo đã mở. Nhận được lọ keo 502!", Color.GREEN);
+                com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("nhan_keo_502", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    hideInspectText();
+                    dialogueEngine.loadDialogue(thoughtTree);
+                    dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+                }
                 if (sceneManager.getCurrentScene() instanceof RoomScene) {
                     ((RoomScene) sceneManager.getCurrentScene()).setObjectState("drawer", "open");
                 }
@@ -1199,7 +1278,17 @@ public class GameScreen extends BaseScreen {
             Gdx.app.error("Notification", "Not found: " + itemId);
         }
 
-        showNotification(itemName, Color.MAROON);
+        com.gnivol.game.model.dialogue.DialogueTree thoughtTree = new com.gnivol.game.system.dialogue.ThoughtManager().getThoughtTree("nhan_" + itemId, game.getRsManager().getRS());
+
+        if (thoughtTree != null) {
+            // Nếu TÌM THẤY suy nghĩ trong thoughts.json -> Hiện suy nghĩ nội tâm
+            hideInspectText();
+            dialogueEngine.loadDialogue(thoughtTree);
+            dialogueUI.displayNode(dialogueEngine.getCurrentNode());
+        } else {
+
+            showNotification(itemName, Color.MAROON);
+        }
     }
 
     // Scenes chuyển cảnh không phải do mở cửa (chui vào, leo lên, chui ra...) — skip sfx open_door cả 2 chiều
@@ -1265,17 +1354,31 @@ public class GameScreen extends BaseScreen {
 
     /** Cutscene/event chỉ play LẦN ĐẦU vào scene cụ thể. Gate bằng FlagManager. */
     private void triggerFirstTimeSceneEvents(String targetSceneId) {
-        if ("room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
+        boolean isWaitingForLandlord = game.getFlagManager().get("chu_tro_fixed_toilet") && !game.getFlagManager().get("chu_tro_bathroom_talked");
+
+        // Hội thoại gõ cửa hàng xóm ở hành lang (Chỉ hiện khi KHÔNG chờ chủ trọ)
+        if (!isWaitingForLandlord && "room_hallway".equals(targetSceneId) && !game.getFlagManager().get("first_time_hallway")) {
             game.getFlagManager().set("first_time_hallway", true);
             cutsceneManager.play("door_neighbor");
         }
 
 
         if (targetSceneId != null && targetSceneId.contains("bathroom")) {
-            // Kiểm tra xem đã gọi chủ trọ chưa và chưa bị chửi
-            if (game.getFlagManager().get("chu_tro_fixed_toilet") && !game.getFlagManager().get("chu_tro_bathroom_talked")) {
+            // 1. Ưu tiên sự kiện chủ trọ nếu đang chờ
+            if (isWaitingForLandlord) {
                 game.getFlagManager().set("chu_tro_bathroom_talked", true);
-                triggerDialogue("chu_tro_in_bathroom");
+
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                triggerDialogue("chu_tro_in_bathroom");
+                            }
+                        });
+                    }
+                }, 0.5f);
             }
         }
     }

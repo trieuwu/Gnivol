@@ -409,14 +409,14 @@
             "content": "Tôi muốn chết…",
             "nextNodeId": "node_11_A",
             "textEffects": false,
-            "rsChange": 15
+            "rsChange": -60
           },
           {
             "id": "choice_B",
             "content": "Tôi muốn sống",
             "nextNodeId": "node_11_B",
             "textEffects": false,
-            "rsChange": -5
+            "rsChange": 5
           }
         ]
       },
@@ -545,14 +545,14 @@
             "nextNodeId": "node_11_A_3",
             "textEffects": false,
             "cutsceneId" : "cutscene_mot_sach_kill",
-            "rsChange": 0
+            "rsChange": -4
           },
           {
             "id": "choice_B_1_3",
             "content": "Ngươi... không giống những kẻ khác à?",
             "nextNodeId": "node_11_B_3",
             "textEffects": false,
-            "rsChange": 0
+            "rsChange": 5
           }
         ]
       },
