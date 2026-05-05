@@ -126,7 +126,25 @@ public class RoomInteractionHandler implements InteractionCallback {
                             screen.getGnivolGame().getInventoryManager().addItem("glass_shard");
                             screen.getInventoryUI().refreshUI();
                             game.getAudioManager().playSFX("verification");
-                            screen.showNotification("Bạn đã nhận được 1 mảnh kính", com.badlogic.gdx.graphics.Color.YELLOW);
+
+                            DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("nhan_manh_kinh", game.getRsManager().getRS());
+                            if (thoughtTree != null) {
+                                // --- THÊM TIMER ĐỂ TRÌ HOÃN HỘI THOẠI 0.7 GIÂY ---
+                                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                screen.hideInspectText();
+                                                screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                                screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                            }
+                                        });
+                                    }
+                                }, 0.001f); // Hẹn giờ 0.7s chờ chuyển cảnh gương vỡ xong
+                                // --------------------------------------------------
+                            }
                         }
                     }, 3.0f);
                 } else {
@@ -309,7 +327,12 @@ public class RoomInteractionHandler implements InteractionCallback {
                 screen.hideInspectText();
                 screen.getCutsceneManager().play("final_ending");
             } else {
-                screen.showInspectText("Cần mảnh kính chứa vân tay để mở khóa.");
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("scanner_thieu_van_tay", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
             }
             return;
         }
@@ -360,7 +383,12 @@ public class RoomInteractionHandler implements InteractionCallback {
                 screen.getInventoryUI().clearSelection();
                 screen.getPuzzleManager().markSolved("main_door_unlocked");
                 game.getAudioManager().playSFX("open_door");
-                screen.showNotification("Cạch! Cửa đã được mở khóa.", Color.GREEN);
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("cua_chinh_da_mo_khoa", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
                 screen.getInventoryUI().refreshUI();
                 if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("unlock_main_door");
             } else {

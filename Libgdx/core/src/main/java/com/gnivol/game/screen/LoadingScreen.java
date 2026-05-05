@@ -34,10 +34,13 @@ public class LoadingScreen extends BaseScreen {
         "Một số cánh cửa tốt nhất là không bao giờ nên mở. Với bạn thì là cửa sổ tâm hồn",
         "2822 8686 8866 MB, please...",
         "Mẹo qua minigame: Mẹo m bé",
-        "Đã đi mọi phương trời nhưng người chỉ nhớ về Phương Anh."
-        "Chúc Thành 8.0+ ielts nhé :))) Vua Ren lít"
-        "byvn.net/jVT0"
-        "Có 4 ending và 1 true ending"
+        "Đã đi mọi phương trời nhưng người chỉ nhớ về Phương Anh.",
+        "Chúc Thành 8.0+ ielts nhé :))) Vua Ren lít",
+        "byvn.net/jVT0",
+        "Có 4 ending và 1 true ending",
+        "Tài trợ bởi Claude",
+        "1907 6122 5710 14 Techcombank hjhjhj",
+        "0906279876 MB, gimme bobux pls"
     };
 
     public LoadingScreen(GnivolGame game, LoadingTarget target, GameScreen previousGameScreen) {

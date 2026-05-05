@@ -224,7 +224,7 @@
       { "type": "swap_sprite", "id": "room_password_closeup", "sprite": "images/UI/to_be_continue.png" },
       { "type": "wait", "duration": 4.0 },
 
-      { "type": "swap_sprite", "id": "room_password_closeup", "sprite": "images/UI/qr_donate.png" },
+      { "type": "swap_sprite", "id": "room_password_closeup", "sprite": "images/donate.jpg" },
       { "type": "wait", "duration": 6.0 },
 
       { "type": "fade_out", "duration": 2.0 },
