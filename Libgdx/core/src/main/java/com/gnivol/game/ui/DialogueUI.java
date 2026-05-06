@@ -230,9 +230,9 @@ public class DialogueUI {
     private void applyRSEffect(com.badlogic.gdx.scenes.scene2d.Actor target, float rs) {
         target.clearActions(); // Xóa sạch hiệu ứng cũ
         target.getColor().a = 1f;
-        boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
+        boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffectsMassively);
 
-        // RUNG LẮC KHI RS > 65 hoặc node có textEffects (force max)
+        // RUNG LẮC KHI RS > 65 hoặc node có textEffectsMassively (force max)
         if (forceMax || rs > 65f) {
             float intensity = forceMax ? 1.0f : (rs - 65f) / 35f;
             float amount = 2f + (3f * intensity);
@@ -288,11 +288,11 @@ public class DialogueUI {
 
         autoAdvanceTimer = 0f;
         currentNodeRef = node;
-        // Sync FORCE_MAX_GLITCH với textEffects flag của node hiện tại
+        // Sync FORCE_MAX_GLITCH chỉ khi textEffectsMassively (textEffects giờ là RS-aware gradient default)
         boolean prevForce = com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH;
-        com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = node.textEffects;
-        if (prevForce != node.textEffects) {
-            com.badlogic.gdx.Gdx.app.log("GLITCH", "FORCE_MAX_GLITCH = " + node.textEffects + " (node=" + node.id + ", speaker=" + node.speaker + ")");
+        com.gnivol.game.screen.GameScreen.FORCE_MAX_GLITCH = node.textEffectsMassively;
+        if (prevForce != node.textEffectsMassively) {
+            com.badlogic.gdx.Gdx.app.log("GLITCH", "FORCE_MAX_GLITCH = " + node.textEffectsMassively + " (node=" + node.id + ", speaker=" + node.speaker + ")");
         }
 
         // Play one-shot SFX khi vào node (VD: sike, scream2...)
@@ -581,7 +581,7 @@ public class DialogueUI {
         // 2. LOGIC ĐỒNG HỒ 1 GIÂY (RS < 35 hoặc node textEffects = liên tục)
         if (activeTypingLabel != null) {
             float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
-            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
+            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffectsMassively);
 
             if (forceMax) {
                 // Force: glitch state ON liên tục, refresh label mỗi frame để text đổi nát liên tục
@@ -609,7 +609,7 @@ public class DialogueUI {
             float currentRS = (rsManager != null) ? rsManager.getRS() : 50f;
             String currentText = fullContentText.substring(0, typeIndex);
 
-            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffects);
+            boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffectsMassively);
             // --- 1. QUYẾT ĐỊNH HIỆN CHỮ GÌ ---
             if (forceMax || (currentRS < 35f && isGlitchedState)) {
                 // Force-glitch hoặc RS thấp đang trong frame lỗi -> Băm nát chữ với intensity max
