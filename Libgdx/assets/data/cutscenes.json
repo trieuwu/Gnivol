@@ -244,10 +244,6 @@
 
       { "type": "sfx", "id": "glass_shatter" },
       { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa4.png" },
-      { "type": "wait", "duration": 0.2 },
-
-      { "type": "sfx", "id": "glass_shatter" },
-      { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa5.png" },
       { "type": "wait", "duration": 0.2 }
     ]
   }
