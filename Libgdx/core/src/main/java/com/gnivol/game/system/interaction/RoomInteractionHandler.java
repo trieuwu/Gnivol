@@ -61,6 +61,16 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("fire_hose_box".equals(obj.getId())) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                screen.changeSceneWithFade("hong_chia_khoa5");
+                return;
+            }
+            else if (game.getFlagManager().get("first_click_hop_chua_chay")) {
+                screen.changeSceneWithFade("hong_chia_khoa1");
+                return;
+            }
+        }
 
         // Logic chuyển cảnh thông thường qua targetScene trong JSON
         RoomData roomData = screen.getSceneManager().getCurrentScene().getRoomData();
@@ -337,6 +347,67 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if("hop_chua_chay".equals(id)){
+            if(!game.getFlagManager().get("first_click_hop_chua_chay")){
+                game.getFlagManager().set("first_click_hop_chua_chay", true);
+                screen.getSceneManager().changeScene("hong_chia_khoa1");
+                game.getGameState().setCurrentRoom("hong_chia_khoa1");
+                handleGenericInteractions(obj);
+                return;
+            }
+            if (!game.getFlagManager().get("hop_chua_chay_broken")) {
+                // chống spam khi đang xử lý lấy rìu
+                if (game.getFlagManager().get("is_breaking_box")) return;
+                if ("bone".equals(screen.getInventoryUI().getSelectedItem())) {
+                    screen.hideInspectText();
+                    game.getFlagManager().set("hop_chua_chay_broken", true);
+                    screen.getInventoryUI().clearSelection();
+                    screen.getInventoryUI().refreshUI();
+                    screen.getCutsceneManager().play("action_break_hop_chua_chay");
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    screen.getSceneManager().changeScene("hong_chia_khoa5");
+                                    game.getGameState().setCurrentRoom("hong_chia_khoa5");
+                                }
+                            });
+                        }
+                    }, 1.1f);
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    game.getInventoryManager().addItem("axe");
+                                    screen.getInventoryUI().refreshUI();
+                                    if (game.getAudioManager() != null) {
+                                        game.getAudioManager().playSFX("verification");
+                                    }
+                                    onDialogueTriggered("nhan_axe");
+                                }
+                            });
+                        }
+                    }, 2f);
+                    return;
+                } else {
+                    onDialogueTriggered("thong_bao_hong_khoa");
+                    return;
+                }
+            }
+            else {
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("tu_chua_chay_da_vo", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
+                return;
+            }
+        }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }

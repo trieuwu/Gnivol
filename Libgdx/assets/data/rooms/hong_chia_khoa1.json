@@ -1,0 +1,62 @@
+{
+  "roomId": "hong_chia_khoa1",
+  "roomName": "Cận cảnh Hộp Chữa Cháy",
+  "background": "images/back_ground/tang_1/hong_chia_khoa1.png",
+  "objects": [
+    {
+      "id": "back_to_tang_1a",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "back_to_tang_1b",
+      "type": "door",
+      "x": 873,
+      "y": 0,
+      "w": 400,
+      "h": 120,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "hop_chua_chay",
+      "type": "interactable",
+      "x": 819,
+      "y": 152,
+      "w": 310,
+      "h": 410,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "phe_lieu",
+      "type": "furniture",
+      "x": 162,
+      "y": 156,
+      "w": 371,
+      "h": 201,
+      "properties": {
+
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    }
+  ]
+}

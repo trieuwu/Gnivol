@@ -1335,6 +1335,16 @@ public class GameScreen extends BaseScreen {
                 actualTarget = "room_toilet_clogged"; // Nếu đã tắc thì load phòng tắc
             }
         }
+        if ("room_tang_1".equals(actualTarget)) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                actualTarget = "tang_1_glass_breaked";
+            }
+        }
+        if ("room_chua_chay_close_up".equals(actualTarget)) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                actualTarget = "hong_chia_khoa5";
+            }
+        }
         final String finalTarget = actualTarget;
 
         if (isStairsTransition(targetSceneId)) {
