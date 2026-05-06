@@ -230,5 +230,25 @@
       { "type": "fade_out", "duration": 2.0 },
       { "type": "change_scene", "id": "return_to_menu" }
     ]
+  },
+  {
+    "id": "action_break_hop_chua_chay",
+    "steps": [
+      { "type": "sfx", "id": "hit_glass_1" },
+      { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa2.png" },
+      { "type": "wait", "duration": 0.4 },
+
+      { "type": "sfx", "id": "hit_glass_2" },
+      { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa3.png" },
+      { "type": "wait", "duration": 0.4 },
+
+      { "type": "sfx", "id": "glass_shatter" },
+      { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa4.png" },
+      { "type": "wait", "duration": 0.2 },
+
+      { "type": "sfx", "id": "glass_shatter" },
+      { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa5.png" },
+      { "type": "wait", "duration": 0.2 }
+    ]
   }
 ]

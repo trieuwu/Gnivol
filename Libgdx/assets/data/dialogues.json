@@ -1371,5 +1371,33 @@
         "choices": []
       }
     ]
+  },
+  {
+    "dialogueId": "nhan_axe",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Đã nhận được chiếc rìu sắc bén, nên làm gì tiếp đây...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "thong_bao_hong_khoa",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Chìa khóa đã bị gãy rồi, phải tìm cách gì khác để phá hủy cái này...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
   }
 ]

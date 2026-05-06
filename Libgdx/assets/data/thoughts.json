@@ -289,6 +289,11 @@
     "MID": "Chiếc gương đã bị tôi đập vỡ. Nhìn những mảnh kính sắc nhọn này thật nguy hiểm.",
     "HIGH": "Sự thật đã bị đập nát. Giờ đây chỉ còn lại những ảo ảnh phân mảnh thú vị."
   },
+  "tu_chua_chay_da_vo": {
+    "LOW": "Kính vỡ vương vãi khắp nơi... Những mảnh nhọn hoắt đâm tua tủa lên như những chiếc răng nanh đang chực chờ cắn nát gót chân tôi vậy.",
+    "MID": "Tủ chữa cháy đã bị tôi đập vỡ nát. Bên trong trống rỗng, chỉ còn lại những mảnh kính sắc nhọn rất nguy hiểm.",
+    "HIGH": "Một cú đập thật hoàn hảo. Tiếng kính vỡ lạo xạo dưới gót giày nghe thật êm tai làm sao..."
+  },
   "drawer_da_mo": {
     "LOW": "Bóng tối trong ngăn kéo trống rỗng dường như đang hút lấy linh hồn tôi...",
     "MID": "Ngăn kéo đã mở, và chẳng còn gì bên trong nữa.",
