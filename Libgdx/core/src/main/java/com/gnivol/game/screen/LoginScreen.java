@@ -147,16 +147,26 @@ public class LoginScreen extends BaseScreen {
                     errorLabel.setVisible(false);
                     game.getGameState().setPlayerName(playerName);
                     Gdx.app.log("Login", "Welcome baby: " + playerName);
+                    final boolean suicided = game.getEndingManager() != null
+                        && game.getEndingManager().isSuicided();
                     if (game.getScreenFader() != null && !game.getScreenFader().isFading()) {
                         game.getScreenFader().startFade(() -> {
                             Gdx.app.postRunnable(() -> {
-                                game.setScreen(new MainMenuScreen(game));
+                                if (suicided) {
+                                    game.setScreen(new SuicideIntroScreen(game));
+                                } else {
+                                    game.setScreen(new MainMenuScreen(game));
+                                }
                                 LoginScreen.this.dispose();
                             });
                         });
                     } else {
 
-                        game.setScreen(new MainMenuScreen(game));
+                        if (suicided) {
+                            game.setScreen(new SuicideIntroScreen(game));
+                        } else {
+                            game.setScreen(new MainMenuScreen(game));
+                        }
                     }
 
                 }

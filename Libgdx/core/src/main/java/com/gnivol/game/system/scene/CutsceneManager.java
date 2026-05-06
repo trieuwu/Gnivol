@@ -53,6 +53,7 @@ public class CutsceneManager {
         void onChangeScene(String sceneId);
         void onCutsceneFinished(String cutsceneId);
         void onOpenMinigame(String minigameId);
+        void onMarkEnding(String endingId);
     }
 
     // --- Fields ---
@@ -268,6 +269,13 @@ public class CutsceneManager {
             stepDuration = 0f;
             if (listener != null) {
                 listener.onOpenMinigame(step.id);
+            }
+            advanceStep();
+            return;
+        } else if ("mark_ending".equals(type)) {
+            stepDuration = 0f;
+            if (listener != null) {
+                listener.onMarkEnding(step.id);
             }
             advanceStep();
             return;
