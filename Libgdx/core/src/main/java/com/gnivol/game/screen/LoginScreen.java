@@ -153,7 +153,7 @@ public class LoginScreen extends BaseScreen {
                         game.getScreenFader().startFade(() -> {
                             Gdx.app.postRunnable(() -> {
                                 if (suicided) {
-                                    game.setScreen(new SuicideIntroScreen(game));
+                                    game.setScreen(buildSuicidePreSequence());
                                 } else {
                                     game.setScreen(new MainMenuScreen(game));
                                 }
@@ -163,7 +163,7 @@ public class LoginScreen extends BaseScreen {
                     } else {
 
                         if (suicided) {
-                            game.setScreen(new SuicideIntroScreen(game));
+                            game.setScreen(buildSuicidePreSequence());
                         } else {
                             game.setScreen(new MainMenuScreen(game));
                         }
@@ -254,5 +254,13 @@ public class LoginScreen extends BaseScreen {
         if (stage != null) {
             stage.clear();
         }
+    }
+
+    /** Chuỗi suicide aftermath khi player đã từng tự sát: suicide.webm → scanqr → warning → MainMenu. */
+    private com.badlogic.gdx.Screen buildSuicidePreSequence() {
+        return new SuicideIntroScreen(game,
+            () -> new TimedImageScreen(game, "images/scanqr.png", 15f,
+                () -> new TimedImageScreen(game, "images/warning.png", 10f,
+                    () -> new MainMenuScreen(game))));
     }
 }

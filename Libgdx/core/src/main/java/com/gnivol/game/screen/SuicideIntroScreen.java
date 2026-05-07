@@ -10,13 +10,16 @@ import com.badlogic.gdx.video.VideoPlayer;
 import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.gnivol.game.GnivolGame;
 
+import java.util.function.Supplier;
+
 /**
- * Phát suicide.webm với chromakey rồi tự chuyển MainMenuScreen.
- * Không cho skip — buộc xem hết.
+ * Phát suicide.webm với chromakey rồi auto chuyển sang screen tiếp theo
+ * (do nextScreenFactory tạo). Không cho skip — buộc xem hết.
  */
 public class SuicideIntroScreen implements Screen {
 
     private final GnivolGame game;
+    private final Supplier<Screen> nextScreenFactory;
     private SpriteBatch batch;
     private VideoPlayer videoPlayer;
     private ShaderProgram chromaShader;
@@ -27,8 +30,14 @@ public class SuicideIntroScreen implements Screen {
     private static final float CHROMA_THRESHOLD = 0.4f;
     private static final float CHROMA_SMOOTHING = 0.1f;
 
+    /** Default: video xong → MainMenuScreen. */
     public SuicideIntroScreen(GnivolGame game) {
+        this(game, () -> new MainMenuScreen(game));
+    }
+
+    public SuicideIntroScreen(GnivolGame game, Supplier<Screen> nextScreenFactory) {
         this.game = game;
+        this.nextScreenFactory = nextScreenFactory;
     }
 
     @Override
@@ -85,7 +94,7 @@ public class SuicideIntroScreen implements Screen {
         if (videoFinished && !transitioning) {
             transitioning = true;
             Gdx.app.postRunnable(() -> {
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(nextScreenFactory.get());
                 dispose();
             });
         }

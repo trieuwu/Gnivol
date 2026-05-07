@@ -182,9 +182,38 @@ public class RoomInteractionHandler implements InteractionCallback {
         if ("door_neighbor".equals(id)) {
             if ("axe".equals(screen.getInventoryUI().getSelectedItem()) && !game.getFlagManager().get("break_door_neighbor")) {
                 game.getFlagManager().set("break_door_neighbor");
-                if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                    ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/hall/hall_breaked_door.png");
+
+                // 1. Bắt đầu overlay đen fade in (4.5s) → hold (2.5s) → fade out (1.5s)
+                screen.startBreakDoorOverlay();
+
+                // 2. Khi screen đã đen hoàn toàn (t=4.5s): play SFX 3x + đổi BG
+                final float fadeInDuration = 4.5f;
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
+                                    ((RoomScene) screen.getSceneManager().getCurrentScene())
+                                        .changeBackground("images/back_ground/hall/hall_breaked_door.png");
+                                }
+                            }
+                        });
+                    }
+                }, fadeInDuration);
+                if (game.getAudioManager() != null) {
+                    for (int i = 0; i < 3; i++) {
+                        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                            @Override
+                            public void run() {
+                                game.getAudioManager().playSFX("breakdoor");
+                            }
+                        }, fadeInDuration + i * 0.5f);
+                    }
                 }
+
+                // 3. Sau khi fade out xong (t=8.5s): hiện dialogue thoughtTree
                 DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("pha_cua_bang_riu", game.getRsManager().getRS());
                 if (thoughtTree != null) {
                     com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
@@ -199,7 +228,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                                 }
                             });
                         }
-                    }, 0.7f);
+                    }, 8.5f);
                 }
                 return;
             }

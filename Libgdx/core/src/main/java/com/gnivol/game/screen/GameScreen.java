@@ -105,6 +105,13 @@ public class GameScreen extends BaseScreen {
     private static final float JUMPSCARE_MAX = 180f;
     private final java.util.Random jumpscareRandom = new java.util.Random();
 
+    // Break-door fade overlay (4.5s fade in → 2.5s hold black → 1.5s fade out)
+    private boolean breakDoorOverlayActive;
+    private float breakDoorOverlayTimer;
+    private static final float BREAK_DOOR_FADE_IN = 4.5f;
+    private static final float BREAK_DOOR_HOLD = 2.5f;
+    private static final float BREAK_DOOR_FADE_OUT = 1.5f;
+
     /** Cheat/cutscene flag: ép glitch shader + camera shake liên tục ở intensity max, bypass RS check. */
     public static boolean FORCE_MAX_GLITCH = false;
 
@@ -1186,6 +1193,32 @@ public class GameScreen extends BaseScreen {
             batch.end();
         }
 
+        // Break-door fade overlay (vẽ trước stage để dialogue đè lên trên đọc được)
+        if (breakDoorOverlayActive) {
+            breakDoorOverlayTimer += delta;
+            float bdAlpha;
+            float holdEnd = BREAK_DOOR_FADE_IN + BREAK_DOOR_HOLD;
+            float fadeOutEnd = holdEnd + BREAK_DOOR_FADE_OUT;
+            if (breakDoorOverlayTimer < BREAK_DOOR_FADE_IN) {
+                bdAlpha = breakDoorOverlayTimer / BREAK_DOOR_FADE_IN;
+            } else if (breakDoorOverlayTimer < holdEnd) {
+                bdAlpha = 1f;
+            } else if (breakDoorOverlayTimer < fadeOutEnd) {
+                bdAlpha = 1f - (breakDoorOverlayTimer - holdEnd) / BREAK_DOOR_FADE_OUT;
+            } else {
+                breakDoorOverlayActive = false;
+                bdAlpha = 0f;
+            }
+            if (bdAlpha > 0f) {
+                Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+                dimRenderer.setProjectionMatrix(camera.combined);
+                dimRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                dimRenderer.setColor(0f, 0f, 0f, bdAlpha);
+                dimRenderer.rect(0, 0, 1280, 720);
+                dimRenderer.end();
+            }
+        }
+
         game.getStage().draw();
 
         // Vẽ debug portrait overlay sau stage (luôn hiện trên cùng)
@@ -1572,6 +1605,9 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
+        if (game.getAudioManager() != null) {
+            game.getAudioManager().stopAllSFXLoops();
+        }
         if (batch != null) batch.dispose();
         if (dimRenderer != null) dimRenderer.dispose();
         if (debugManager != null) debugManager.dispose();
@@ -1593,6 +1629,12 @@ public class GameScreen extends BaseScreen {
         jumpscareNextAt = JUMPSCARE_MIN
             + jumpscareRandom.nextFloat() * (JUMPSCARE_MAX - JUMPSCARE_MIN);
         jumpscareTimer = 0f;
+    }
+
+    /** Trigger overlay đen fade-in 4.5s rồi fade-out 1.5s — dùng cho event phá cửa bằng rìu. */
+    public void startBreakDoorOverlay() {
+        breakDoorOverlayActive = true;
+        breakDoorOverlayTimer = 0f;
     }
 
     public void openInventoryOverlay(String overlayId) {
