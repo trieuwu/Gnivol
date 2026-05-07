@@ -246,5 +246,12 @@
       { "type": "swap_sprite", "id": "room_chua_chay_closeup", "sprite": "images/back_ground/tang_1/hong_chia_khoa4.png" },
       { "type": "wait", "duration": 0.2 }
     ]
+  },
+  {
+    "id": "room_opposite_video_jumpscare",
+    "steps": [
+      { "type": "video", "src": "video/jumscare_room_opposite.webm", "x": 0, "y": 0, "w": 1280, "h": 720 },
+      { "type": "flash", "color": "white", "duration": 0.2 }
+    ]
   }
 ]

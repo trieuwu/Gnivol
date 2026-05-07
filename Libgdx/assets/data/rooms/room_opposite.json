@@ -1,6 +1,21 @@
 {
   "roomId": "room_opposite",
   "roomName": "Phòng đối diện",
-  "background": "images/back_ground/tang_1/tang_1.png",
-  "objects": []
+  "background": "images/back_ground/room_opposite/inner_next_room.png",
+  "objects": [
+    {
+      "id": "door_hallwway",
+      "type": "door",
+      "x": 1176,
+      "y": 42,
+      "w": 105,
+      "h": 585,
+      "properties": {
+        "targetScene": "room_hallway",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    }
+  ]
 }

@@ -180,9 +180,67 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 1. Cửa hàng xóm: có rìu → vào phòng đối diện; không có → dialogue mùi xác chết
         // Cutscene jumpscare đã chuyển sang trigger lần đầu vào hành lang (xem GameScreen.changeSceneWithFade)
         if ("door_neighbor".equals(id)) {
-            if ("axe".equals(screen.getInventoryUI().getSelectedItem())) {
+            if ("axe".equals(screen.getInventoryUI().getSelectedItem()) && !game.getFlagManager().get("break_door_neighbor")) {
+                game.getFlagManager().set("break_door_neighbor");
+                if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
+                    ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/hall/hall_breaked_door.png");
+                }
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("pha_cua_bang_riu", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    screen.hideInspectText();
+                                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                }
+                            });
+                        }
+                    }, 0.7f);
+                }
+                return;
+            }
+            else if (game.getFlagManager().get("break_door_neighbor") && !game.getFlagManager().get("first_click_break_door_neighbor")) {
+                game.getFlagManager().set("first_click_break_door_neighbor");
+                if (game.getAudioManager() != null) {
+                    game.getAudioManager().stopBGM(); // Tắt nhạc nền hiện tại
+                }
+                screen.getCutsceneManager().play("room_opposite_video_jumpscare");
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                screen.changeSceneWithFade("room_opposite");
+                            }
+                        });
+                    }
+                }, 26f);
+            }
+            else if(game.getFlagManager().get("break_door_neighbor")){
                 screen.changeSceneWithFade("room_opposite");
-            } else {
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("phat_hien_xac_chet", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    screen.hideInspectText();
+                                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                }
+                            });
+                        }
+                    }, 0.7f);
+                }
+            }
+            else {
                 onDialogueTriggered("neighbor_door_smell");
             }
             return;
@@ -370,7 +428,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                     // 1
                     if (!game.getFlagManager().get("hop_chua_chay_hit_1")) {
                         game.getFlagManager().set("hop_chua_chay_hit_1", true);
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("hit_glass_1");
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
                         if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
                             ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa2.png");
                         }
@@ -378,7 +436,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                     // 2
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_2")) {
                         game.getFlagManager().set("hop_chua_chay_hit_2", true);
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("hit_glass_2");
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
                         if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
                             ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa3.png");
                         }
@@ -386,7 +444,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                     // 3
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_3")) {
                         game.getFlagManager().set("hop_chua_chay_hit_3", true);
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("glass_shatter");
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
                         if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
                             ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa4.png");
                         }

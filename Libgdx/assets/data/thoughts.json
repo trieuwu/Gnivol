@@ -378,5 +378,15 @@
     "LOW": "Khớp rồi! Hai mảnh vỡ đã gắn chặt lại với nhau bằng keo. Hy vọng nó đủ chắc chắn để không bị gãy lại khi cắm vào ổ khóa.",
     "MID": "Mình đã dán hai mảnh chìa khóa lại thành công. Trông có vẻ dùng được rồi.",
     "HIGH": "Sự phục hồi hoàn hảo. Những mảnh vỡ tưởng chừng vô dụng khi được liên kết đúng cách lại trở thành chìa khóa mở ra cánh cửa thoát hiểm."
+  },
+  "pha_cua_bang_riu": {
+    "LOW": "RẦM! Cuối cùng tấm kính cũng chịu vỡ nát. Mảnh vỡ cứa vào tay mình tứa máu... Nhưng khoảng không đen ngòm đằng sau cánh cửa... Không, xin đừng kéo tôi vào đó!",
+    "MID": "Kính vỡ vụn dưới sức công phá của chiếc rìu. Cuối cùng thì cũng có thể đi qua cánh cửa này rồi.",
+    "HIGH": "Một cú đập đầy uy lực. Kính vỡ vụn như thể đang gào thét van xin sự nhân từ. Giờ thì, điều gì đang chờ đón kẻ săn mồi ở phía bên kia?"
+  },
+  "phat_hien_xac_chet": {
+    "LOW": "Mùi máu tanh xộc thẳng vào cuống họng... Chúa ơi, một cái xác! Đôi mắt nó... nó vẫn đang trừng trừng nhìn mình! Chạy! Phải chạy khỏi đây ngay!",
+    "MID": "Thứ mùi thối rữa phát ra từ đây... Một cái xác chết. Ai đó đã bị sát hại cực kỳ dã man trong căn phòng này.",
+    "HIGH": "Chà... Một bức tranh nhuốm máu tuyệt đẹp. Mùi hương nồng nặc của cái chết thật khiến người ta say mê. Kẻ ra tay hẳn là một nghệ sĩ có gu đấy."
   }
 }
