@@ -178,6 +178,9 @@ public class RoomInteractionHandler implements InteractionCallback {
         if ("door_neighbor".equals(id)) {
             if ("axe".equals(screen.getInventoryUI().getSelectedItem()) && !game.getFlagManager().get("break_door_neighbor")) {
                 game.getFlagManager().set("break_door_neighbor");
+                if (game.getAutoSaveManager() != null) {
+                    game.getAutoSaveManager().onSaveTrigger("break_door_neighbor");
+                }
 
                 // 1. Bắt đầu overlay đen fade in (4.5s) → hold (2.5s) → fade out (1.5s)
                 screen.startBreakDoorOverlay();

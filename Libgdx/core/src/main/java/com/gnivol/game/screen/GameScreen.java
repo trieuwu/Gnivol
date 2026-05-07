@@ -221,6 +221,10 @@ public class GameScreen extends BaseScreen {
                     game.getInventoryManager().addItem(itemId);
                     inventoryUI.refreshUI();
                     showItemNotification(itemId);
+                    com.gnivol.game.model.ItemData itemData = com.gnivol.game.data.ItemDatabase.getInstance().getItemData(itemId);
+                    if (itemData != null && itemData.pickupSoundID != null && game.getAudioManager() != null) {
+                        game.getAudioManager().playSFX(itemData.pickupSoundID);
+                    }
                     if (game.getAutoSaveManager() != null) {
                         game.getAutoSaveManager().onSaveTrigger("pickup_" + itemId);
                     }
@@ -987,7 +991,10 @@ public class GameScreen extends BaseScreen {
 
     private void handleFirstShow() {
         String room = game.isLoadedGame ? game.getGameState().getCurrentRoom() : Constants.SCENE_BEDROOM;
-        sceneManager.changeScene(room != null ? room : Constants.SCENE_BEDROOM);
+        if (room == null) room = Constants.SCENE_BEDROOM;
+        // Apply flag-based redirect (vd: hallway → breaked_door variant nếu flag set)
+        room = resolveSceneByFlags(room);
+        sceneManager.changeScene(room);
         screenFader.startFadeIn();
         if (!game.isLoadedGame) {
             if (game.getAutoSaveManager() != null) {
@@ -1447,41 +1454,44 @@ public class GameScreen extends BaseScreen {
         return toStairs || fromStairs;
     }
 
+    /** Map sceneId thô → sceneId thực tế dựa trên flags (vd: room_hallway → room_hallway_breaked_door nếu đã phá cửa). */
+    public String resolveSceneByFlags(String targetSceneId) {
+        String actual = targetSceneId;
+        if ("room_bedroom".equals(actual)) {
+            if (game.getFlagManager().get("tie_hung")) {
+                actual = "room_bedroom_treo_ca_vat";
+            } else if (game.getFlagManager().get("chair_on_bed")) {
+                actual = "room_bedroom_ghe_tren_giuong";
+            }
+        }
+        if ("room_toilet_closeup".equals(actual)) {
+            if (game.getFlagManager().get("toilet_clogged")) {
+                actual = "room_toilet_clogged";
+            }
+        }
+        if ("room_tang_1".equals(actual)) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                actual = "room_tang_1_glass_breaked";
+            } else if (game.getFlagManager().get("first_click_hop_chua_chay")) {
+                actual = "room_tang_1_tu_hong_khoa";
+            }
+        }
+        if ("room_chua_chay_close_up".equals(actual)) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                actual = "hong_chia_khoa5";
+            }
+        }
+        if ("room_hallway".equals(actual)) {
+            if (game.getFlagManager().get("break_door_neighbor")) {
+                actual = "room_hallway_breaked_door";
+            }
+        }
+        return actual;
+    }
+
     public void changeSceneWithFade(String targetSceneId) {
         if (screenFader.isFading()) return;
-        // Kiểm tra trạng thái phòng ngủ
-        String actualTarget = targetSceneId;
-        if ("room_bedroom".equals(actualTarget)) {
-            if (game.getFlagManager().get("tie_hung")) {
-                actualTarget = "room_bedroom_treo_ca_vat"; // Đã treo cà vạt
-            } else if (game.getFlagManager().get("chair_on_bed")) {
-                actualTarget = "room_bedroom_ghe_tren_giuong"; // Mới bê ghế
-            }
-        }
-        if ("room_toilet_closeup".equals(actualTarget)) {
-            if (game.getFlagManager().get("toilet_clogged")) {
-                actualTarget = "room_toilet_clogged"; // Nếu đã tắc thì load phòng tắc
-            }
-        }
-        if ("room_tang_1".equals(actualTarget)) {
-            if (game.getFlagManager().get("hop_chua_chay_broken")) {
-                actualTarget = "room_tang_1_glass_breaked";
-            }
-            else if (game.getFlagManager().get("first_click_hop_chua_chay")) {
-                actualTarget = "room_tang_1_tu_hong_khoa";
-            }
-        }
-        if ("room_chua_chay_close_up".equals(actualTarget)) {
-            if (game.getFlagManager().get("hop_chua_chay_broken")) {
-                actualTarget = "hong_chia_khoa5";
-            }
-        }
-        if ("room_hallway".equals(actualTarget)) {
-            if (game.getFlagManager().get("break_door_neighbor")) {
-                actualTarget = "room_hallway_breaked_door";
-            }
-        }
-        final String finalTarget = actualTarget;
+        final String finalTarget = resolveSceneByFlags(targetSceneId);
 
         if (isStairsTransition(targetSceneId)) {
             // Cầu thang lên/xuống đều gấp đôi volume
