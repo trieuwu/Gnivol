@@ -17,7 +17,7 @@
 
 * **[Hoàng Duy Anh]**
     GitHub: https://github.com/NaraDuyy
-    Contact: [optional]
+    Contact: 0981499267
 
 * **[Nguyễn Văn Thành]**
     GitHub: https://github.com/NvThanh2809
