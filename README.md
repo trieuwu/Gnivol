@@ -289,7 +289,7 @@ Việc nhiều thành viên cùng chỉnh sửa các Manager cốt lõi dẫn đ
 #### Hành động để giải quyết
 
 - **Chuẩn hóa quy trình làm việc nhóm:**  
-  Sử dụng công cụ [Linear](https://linear.app?utm_source=chatgpt.com) để phân chia nhiệm vụ chi tiết, đảm bảo mỗi thành viên phụ trách một module riêng nhằm hạn chế chồng chéo mã nguồn.
+  Sử dụng công cụ [Linear](https://linear.app/javacore24-finalcontest/team/JAV/all) để phân chia nhiệm vụ chi tiết, đảm bảo mỗi thành viên phụ trách một module riêng nhằm hạn chế chồng chéo mã nguồn.
 
 - **Thiết lập quy trình Code Review bắt buộc:**  
   Thành viên trong nhóm phải kiểm tra mã nguồn của nhau trước khi thực hiện Pull Request (PR) và Merge vào nhánh chính.
