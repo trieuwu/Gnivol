@@ -438,38 +438,78 @@ public class RoomInteractionHandler implements InteractionCallback {
         }
 
         if("hop_chua_chay".equals(id)){
+            // 1. Lần đầu tiên bấm vào -> Bị gãy chìa khóa bên trong
             if(!game.getFlagManager().get("first_click_hop_chua_chay")){
                 game.getFlagManager().set("first_click_hop_chua_chay", true);
                 screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa1");
                 game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa1");
-                handleGenericInteractions(obj);
+
+                // --- Hiện suy nghĩ gãy chìa ---
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("hop_chua_chay_gay_chia", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            Gdx.app.postRunnable(() -> {
+                                screen.hideInspectText();
+                                screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                            });
+                        }
+                    }, 0.5f);
+                }
                 return;
             }
+
             if (!game.getFlagManager().get("hop_chua_chay_broken")) {
                 screen.hideInspectText();
+
+                // 2. Dùng khúc xương để đập kính
                 if ("bone".equals(screen.getInventoryUI().getSelectedItem())) {
-                    // 1
+                    String nextScene = "";
+                    String thoughtId = "";
+
+                    // Lần đập 1
                     if (!game.getFlagManager().get("hop_chua_chay_hit_1")) {
                         game.getFlagManager().set("hop_chua_chay_hit_1", true);
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa2");
-                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa2");
+                        nextScene = "room_chua_chay_hong_chia_khoa2";
+                        thoughtId = "hop_chua_chay_dap_1";
                     }
-                    // 2
+                    // Lần đập 2
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_2")) {
                         game.getFlagManager().set("hop_chua_chay_hit_2", true);
-                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa3");
-                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa3");
+                        nextScene = "room_chua_chay_hong_chia_khoa3";
+                        thoughtId = "hop_chua_chay_dap_2";
                     }
-                    // 3
+                    // Lần đập 3
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_3")) {
                         game.getFlagManager().set("hop_chua_chay_hit_3", true);
+                        nextScene = "room_chua_chay_hong_chia_khoa4";
+                        thoughtId = "hop_chua_chay_dap_3";
+                    }
+
+                    // Xử lý chuyển cảnh và hiển thị thoại cho các lần đập
+                    if (!nextScene.isEmpty()) {
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa4");
-                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa4");
+                        screen.getSceneManager().changeScene(nextScene);
+                        game.getGameState().setCurrentRoom(nextScene);
+
+                        DialogueTree thoughtTree = new ThoughtManager().getThoughtTree(thoughtId, game.getRsManager().getRS());
+                        if (thoughtTree != null) {
+                            com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                                @Override
+                                public void run() {
+                                    Gdx.app.postRunnable(() -> {
+                                        screen.hideInspectText();
+                                        screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                        screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                    });
+                                }
+                            }, 0.5f);
+                        }
                     }
                 }
+                // 3. Đã đập 3 lần -> Bấm lần nữa để kính vỡ tung và lấy rìu
                 else if(game.getFlagManager().get("hop_chua_chay_hit_3")){
                     screen.hideInspectText();
                     game.getFlagManager().set("hop_chua_chay_broken", true);
@@ -482,26 +522,39 @@ public class RoomInteractionHandler implements InteractionCallback {
                     com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
                         @Override
                         public void run() {
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    game.getInventoryManager().addItem("axe");
-                                    screen.getInventoryUI().refreshUI();
-                                    if (game.getAudioManager() != null) {
-                                        game.getAudioManager().playSFX("verification");
-                                    }
-                                    onDialogueTriggered("nhan_axe");
+                            Gdx.app.postRunnable(() -> {
+                                game.getInventoryManager().addItem("axe");
+                                screen.getInventoryUI().refreshUI();
+                                if (game.getAudioManager() != null) {
+                                    game.getAudioManager().playSFX("verification");
+                                }
+
+                                // Gọi thought nhặt rìu
+                                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("nhan_axe", game.getRsManager().getRS());
+                                if (thoughtTree != null) {
+                                    screen.hideInspectText();
+                                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
                                 }
                             });
                         }
                     }, 0.7f);
                     return;
                 }
+                // 4. Bấm bậy khi chưa cầm xương
                 else {
-                    onDialogueTriggered("thong_bao_hong_khoa");
+                    DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("hop_chua_chay_can_do_dap", game.getRsManager().getRS());
+                    if (thoughtTree != null) {
+                        screen.hideInspectText();
+                        screen.getDialogueEngine().loadDialogue(thoughtTree);
+                        screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                    } else {
+                        onDialogueTriggered("thong_bao_hong_khoa");
+                    }
                     return;
                 }
             }
+            // 5. Kính đã vỡ hoàn toàn
             else {
                 DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("tu_chua_chay_da_vo", game.getRsManager().getRS());
                 if (thoughtTree != null) {

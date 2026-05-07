@@ -338,7 +338,7 @@ public class GameScreen extends BaseScreen {
                                         }
                                     });
                                 }
-                            }, 0.7f); // Hẹn giờ 0.7s chờ chuyển cảnh xong
+                            }, 0.7f); // Hẹn giờ 0.7s
                         }
 
                         if (game.getAutoSaveManager() != null) game.getAutoSaveManager().onSaveTrigger("event_chair_moved");

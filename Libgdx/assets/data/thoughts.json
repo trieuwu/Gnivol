@@ -44,11 +44,6 @@
     "MID": "Một con gấu bông cũ nát. Tại sao nụ cười của nó lại được khâu bằng chỉ đỏ méo mó thế này?",
     "HIGH": "Mày cũng cô đơn như tao đúng không? Không sao, tao sẽ kể cho mày nghe những bí mật nhuốm máu."
   },
-  "hop_chua_chay": {
-    "LOW": "Chiếc rìu... lưỡi rìu đang rỉ máu! Có ai đó đang đứng ngay sau lớp kính, ánh mắt đầy sát khí chờ tôi mở cửa!",
-    "MID": "Hộp chữa cháy khóa chặt. Nếu xảy ra hỏa hoạn thật thì làm sao mà lấy được chiếc rìu bên trong chứ?",
-    "HIGH": "Một công cụ tuyệt vời để đập tan mọi chướng ngại. Phá vỡ lớp kính này đi, và thứ sức mạnh chết chóc kia sẽ là của tôi."
-  },
   "phe_lieu": {
     "LOW": "Có thứ gì đó đang bò lổm ngổm dưới đống giẻ rách kia! Tiếng sột soạt... chúng đang từ từ bò về phía tôi!",
     "MID": "Chỉ là một đống rác bám đầy mạng nhện. Ai lại vứt cả đống chai lọ rỗng với giấy lộn ở đây thế này?",
@@ -388,5 +383,35 @@
     "LOW": "Mùi máu tanh xộc thẳng vào cuống họng... Chúa ơi, một cái xác! Đôi mắt nó... nó vẫn đang trừng trừng nhìn mình! Chạy! Phải chạy khỏi đây ngay!",
     "MID": "Thứ mùi thối rữa phát ra từ đây... Một cái xác chết. Ai đó đã bị sát hại cực kỳ dã man trong căn phòng này.",
     "HIGH": "Chà... Một bức tranh nhuốm máu tuyệt đẹp. Mùi hương nồng nặc của cái chết thật khiến người ta say mê. Kẻ ra tay hẳn là một nghệ sĩ có gu đấy."
+  },
+  "hop_chua_chay_gay_chia": {
+    "LOW": "Cạch... Rắc! Không thể nào! Chìa khóa gãy kẹt luôn vào ổ rồi! Tại sao mọi thứ ở đây đều cũ nát thế này?!",
+    "MID": "Chết tiệt, chìa khóa gãy nằm kẹt cứng trong ổ. Không thể dùng cách bình thường để mở tủ được nữa.",
+    "HIGH": "Gãy rồi. Một cái ổ khóa rẻ tiền. Đã vậy thì mình sẽ phải dùng bạo lực để lấy thứ mình cần."
+  },
+  "hop_chua_chay_can_do_dap": {
+    "LOW": "Ổ khóa bị kẹt cứng rồi! Mình không thể dùng tay không để cạy tấm kính này ra được, tay sẽ đứt lìa mất!",
+    "MID": "Chìa đã gãy kẹt bên trong. Mình cần tìm một vật gì đó thật cứng để đập vỡ lớp kính này.",
+    "HIGH": "Tay không không thể xuyên qua kính. Mình cần một công cụ, thứ gì đó cứng cáp và mang tính hủy diệt để phá vỡ nó."
+  },
+  "hop_chua_chay_dap_1": {
+    "LOW": "Bốp! Kính nứt rồi... Tiếng vang lớn quá, liệu có đánh thức thứ gì đó trong bóng tối không?",
+    "MID": "Mặt kính đã bắt đầu nứt rạn. Khúc xương này cứng hơn mình tưởng đấy.",
+    "HIGH": "Nứt rồi. Cảm giác dùng xương người để đập nát thứ khác thật sự rất... thỏa mãn."
+  },
+  "hop_chua_chay_dap_2": {
+    "LOW": "Rắc rắc... Kính vỡ thêm rồi! Tay mình run quá, khúc xương này lạnh toát...",
+    "MID": "Thêm một cú nữa, vết nứt đã lan rộng khắp mặt kính. Nó sắp vỡ nát rồi.",
+    "HIGH": "Sự sụp đổ đang đến rất gần. Chỉ cần một chút lực nữa thôi."
+  },
+  "hop_chua_chay_dap_3": {
+    "LOW": "Rầm! Kính đã vỡ vụn... Những khe hở sắc lẹm trông như cái miệng đang ngoác ra cười với mình.",
+    "MID": "Kính đã vỡ một mảng lớn. Đã có thể luồn tay vào trong để lấy đồ được rồi.",
+    "HIGH": "Phá hủy bao giờ cũng dễ dàng hơn xây dựng. Giờ thì, chiếc rìu kia chuẩn bị thuộc về mình."
+  },
+  "nhan_axe": {
+    "LOW": "Một cây rìu cứu hỏa sắc lẹm, nặng trĩu trên tay... Cứ cầm thứ này làm mình cảm thấy sợ chính bản thân mình...",
+    "MID": "Cuối cùng cũng lấy được chiếc rìu. Bây giờ thì mình có thể phá cánh cửa của gã hàng xóm.",
+    "HIGH": "Công cụ săn mồi hoàn hảo. Không một cánh cửa nào, không một kẻ nào có thể cản bước mình nữa."
   }
 }
