@@ -1,5 +1,5 @@
 {
-  "roomId": "new_blank_room_chair_on_bed",
+  "roomId": "room_bedroom_ghe_tren_giuong",
   "roomName": "Phòng ngủ",
   "background": "images/back_ground/room/new_blank_room_chair_on_bed.png",
   "objects": [
@@ -42,7 +42,7 @@
         "overlayId": "fridge_interior",
         "altTextures": {
           "open": "images/tulanh_mo.png",
-          "taken": "images/tulanh_mo.png"
+          "taken": "images/tulanh_mo_nobone.png"
         }
       }
     },

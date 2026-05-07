@@ -1,0 +1,145 @@
+{
+  "roomId": "room_hallway_breaked_door",
+  "roomName": "Sảnh chung",
+  "background": "images/back_ground/hall/hall_breaked_door.png",
+  "objects": [
+    {
+      "id": "door_back_bedroom",
+      "type": "door",
+      "x": 880,
+      "y": 0,
+      "w": 379,
+      "h": 112,
+      "properties": {
+        "targetScene": "room_bedroom",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "door_neighbor",
+      "type": "interactable",
+      "x": 634,
+      "y": 209,
+      "w": 160,
+      "h": 370,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up1",
+      "type": "door",
+      "x": 0,
+      "y": 0,
+      "w": 108,
+      "h": 601,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up2",
+      "type": "door",
+      "x": 107,
+      "y": 0,
+      "w": 102,
+      "h": 548,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up3",
+      "type": "door",
+      "x": 211,
+      "y": 0,
+      "w": 106,
+      "h": 465,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_up4",
+      "type": "door",
+      "x": 317,
+      "y": 0,
+      "w": 58,
+      "h": 207,
+      "properties": {
+        "targetScene": "room_chu_nha",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down1",
+      "type": "door",
+      "x": 497,
+      "y": 117,
+      "w": 125,
+      "h": 393,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down2",
+      "type": "door",
+      "x": 377,
+      "y": 149,
+      "w": 117,
+      "h": 307,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "stairs_down3",
+      "type": "door",
+      "x": 321,
+      "y": 207,
+      "w": 55,
+      "h": 239,
+      "properties": {
+        "targetScene": "room_tang_1",
+        "collectible": false,
+        "hasGlitch": false,
+        "rsChange": 0
+      }
+    },
+    {
+      "id": "creepy_painting",
+      "type": "interactable",
+      "x": 929,
+      "y": 273,
+      "w": 170,
+      "h": 350,
+      "properties": {
+        "collectible": false,
+        "hasGlitch": true,
+        "rsChange": 0
+      }
+    }
+  ]
+}

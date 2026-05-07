@@ -85,6 +85,10 @@ public class DialogueUI {
     private boolean isGlitchedState = false;
     private float autoAdvanceTimer = 0f;
 
+    // Đồng hồ đếm chu kỳ rung
+    private float shakeTimer = 0f;
+    private boolean isShakingNow = false;
+
     public DialogueUI(GnivolGame game, Stage stage, BitmapFont font, DialogueEngine engine, RSManager rsManager) {
         this.game = game;
         this.engine = engine;
@@ -233,12 +237,12 @@ public class DialogueUI {
         boolean forceMax = (currentNodeRef != null && currentNodeRef.textEffectsMassively);
 
         // RUNG LẮC KHI RS > 65 hoặc node có textEffectsMassively (force max)
-        if (forceMax || rs > 65f) {
+        if (forceMax || (rs > 65f && isShakingNow)) {
             float intensity = forceMax ? 1.0f : (rs - 65f) / 35f;
             float amount = 2f + (3f * intensity);
             float duration = 0.04f;
 
-            target.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.forever(
+            target.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.repeat(5,
                 com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
                     com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(amount, amount, duration),
                     com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy(-amount * 2, -amount, duration),
@@ -600,6 +604,24 @@ public class DialogueUI {
                     isGlitchedState = false;
                     updateContentLabel();
                 }
+            }
+            // 3. RUNG LẮC CHU KỲ 5 GIÂY KHI RS > 65
+            if (!forceMax && currentRS > 65f) {
+                shakeTimer += delta;
+                if (shakeTimer >= 5.0f) {
+                    // Sau 5s, kích hoạt trạng thái rung
+                    shakeTimer = 0f;
+                    isShakingNow = true;
+                    // Bắt đầu nhồi Action rung vào cái Label ngay lập tức
+                    applyRSEffect(activeTypingLabel, currentRS);
+                } else if (isShakingNow && activeTypingLabel.getActions().size == 0) {
+                    // Nếu Action rung đã chạy xong hết các vòng lặp -> Tắt trạng thái rung, chờ 2s sau
+                    isShakingNow = false;
+                }
+            } else if (!forceMax && currentRS <= 65f && isShakingNow) {
+                // Nếu RS rớt xuống dưới 65 thì tắt luôn
+                isShakingNow = false;
+                activeTypingLabel.clearActions();
             }
         }
     }

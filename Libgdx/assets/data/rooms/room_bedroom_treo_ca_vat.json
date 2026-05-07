@@ -1,5 +1,5 @@
 {
-  "roomId": "the_end",
+  "roomId": "room_bedroom_treo_ca_vat",
   "roomName": "Phòng ngủ",
   "background": "images/back_ground/room/the_end.png",
   "objects": [
@@ -42,7 +42,7 @@
         "overlayId": "fridge_interior",
         "altTextures": {
           "open": "images/tulanh_mo.png",
-          "taken": "images/tulanh_mo.png"
+          "taken": "images/tulanh_mo_nobone.png"
         }
       }
     },

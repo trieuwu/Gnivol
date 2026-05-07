@@ -3,7 +3,7 @@
     "id": "fridge_interior",
     "background": "images/tulanh_mo.png",
     "items": [
-      {"itemId": "bone", "x": 500, "y": 350, "w": 64, "h": 64}
+      {"itemId": "bone", "x": 716, "y": 797, "w": 438, "h": 166}
     ]
   }
 ]
