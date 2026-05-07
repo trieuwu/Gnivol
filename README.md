@@ -9,11 +9,11 @@
 
 * **[Hà Tiến Triệu]**
     GitHub: https://github.com/trieuwu/
-    Contact: [optional]
+    Contact: 0868668837
 
 * **[Nguyễn Hoàng Tùng]**
     GitHub: https://github.com/Luffyreals
-    Contact: [optional]
+    Contact:  0906279876
 
 * **[Hoàng Duy Anh]**
     GitHub: https://github.com/NaraDuyy
@@ -21,10 +21,10 @@
 
 * **[Nguyễn Văn Thành]**
     GitHub: https://github.com/NvThanh2809
-    Contact: [optional]
+    Contact: 0335382422
 
 * **[Nguyễn Thành Trung]** — *Project Advisor*
-  Contact / Profile: [link]
+  Contact / Profile: https://github.com/Sagitoaz
 
 
 
