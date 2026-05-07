@@ -1126,6 +1126,7 @@
         "speaker": "Suy nghĩ",
         "content": "Mọi thứ đã sẵn sàng. Một bước chân nữa thôi là mọi đau khổ sẽ kết thúc... Mình có thực sự muốn làm điều này?",
         "textEffects": true,
+        "textEffectsMassively": true,
         "nextNodeId": null,
         "choices": [
           {
@@ -1152,6 +1153,7 @@
         "speaker": "Hệ thống",
         "content": "Bạn đã treo cổ tự vẫn để giải thoát đau đớn...",
         "textEffects": true,
+        "textEffectsMassively": true,
         "nextNodeId": null,
         "choices": []
       }
@@ -1353,6 +1355,7 @@
         "speaker": "Bệnh viện",
         "content": "Linh mất rồi.",
         "textEffects": true,
+        "textEffectsMassively": true,
         "nextNodeId": null,
         "choices": []
       }
@@ -1366,6 +1369,35 @@
         "id": "node_1",
         "speaker": "Hệ thống",
         "content": "Phát hiện biến số không ổn định, thực tại bắt đầu sụp đổ...",
+        "textEffects": true,
+        "textEffectsMassively": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "nhan_axe",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Đã nhận được chiếc rìu sắc bén, nên làm gì tiếp đây...",
+        "textEffects": true,
+        "nextNodeId": null,
+        "choices": []
+      }
+    ]
+  },
+  {
+    "dialogueId": "thong_bao_hong_khoa",
+    "startNodeId": "node_1",
+    "nodes": [
+      {
+        "id": "node_1",
+        "speaker": "Suy nghĩ",
+        "content": "Chìa khóa đã bị gãy rồi, phải tìm cách gì khác để phá hủy cái này...",
         "textEffects": true,
         "nextNodeId": null,
         "choices": []
