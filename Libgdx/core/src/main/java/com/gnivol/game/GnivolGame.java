@@ -38,6 +38,7 @@ public class GnivolGame extends Game {
     private com.gnivol.game.system.save.GameSnapshot gameSnapshot;
     private com.gnivol.game.system.save.AutoSaveManager autoSaveManager;
     private com.gnivol.game.system.save.SaveUIController saveUIController;
+    private com.gnivol.game.system.meta.EndingManager endingManager;
     public boolean isLoadedGame = false;
     private FontManager fontManager;
 
@@ -65,6 +66,8 @@ public class GnivolGame extends Game {
         sceneManager.setSceneBGM("room_tang_1", "outside");
         sceneManager.setSceneBGM("room_chu_nha", "outside");
         playerInteractionSystem = new PlayerInteractionSystem(sceneManager, inventoryManager, rsManager, puzzleManager);
+
+        endingManager = new com.gnivol.game.system.meta.EndingManager();
 
         gameSnapshot = new com.gnivol.game.system.save.GameSnapshot();
         autoSaveManager = new com.gnivol.game.system.save.AutoSaveManager(gameSnapshot, saveUIController);
@@ -202,6 +205,8 @@ public class GnivolGame extends Game {
     public com.gnivol.game.model.GameState getGameState() {return gameState;}
 
     public com.gnivol.game.system.save.AutoSaveManager getAutoSaveManager() { return autoSaveManager;}
+
+    public com.gnivol.game.system.meta.EndingManager getEndingManager() { return endingManager; }
 
     public FontManager getFontManager() {return fontManager;}
 }
