@@ -63,7 +63,7 @@ public class RoomInteractionHandler implements InteractionCallback {
 
         if ("fire_hose_box".equals(obj.getId())) {
             if (game.getFlagManager().get("hop_chua_chay_broken")) {
-                screen.changeSceneWithFade("hong_chia_khoa5");
+                screen.changeSceneWithFade("room_chua_chay_hong_chia_khoa5");
                 return;
             }
             else if (game.getFlagManager().get("first_click_hop_chua_chay")) {
@@ -72,11 +72,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                 game.getFlagManager().set("hop_chua_chay_hit_2", false);
                 game.getFlagManager().set("hop_chua_chay_hit_3", false);
 
-                com.gnivol.game.model.RoomData originalData = com.gnivol.game.data.DataManager.getInstance().loadRoomData("hong_chia_khoa1");
-                if (originalData != null) {
-                    originalData.background = "images/back_ground/tang_1/hong_chia_khoa1.png";
-                }
-                screen.changeSceneWithFade("hong_chia_khoa1");
+                screen.changeSceneWithFade("room_chua_chay_hong_chia_khoa1");
                 return;
             }
         }
@@ -186,7 +182,7 @@ public class RoomInteractionHandler implements InteractionCallback {
                 // 1. Bắt đầu overlay đen fade in (4.5s) → hold (2.5s) → fade out (1.5s)
                 screen.startBreakDoorOverlay();
 
-                // 2. Khi screen đã đen hoàn toàn (t=4.5s): play SFX 3x + đổi BG
+                // 2. Khi screen đã đen hoàn toàn (t=4.5s): play SFX 3x + chuyển sang scene cửa vỡ
                 final float fadeInDuration = 4.5f;
                 com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
                     @Override
@@ -194,10 +190,8 @@ public class RoomInteractionHandler implements InteractionCallback {
                         com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
                             @Override
                             public void run() {
-                                if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                                    ((RoomScene) screen.getSceneManager().getCurrentScene())
-                                        .changeBackground("images/back_ground/hall/hall_breaked_door.png");
-                                }
+                                screen.getSceneManager().changeScene("room_hallway_breaked_door");
+                                game.getGameState().setCurrentRoom("room_hallway_breaked_door");
                             }
                         });
                     }
@@ -446,8 +440,8 @@ public class RoomInteractionHandler implements InteractionCallback {
         if("hop_chua_chay".equals(id)){
             if(!game.getFlagManager().get("first_click_hop_chua_chay")){
                 game.getFlagManager().set("first_click_hop_chua_chay", true);
-                screen.getSceneManager().changeScene("hong_chia_khoa1");
-                game.getGameState().setCurrentRoom("hong_chia_khoa1");
+                screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa1");
+                game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa1");
                 handleGenericInteractions(obj);
                 return;
             }
@@ -458,25 +452,22 @@ public class RoomInteractionHandler implements InteractionCallback {
                     if (!game.getFlagManager().get("hop_chua_chay_hit_1")) {
                         game.getFlagManager().set("hop_chua_chay_hit_1", true);
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                            ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa2.png");
-                        }
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa2");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa2");
                     }
                     // 2
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_2")) {
                         game.getFlagManager().set("hop_chua_chay_hit_2", true);
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                            ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa3.png");
-                        }
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa3");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa3");
                     }
                     // 3
                     else if (!game.getFlagManager().get("hop_chua_chay_hit_3")) {
                         game.getFlagManager().set("hop_chua_chay_hit_3", true);
                         if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
-                        if (screen.getSceneManager().getCurrentScene() instanceof RoomScene) {
-                            ((RoomScene) screen.getSceneManager().getCurrentScene()).changeBackground("images/back_ground/tang_1/hong_chia_khoa4.png");
-                        }
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa4");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa4");
                     }
                 }
                 else if(game.getFlagManager().get("hop_chua_chay_hit_3")){
@@ -485,8 +476,8 @@ public class RoomInteractionHandler implements InteractionCallback {
                     screen.getInventoryUI().clearSelection();
                     screen.getInventoryUI().refreshUI();
 
-                    screen.getSceneManager().changeScene("hong_chia_khoa5");
-                    game.getGameState().setCurrentRoom("hong_chia_khoa5");
+                    screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa5");
+                    game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa5");
 
                     com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
                         @Override

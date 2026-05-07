@@ -1,7 +1,7 @@
 {
-  "roomId": "new_blank_room_chair_on_bed",
+  "roomId": "room_bedroom_treo_ca_vat",
   "roomName": "Phòng ngủ",
-  "background": "images/back_ground/room/new_blank_room_chair_on_bed.png",
+  "background": "images/back_ground/room/the_end.png",
   "objects": [
     {
       "id": "wardrobe",
@@ -233,23 +233,6 @@
         "altTextures": {
           "open": "images/qrcode.png"
         }
-      }
-    },
-    {
-      "id": "chair",
-      "type": "furniture",
-      "x": 631,
-      "y": 70,
-      "w": 121,
-      "h": 253,
-      "scale": 1.0,
-      "offsetX": 0,
-      "offsetY": 0,
-      "properties": {
-        "dialogueId": "intro_phone_call",
-        "collectible": false,
-        "hasGlitch": false,
-        "rsChange": 0
       }
     },
     {
