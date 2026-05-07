@@ -190,6 +190,7 @@
       { "type": "wait", "duration": 2.5 },
 
       { "type": "sfx", "id": "sfx_flatline_heart" },
+      { "type": "mark_ending", "id": "suicide" },
       { "type": "fade_out", "duration": 2.5},
       { "type": "change_scene", "id": "return_to_menu" }
     ]

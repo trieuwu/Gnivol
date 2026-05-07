@@ -203,6 +203,44 @@ public class AudioManager {
         currentAmbientId = null;
     }
 
+    /**
+     * Phát SFX dưới dạng Music (streaming) để có thể bắt onCompletion → biết duration.
+     * Không cache — caller chịu trách nhiệm dispose. Trả về null nếu file không tồn tại.
+     */
+    public Music playSfxOneShot(String id, float volume) {
+        if (id == null) return null;
+        String[] candidates = {
+            "audio/sfx/" + id + ".wav",
+            "audio/sfx/" + id + ".mp3",
+            "sfx/" + id + ".mp3",
+            "sfx/" + id + ".wav"
+        };
+        for (String path : candidates) {
+            try {
+                if (Gdx.files.internal(path).exists()) {
+                    Music m = Gdx.audio.newMusic(Gdx.files.internal(path));
+                    m.setVolume(volume);
+                    m.play();
+                    return m;
+                }
+            } catch (Exception ignored) {}
+        }
+        Gdx.app.error("AudioManager", "Failed to load SFX (one-shot): " + id);
+        return null;
+    }
+
+    /** Tạm tắt nhạc nền (BGM + ambient) — không ghi prefs. Dùng cho jumpscare/SFX gây sốc. */
+    public void duckMusic() {
+        if (currentBGM != null) currentBGM.setVolume(0f);
+        if (currentAmbient != null) currentAmbient.setVolume(0f);
+    }
+
+    /** Khôi phục nhạc nền về mức musicVolume hiện tại. Idempotent. */
+    public void unduckMusic() {
+        if (currentBGM != null) currentBGM.setVolume(musicVolume);
+        if (currentAmbient != null) currentAmbient.setVolume(musicVolume);
+    }
+
     // --- Volume controls ---
 
     public float getMusicVolume() {

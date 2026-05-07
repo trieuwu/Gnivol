@@ -90,6 +90,21 @@ public class GameScreen extends BaseScreen {
     private Texture vignetteTexture;
     private boolean isInitialized = false;
 
+    // Jumpscare định kỳ khi player đã từng tự sát ở session trước
+    private Texture jumpscareTexture;
+    private float jumpscareTimer;
+    private float jumpscareNextAt;
+    private float jumpscareSpriteTimer;
+    private boolean jumpscareArmed;
+    private com.badlogic.gdx.audio.Music jumpscareSfx;
+    private boolean jumpscareSfxFinished;
+    private float jumpscarePostFinishTimer;
+    private static final float JUMPSCARE_EXTRA_AFTER_SFX = 1.0f;
+    private static final float JUMPSCARE_MAX_DURATION = 30f; // safety cap
+    private static final float JUMPSCARE_MIN = 60f;
+    private static final float JUMPSCARE_MAX = 180f;
+    private final java.util.Random jumpscareRandom = new java.util.Random();
+
     /** Cheat/cutscene flag: ép glitch shader + camera shake liên tục ở intensity max, bypass RS check. */
     public static boolean FORCE_MAX_GLITCH = false;
 
@@ -585,6 +600,13 @@ public class GameScreen extends BaseScreen {
                 }
 
                 @Override
+                public void onMarkEnding(String endingId) {
+                    if (game.getEndingManager() != null) {
+                        game.getEndingManager().markAchieved(endingId);
+                    }
+                }
+
+                @Override
                 public void onCutsceneFinished(String cutsceneId) {
                     if (cutsceneSprite != null) {
                         if (!isGameOver) {
@@ -640,6 +662,13 @@ public class GameScreen extends BaseScreen {
             if (game.getAudioManager() != null) {
                 game.getAudioManager().crossfadeBGM("bedroom_bgm", 1.5f);
             }
+
+            // Arm jumpscare loop nếu player đã từng tự sát
+            if (game.getEndingManager() != null && game.getEndingManager().isSuicided()) {
+                jumpscareArmed = true;
+                rollNextJumpscare();
+            }
+
             isInitialized = true;
         }
         setupInputProcessors();
@@ -1176,6 +1205,66 @@ public class GameScreen extends BaseScreen {
             dimRenderer.end();
         }
 
+        // Jumpscare timer + trigger
+        if (jumpscareArmed && !isGameOver) {
+            jumpscareTimer += delta;
+            if (jumpscareTexture == null && jumpscareTimer >= jumpscareNextAt) {
+                try {
+                    jumpscareTexture = new Texture(Gdx.files.internal("images/you_killed_me.png"));
+                    jumpscareSpriteTimer = 0f;
+                    jumpscarePostFinishTimer = 0f;
+                    jumpscareSfxFinished = false;
+                    if (game.getAudioManager() != null) {
+                        game.getAudioManager().duckMusic();
+                        float boost = game.getAudioManager().getSfxVolume() * 3f;
+                        jumpscareSfx = game.getAudioManager().playSfxOneShot("you_killed_me", boost);
+                        if (jumpscareSfx != null) {
+                            jumpscareSfx.setOnCompletionListener(m -> jumpscareSfxFinished = true);
+                        } else {
+                            jumpscareSfxFinished = true; // không có audio → +1s rồi dispose
+                        }
+                    } else {
+                        jumpscareSfxFinished = true;
+                    }
+                } catch (Exception e) {
+                    Gdx.app.error("Jumpscare", "Cannot load you_killed_me.png", e);
+                    jumpscareTexture = null;
+                    rollNextJumpscare();
+                }
+            }
+        }
+
+        // Jumpscare overlay render (centered)
+        if (jumpscareTexture != null) {
+            jumpscareSpriteTimer += delta;
+            if (jumpscareSfxFinished) {
+                jumpscarePostFinishTimer += delta;
+            }
+            boolean done = (jumpscareSfxFinished && jumpscarePostFinishTimer >= JUMPSCARE_EXTRA_AFTER_SFX)
+                || jumpscareSpriteTimer >= JUMPSCARE_MAX_DURATION;
+            if (done) {
+                jumpscareTexture.dispose();
+                jumpscareTexture = null;
+                if (jumpscareSfx != null) {
+                    jumpscareSfx.dispose();
+                    jumpscareSfx = null;
+                }
+                if (game.getAudioManager() != null) {
+                    game.getAudioManager().unduckMusic();
+                }
+                rollNextJumpscare();
+            } else {
+                float w = jumpscareTexture.getWidth();
+                float h = jumpscareTexture.getHeight();
+                float x = (1280f - w) / 2f;
+                float y = (720f - h) / 2f;
+                batch.setProjectionMatrix(camera.combined);
+                batch.begin();
+                batch.draw(jumpscareTexture, x, y, w, h);
+                batch.end();
+            }
+        }
+
         // Cutscene sprite rendering
         if (cutsceneSprite != null) {
             cutsceneSpriteTimer += delta;
@@ -1490,12 +1579,20 @@ public class GameScreen extends BaseScreen {
         if (defaultSkin != null) defaultSkin.dispose();
         if (inventoryOverlaySystem != null) inventoryOverlaySystem.dispose();
         if (cutsceneSprite != null) cutsceneSprite.dispose();
+        if (jumpscareTexture != null) jumpscareTexture.dispose();
+        if (jumpscareSfx != null) jumpscareSfx.dispose();
         if (videoPlayer != null) videoPlayer.dispose();
         if (chromaShader != null) chromaShader.dispose();
         if (glitchShader != null) glitchShader.dispose();
         if (inventoryUI != null) inventoryUI.dispose();
         if (vignetteTexture != null) vignetteTexture.dispose();
         if (sceneManager != null) sceneManager.dispose();
+    }
+
+    private void rollNextJumpscare() {
+        jumpscareNextAt = JUMPSCARE_MIN
+            + jumpscareRandom.nextFloat() * (JUMPSCARE_MAX - JUMPSCARE_MIN);
+        jumpscareTimer = 0f;
     }
 
     public void openInventoryOverlay(String overlayId) {
