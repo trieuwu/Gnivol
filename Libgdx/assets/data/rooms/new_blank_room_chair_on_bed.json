@@ -42,7 +42,7 @@
         "overlayId": "fridge_interior",
         "altTextures": {
           "open": "images/tulanh_mo.png",
-          "taken": "images/tulanh_mo.png"
+          "taken": "images/tulanh_mo_nobone.png"
         }
       }
     },
