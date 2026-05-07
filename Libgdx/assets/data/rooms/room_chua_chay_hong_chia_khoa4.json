@@ -1,7 +1,7 @@
 {
-  "roomId": "hong_chia_khoa1",
+  "roomId": "room_chua_chay_hong_chia_khoa4",
   "roomName": "Cận cảnh Hộp Chữa Cháy",
-  "background": "images/back_ground/tang_1/hong_chia_khoa1.png",
+  "background": "images/back_ground/tang_1/hong_chia_khoa4.png",
   "objects": [
     {
       "id": "back_to_tang_1a",
