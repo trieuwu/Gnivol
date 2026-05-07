@@ -37,7 +37,7 @@ Nhóm áp dụng phương pháp **Scrumban** (kết hợp giữa Scrum và Kanba
 
 Bên cạnh đó, dự án được phát triển theo định hướng **thiết kế dựa trên cốt truyện** (*Narrative-driven development*). Cốt truyện không được cố định ngay từ đầu mà liên tục được xây dựng và điều chỉnh trong suốt quá trình phát triển. Trên cơ sở đó, các yếu tố gameplay, môi trường và trải nghiệm người chơi được thiết kế xoay quanh diễn biến của câu chuyện, nhằm đảm bảo sự nhất quán về mặt cảm xúc và tăng chiều sâu cho trải nghiệm kinh dị tâm lý.
 
-Do giới hạn thời gian phát triển trong 7 tuần, đồng thời toàn bộ thành viên đều chưa có kinh nghiệm làm game và chưa từng sử dụng LibGDX trước đó, phiên bản hiện tại được xác định là một **bản demo**.
+Do giới hạn thời gian phát triển trong 7 tuần, đồng thời toàn bộ thành viên đều chưa có kinh nghiệm làm game và chưa từng sử dụng LibGDX trước đó, phiên bản hiện tại là một **bản demo**.
 
 Tính đến thời điểm hiện tại, dự án mới triển khai được khoảng **1/8 nội dung cốt truyện** đã đề ra. Trong các giai đoạn tiếp theo, trò chơi sẽ tiếp tục được mở rộng và hoàn thiện cả về nội dung lẫn tính năng.
 
