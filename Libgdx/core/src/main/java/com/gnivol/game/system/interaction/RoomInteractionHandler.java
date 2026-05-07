@@ -61,6 +61,21 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if ("fire_hose_box".equals(obj.getId())) {
+            if (game.getFlagManager().get("hop_chua_chay_broken")) {
+                screen.changeSceneWithFade("room_chua_chay_hong_chia_khoa5");
+                return;
+            }
+            else if (game.getFlagManager().get("first_click_hop_chua_chay")) {
+                // chưa đập vỡ hết sẽ reset lại
+                game.getFlagManager().set("hop_chua_chay_hit_1", false);
+                game.getFlagManager().set("hop_chua_chay_hit_2", false);
+                game.getFlagManager().set("hop_chua_chay_hit_3", false);
+
+                screen.changeSceneWithFade("room_chua_chay_hong_chia_khoa1");
+                return;
+            }
+        }
 
         // Logic chuyển cảnh thông thường qua targetScene trong JSON
         RoomData roomData = screen.getSceneManager().getCurrentScene().getRoomData();
@@ -161,9 +176,66 @@ public class RoomInteractionHandler implements InteractionCallback {
         // 1. Cửa hàng xóm: có rìu → vào phòng đối diện; không có → dialogue mùi xác chết
         // Cutscene jumpscare đã chuyển sang trigger lần đầu vào hành lang (xem GameScreen.changeSceneWithFade)
         if ("door_neighbor".equals(id)) {
-            if ("axe".equals(screen.getInventoryUI().getSelectedItem())) {
+            if ("axe".equals(screen.getInventoryUI().getSelectedItem()) && !game.getFlagManager().get("break_door_neighbor")) {
+                game.getFlagManager().set("break_door_neighbor");
+                screen.getSceneManager().changeScene("room_hallway_breaked_door");
+                game.getGameState().setCurrentRoom("room_hallway_breaked_door");
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("pha_cua_bang_riu", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    screen.hideInspectText();
+                                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                }
+                            });
+                        }
+                    }, 0.7f);
+                }
+                return;
+            }
+            else if (game.getFlagManager().get("break_door_neighbor") && !game.getFlagManager().get("first_click_break_door_neighbor")) {
+                game.getFlagManager().set("first_click_break_door_neighbor");
+                if (game.getAudioManager() != null) {
+                    game.getAudioManager().stopBGM(); // Tắt nhạc nền hiện tại
+                }
+                screen.getCutsceneManager().play("room_opposite_video_jumpscare");
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                    @Override
+                    public void run() {
+                        com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                screen.changeSceneWithFade("room_opposite");
+                            }
+                        });
+                    }
+                }, 26f);
+            }
+            else if(game.getFlagManager().get("break_door_neighbor")){
                 screen.changeSceneWithFade("room_opposite");
-            } else {
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("phat_hien_xac_chet", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    screen.hideInspectText();
+                                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                                }
+                            });
+                        }
+                    }, 0.7f);
+                }
+            }
+            else {
                 onDialogueTriggered("neighbor_door_smell");
             }
             return;
@@ -337,6 +409,81 @@ public class RoomInteractionHandler implements InteractionCallback {
             return;
         }
 
+        if("hop_chua_chay".equals(id)){
+            if(!game.getFlagManager().get("first_click_hop_chua_chay")){
+                game.getFlagManager().set("first_click_hop_chua_chay", true);
+                screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa1");
+                game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa1");
+                handleGenericInteractions(obj);
+                return;
+            }
+            if (!game.getFlagManager().get("hop_chua_chay_broken")) {
+                screen.hideInspectText();
+                if ("bone".equals(screen.getInventoryUI().getSelectedItem())) {
+                    // 1
+                    if (!game.getFlagManager().get("hop_chua_chay_hit_1")) {
+                        game.getFlagManager().set("hop_chua_chay_hit_1", true);
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa2");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa2");
+                    }
+                    // 2
+                    else if (!game.getFlagManager().get("hop_chua_chay_hit_2")) {
+                        game.getFlagManager().set("hop_chua_chay_hit_2", true);
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa3");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa3");
+                    }
+                    // 3
+                    else if (!game.getFlagManager().get("hop_chua_chay_hit_3")) {
+                        game.getFlagManager().set("hop_chua_chay_hit_3", true);
+                        if (game.getAudioManager() != null) game.getAudioManager().playSFX("breaking_tuchuachay");
+                        screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa4");
+                        game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa4");
+                    }
+                }
+                else if(game.getFlagManager().get("hop_chua_chay_hit_3")){
+                    screen.hideInspectText();
+                    game.getFlagManager().set("hop_chua_chay_broken", true);
+                    screen.getInventoryUI().clearSelection();
+                    screen.getInventoryUI().refreshUI();
+
+                    screen.getSceneManager().changeScene("room_chua_chay_hong_chia_khoa5");
+                    game.getGameState().setCurrentRoom("room_chua_chay_hong_chia_khoa5");
+
+                    com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                        @Override
+                        public void run() {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    game.getInventoryManager().addItem("axe");
+                                    screen.getInventoryUI().refreshUI();
+                                    if (game.getAudioManager() != null) {
+                                        game.getAudioManager().playSFX("verification");
+                                    }
+                                    onDialogueTriggered("nhan_axe");
+                                }
+                            });
+                        }
+                    }, 0.7f);
+                    return;
+                }
+                else {
+                    onDialogueTriggered("thong_bao_hong_khoa");
+                    return;
+                }
+            }
+            else {
+                DialogueTree thoughtTree = new ThoughtManager().getThoughtTree("tu_chua_chay_da_vo", game.getRsManager().getRS());
+                if (thoughtTree != null) {
+                    screen.hideInspectText();
+                    screen.getDialogueEngine().loadDialogue(thoughtTree);
+                    screen.getDialogueUI().displayNode(screen.getDialogueEngine().getCurrentNode());
+                }
+                return;
+            }
+        }
         // 7. Xử lý chung cho Dialogue, Overlay và Thought
         handleGenericInteractions(obj);
     }
