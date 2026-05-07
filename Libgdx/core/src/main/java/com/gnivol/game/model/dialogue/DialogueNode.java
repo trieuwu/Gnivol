@@ -8,7 +8,8 @@ public class DialogueNode {
     public String id;
     public String speaker;           // Tên người nói (VD: "Hnil", "Bóng ma")
     public String content;           // Nội dung câu thoại
-    public boolean textEffects;      // Hiệu ứng glitch/rung text
+    public boolean textEffects;      // Hiệu ứng glitch/rung text — gradient theo RS (RS-aware default)
+    public boolean textEffectsMassively; // Force MAX 5 effects (camera shake + shader + dialog rung + chữ băm + đỏ) — chỉ dùng cho ending/cinematic
     public String nextNodeId;        // Dùng khi KHÔNG CÓ choice (chuyển thẳng tới node này)
 
     public String onEnterCutscene;  // cutscene ID to trigger when entering this node
