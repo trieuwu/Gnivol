@@ -247,15 +247,15 @@ Dự án áp dụng nhiều mẫu thiết kế nhằm đảm bảo tính mở r�
 ## 5. Ảnh và Video Demo
 
 **Ảnh Demo:**
-![Loading Screen](loadingScreen.png)
-![Loading Screen 2](loadingScreen2.png)
-![inGame1](inGame1.png)
-![calling](calling.png)
-![overlay Refridgerator](./overlayRefridgerator.png)
-![optional](./optional.png)
-![you die](youDie.png)
-![horror](horror.png)
-![minigame2](minigame2.png)
+![Loading Screen](imgs/loadingScreen.png)
+![Loading Screen 2](imgs/loadingScreen2.png)
+![inGame1](imgs/inGame1.png)
+![calling](imgs/calling.png)
+![overlay Refridgerator](imgs/overlayRefridgerator.png)
+![optional](imgs/optional.png)
+![you die](imgs/youDie.png)
+![horror](imgs/horror.png)
+![minigame2](imgs/minigame2.png)
 
 #### Và đó mới chỉ là một phần nhỏ của những gì đang chờ bạn trong **Gnivol**. Hãy tự mình trải nghiệm trò chơi để khám phá phần còn lại.
 
