@@ -24,7 +24,8 @@
     Contact: 0335382422
 
 * **[Nguyễn Thành Trung]** — *Project Advisor*
-  Contact / Profile: https://github.com/Sagitoaz
+* **[Lê Đình Chuyên]** — *Project Advisor*
+* **[Phạm Linh Thảo]** — *Project Advisor*
 
 
 
@@ -259,8 +260,7 @@ Dự án áp dụng nhiều mẫu thiết kế nhằm đảm bảo tính mở r�
 
 #### Và đó mới chỉ là một phần nhỏ của những gì đang chờ bạn trong **Gnivol**. Hãy tự mình trải nghiệm trò chơi để khám phá phần còn lại.
 
-**Video Demo:**
-[Video Link](#)
+## Video Demo: [Video Link](https://www.youtube.com/watch?v=RPquHDUQExM)
 
 
 ## 6. Các vấn đề gặp phải
