@@ -61,7 +61,7 @@ Các nhánh chính:
 * `develop`: Chứa phiên bản tích hợp mới nhất, đã qua rà soát cơ bản
 * `feature/*`: Các nhánh phát triển chức năng riêng lẻ, tồn tại ngắn hạn và sẽ được hợp nhất vào `develop` sau khi hoàn thành
 
-![Sơ đồ Gitflow](version_control.png)
+![Sơ đồ Gitflow](imgs/version_control.png)
 
 
 ## 2. Giới thiệu dự án
