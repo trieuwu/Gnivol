@@ -416,11 +416,16 @@ public class GameScreen extends BaseScreen {
                         if (inventoryUI != null) inventoryUI.setVisible(false);
 
                         // Chuyển sang màn hình Loading của Minigame
-                        screenFader.startFade(() -> {
-                            Gdx.app.postRunnable(() -> {
-                                game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, com.gnivol.game.screen.LoadingScreen.LoadingTarget.SLIDING_MINIGAME, GameScreen.this));
-                            });
-                        });
+                        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                            @Override
+                            public void run() {
+                                screenFader.startFade(() -> {
+                                    Gdx.app.postRunnable(() -> {
+                                        game.setScreen(new com.gnivol.game.screen.LoadingScreen(game, com.gnivol.game.screen.LoadingScreen.LoadingTarget.SLIDING_MINIGAME, GameScreen.this));
+                                    });
+                                });
+                            }
+                        }, 0.5f);
                         return;
                     }
                     cutsceneManager.play(cutsceneId);
