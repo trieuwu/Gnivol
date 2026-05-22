@@ -183,8 +183,8 @@ public class SlidingScreen extends BaseScreen {
                     exitMinigame();
                     return true;
                 }
-                // Cheat F4: skip + win minigame ngay
-                if (keycode == Input.Keys.F4) {
+                // Cheat F4: skip + win minigame ngay — DISABLED (key=UNKNOWN)
+                if (keycode == Input.Keys.UNKNOWN) {
                     Gdx.app.log("SlidingGame", "CHEAT F4: Force win");
                     game.getPuzzleManager().markSolved("puzzle_sliding_marble");
                     if (game.getAutoSaveManager() != null) {
