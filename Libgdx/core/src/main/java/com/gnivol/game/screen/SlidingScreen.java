@@ -184,15 +184,15 @@ public class SlidingScreen extends BaseScreen {
                     return true;
                 }
                 // Cheat F4: skip + win minigame ngay — DISABLED (key=UNKNOWN)
-                if (keycode == Input.Keys.UNKNOWN) {
-                    Gdx.app.log("SlidingGame", "CHEAT F4: Force win");
-                    game.getPuzzleManager().markSolved("puzzle_sliding_marble");
-                    if (game.getAutoSaveManager() != null) {
-                        game.getAutoSaveManager().onSaveTrigger("puzzle_sliding_solved");
-                    }
-                    exitMinigame();
-                    return true;
-                }
+//                if (keycode == Input.Keys.UNKNOWN) {
+//                    Gdx.app.log("SlidingGame", "CHEAT F4: Force win");
+//                    game.getPuzzleManager().markSolved("puzzle_sliding_marble");
+//                    if (game.getAutoSaveManager() != null) {
+//                        game.getAutoSaveManager().onSaveTrigger("puzzle_sliding_solved");
+//                    }
+//                    exitMinigame();
+//                    return true;
+//                }
                 if (keycode == Input.Keys.R) {
                     logic.resetBoard();
                     snapVisuals();
