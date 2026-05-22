@@ -158,11 +158,11 @@ public class LaserScreen extends BaseScreen {
                     return true;
                 }
                 // Cheat F4: skip + win minigame ngay — DISABLED (key=UNKNOWN)
-                if (keycode == Input.Keys.UNKNOWN) {
-                    Gdx.app.log("LaserGame", "CHEAT F4: Force win");
-                    onWin();
-                    return true;
-                }
+//                if (keycode == Input.Keys.UNKNOWN) {
+//                    Gdx.app.log("LaserGame", "CHEAT F4: Force win");
+//                    onWin();
+//                    return true;
+//                }
 
                 int dx = 0, dy = 0;
 
